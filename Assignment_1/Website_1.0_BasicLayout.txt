@@ -1,5 +1,4 @@
-1. Tutorial stap 1
-2. Tutorial stap 2
-3. Accesability design
-4. HTML history
-5. What not to do
+1. HTML History
+2. Tutorial stap 1
+3. Tutorial stap 2
+4. Best practices
