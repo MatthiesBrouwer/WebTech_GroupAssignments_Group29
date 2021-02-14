@@ -36,42 +36,35 @@
         <meta charset="utf-8">
 
         <!-- Meta tag for SEO -->
-        <meta name="description" content="Read information on the history of the web technology HTML and follow a tutorial."
+        <meta name="description" content="Read information on the history of the web technology HTML and follow a tutorial.">
 
         <!-- Title for information and SEO -->
         <title>HTML-education, Main Page</title>
 
         <!-- Link the CSS stylesheet. Only one stylesheet should be used -->
-        <!-- <link rel="stylesheet" type="text/css" href="/css/main.css" media="screen, projection" /> -->
-
+        <link rel="stylesheet" type="text/css" href="CSS/stylesheet_main.css" media="screen, projection" />
+        
     </head>
 
     <!-- Body ID allows page styling without additional markup -->
-    <body id="main page">
+    <body>
 
         <!-- Descriptive block to appropriately describe the content contained. This is better than <div>'s -->
         <header>
-
-            <img id="logo" source="ENTER LOGO SOURCE LINK" width="X" height="Y" alt="Website logo" >
-            <div id="header text">LORUM IPSUM</div>
-
+            <img id="mainLogo" src="CSS/assets/websiteIcon.png" width="100" height="100" alt="Website logo" >
             <!-- Navigation tags allow for easy and centralised navigation between page content -->
+            <!-- Table of content -->
+            <nav>
+                <a href="">HISTORY</a>
+                <a href="">TUTORIAL STEP 1</a>
+                <a href="">TUTORIAL STEP 2</a>
+                <a href="">BEST PRACTISE</a>
+            </nav>
+        
         </header>
 
         <!-- Introduction part-->
-        <section>
-            <!-- Table of content -->
-            <nav>
-                <h1>Pages</h1>
-                <ul>
-                    <li><a href="">HTML History</a></li>
-                    <li><a href="">Tutorial step 1</a></li>
-                    <li><a href="">Tutorial step 2</a></li>
-                    <li><a href="">Best practices</a></li>
-                </ul>
-            </nav>
-
-
+        <section id="introductionSection">
             <!-- Introduction text -->
             <article>
                 <h1>Introduction</h1>
@@ -88,14 +81,14 @@
         </section>
 
         <!-- Information about the group members for the bottom of the page -->
-        <footer>
+        <footer id="footerGroupDescription">
             <h2>Group 29 - WebTechnology course 2021</h2>
             <ul class="Groupmembers">
                 <li>
-                    <h2>Matthies Brouwer</h2>
-                    <img source="IMAGE SOURCE" width="X" height="Y" alt="Portret picture of groupmember Matthies Brouwer">
+                    <h2>Kathleen K. de Boer</h2>
+                    <img source="IMAGE SOURCE" width="X" height="Y" alt="Portret picture of groupmember Kathleen K. de Boer">
                     <h3>Study</h3>
-                    <p>HBO-ICT, Computer Engineering</p>
+                    <p>Artificial Intelligence</p>
                 </li>
                 <li>
                     <h2>Lennard Marck</h2>
@@ -104,11 +97,13 @@
                     <p>Information Science</p>
                 </li>
                 <li>
-                    <h2>Kathleen K. de Boer</h2>
-                    <img source="IMAGE SOURCE" width="X" height="Y" alt="Portret picture of groupmember Kathleen K. de Boer">
+                    <h2>Matthies Brouwer</h2>
+                    <img source="IMAGE SOURCE" width="X" height="Y" alt="Portret picture of groupmember Matthies Brouwer">
                     <h3>Study</h3>
-                    <p>Artificial Intelligence</p>
+                    <p>HBO-ICT, Computer Engineering</p>
                 </li>
+    
+                
             </ul>
         </footer>
     </body>
