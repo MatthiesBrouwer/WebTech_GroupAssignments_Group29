@@ -1,0 +1,142 @@
+### Experimentele methoden en statistiek, lab assignment 0. 
+## Assignment by:
+## student 1 (name, studentID): 
+## student 2 (name, studentID):
+
+
+###
+###
+### Questions for section 4.1.E "Working with a data.frame'
+###
+###
+
+
+# Note how I formatted the text above: the symbol '#' precedes parts of the code
+# that should not be executed (i.e., comments for yourself).
+# To keep the code legible, I use white lines between assignments 
+# and use ### to separate sections clearly.
+# Make sure your comments are not too wide, so that they are readable without the
+# need to scroll to the right.
+# In R-studio you can (un-)comment one or more selected lines using
+# "Code" -> Comment/Uncomment Lines. 
+# You can also find the keyboard shortcut specified there. 
+# Lastly, R does not have specific requirements / conventions for how you format code 
+# (i.e., no requirements about indentations, etc).
+
+# It is good practice to clear your variable list before running a script, so that
+# old values of variables cannot be accidently used in a new analysis. 
+# This is done by the following statement:
+# Run it and check what happens to your variable list in the "Environment" panel 
+# (in RStudio)
+rm(list = ls())
+
+# Execute the following code by selecting it with your mouse and 
+# then running it in the console window as you learned before.
+# NB: do not select ALL the code from this assignment, 
+# only the subsections that you need each time.
+
+int <- 0:9
+decimal <- seq(0,0.9,0.1)         
+### what does the function seq do?
+# 
+index <- rep(c("A","B"),length(int)/2)
+indexAlt <- c(rep("nee",length(int)/2),rep("ja",length(int)/2)) 
+
+myFrame <- data.frame(index1= index,index2= indexAlt,int,decimal) 
+### what does data.frame do?
+
+myFrame             ### What is a data.frame? 
+myFrame[1:5,]       ### [1:5,] means: The first 5 objects
+myFrame[,1:2]			  ### [,1:2]  means: All the objects with 2 variables
+names(myFrame)      ### names means: The names of the variables
+myFrame$index1
+myFrame$index2			### in this setting, the $ means: only the values of that variable
+dim(myFrame)				### dim means: what are the dimensions of the data frame
+
+### (run only the above lines of code)
+### you created a data frame. I also asked some questions after specific commands. 
+### You can answer these questions behind the comment section to keep track of 
+### your personal notes.
+myFrame[myFrame$index1 == "A",]
+myFrame[myFrame$index1 == "A" & myFrame$index2 == "nee",]
+myFrame$oddEven <- NA
+myFrame[myFrame$index1 == "A",]$oddEven <- "Even"
+myFrame[myFrame$index1 != "A",]$oddEven <- "Odd"
+names(myFrame)
+myFrame
+myFrame$rounded <- NA
+myFrame$modulo2 <- myFrame$int %%2
+myFrame 
+myFrame[myFrame$decimal >= 0.5,]$rounded <- "1"
+myFrame[myFrame$decimal <= 0.4,]$rounded <- "0"
+myFrame
+myFrame$modulo2 <- myFrame$int %%2
+myFrame
+###
+###
+### Use the section below to address questions for sections 4.1.G and further 
+###
+###
+mean(myFrame[myFrame$index1 == "A",]$int)
+result <- with(myFrame[myFrame$index1 ==
+                         "A",],mean(sum(int+decimal)/sum(int)*exp(decimal)))
+result
+for (i in unique(myFrame$index1))
+{
+  with(myFrame[myFrame$index1 == i,],print(mean(int)))
+}
+## This forloop prints for each unique element in index 1, these are A and B, the mean values of the indices
+##from the variable int, that correspond to A and B. 
+## Print, prints it argument to the console.
+cntr <- 1
+summation <- 0
+while(summation < 10)
+{
+  summation <- summation + myFrame[cntr,]$int
+  cntr <- cntr + 1
+}
+print(paste("Counter is:", cntr, "Summation is:", summation))
+## this while loop, loops trough the the values of the varibale "int", till the sum of the values reaches 10. 
+## Then it outputs the counter, how many values it has seen, already starting at one. And the sum of these values. 
+myFrameCopy <- myFrame
+myFrameCopy$c <- NA
+myFrameCopy[myFrame$index1 == "A" & myFrame$int < 5, ]$c <- "EvenSmall"
+myFrameCopy[myFrame$index1 == "A" & myFrame$int > 5, ]$c <- "EvenLarge"
+myFrameCopy[myFrame$index1 == "B",]$c <- "Odd"
+with(myFrame,tapply(int,index1,mean))
+with(myFrame,tapply(int,index1,head,n=2))
+## Tapply() : Apply a function to each cell of a ragged array, that is to each (non-empty) 
+##group of values given by a unique combination of the levels of certain factors.
+with(myFrame,aggregate(int,list(index1=index1,index2=index2),mean))
+with(myFrame,aggregate(int,list(newName1=index1,newName2=index2),mean))
+## The function aggregate takes the dataset, a few variables to group by (index 1, index2) and a function (here mean).
+samenvatting <- with(myFrame,aggregate(int,list(newName1=index1,newName2=index2),mean))
+samenvatting$gemiddelde <- samenvatting$x
+samenvatting$maximum <- with(myFrame,aggregate(int,list(newName1=index1,newName2=index2),max))$x
+samenvatting$minimum <- with(myFrame,aggregate(int,list(newName1=index1,newName2=index2),min))$x
+samenvatting$eerste <- with(myFrame,aggregate(int,list(newName1=index1,newName2=index2),head,n=1))$x
+library(plyr)
+samenvatting2 <- ddply(myFrame, c("index1", "index2"), summarise,gemiddelde = mean(int, na.rm=TRUE),
+                       maximum = max(int),minimum = min(int),eerste = head(int, n=1))
+mysteryFunction <- function(digit,add)
+{
+  result <- digit + add
+  result
+}
+slicerFunction <- function(digit,criterion=5)
+{
+  result <- digit[digit<criterion]
+  result
+}
+test <- c(4,5,6,7,8,7,6,5,4,3,2,1)
+slicerFunction(test)
+slicerFunction(test,8)
+mysteryFunction(test,5)
+## 5 is for the mystery function, 15 is for the slicer function
+MyCounter <- function(c())
+{
+  result <- c() + match(c(), c())
+  result
+}
+MyCounter(4)
+MyCounter(c(4,10))
