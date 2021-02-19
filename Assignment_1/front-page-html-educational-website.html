@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8">'
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- Meta tag for SEO -->
         <meta name="description" content="Read information on the history of the web technology HTML and follow a tutorial.">
@@ -20,16 +21,16 @@
 
         <!-- Descriptive block to appropriately describe the content contained. This is better than <div>'s -->
         <header>
-            <img id="mainLogo" src="CSS/assets/websiteIcon.png" width="100" height="100" alt="Website logo" >
-            <!-- Navigation tags allow for easy and centralised navigation between page content -->
-            <!-- Table of content -->
-            <nav class="menu-options">
-                <a  href="front-page-html-educational-website.html">HOME</a>
-                <a  href="History.html">HISTORY</a>
-                <a  href="tutorial-page-html-educational-website.html">TUTORIAL</a>
-                <a  href="">BEST PRACTISE</a>
-                <a  href="">ABOUT US</a>
-            </nav>
+                <!--img class="top-bar__main-logo col-2" src="CSS/assets/websiteIcon.png" widht="100" height="100" alt="Website logo" -->
+                <!-- Navigation tags allow for easy and centralised navigation between page content -->
+                <!-- Table of content -->
+                <nav class="top-bar__menu col-10 row">
+                    <a  class="col-2" href="front-page-html-educational-website.html">HOME</a>
+                    <a  class="col-2" href="History.html">HISTORY</a>
+                    <a  class="col-2" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
+                    <a  class="col-4" href="">BEST PRACTISE</a>
+                    <a  class="col-2" href="">CONTACT</a>
+                </nav>
 
         </header>
 
@@ -39,8 +40,12 @@
             <article class="pageDescriptions">
 
                 <section class="descriptionRow topMarg30 bottomMarg30">
-                    <h1 class="aboutTitle">HTML Education - Learn How to Make a Web page</h1>
-                    <p class="aboutDescription">
+                    
+                    <h1 class="page-content__section-title-main col-12">HTML Education - Learn How to Make a Web page</h1>
+                    
+                    <img class="page-content__page-reference-icon-main col-6" src="CSS/assets/pageIcon-homePage.png" width="100" height="100" alt="An icon for the home page displaying a web page">
+
+                    <p class="page-content__page-description-main col-6">
                     Being free to surf the internet is one of the biggest benifits of living in the 21st century, but being able to
                     create your own web content feels even better. HyperText Markup Language (HTML) 
                     gives web developers the tools necessary to freely create web pages and applications.
@@ -48,31 +53,35 @@
                     With the help of our tutorial, even YOU can becoma a skilled web developer and create your own insightful webpages.
                     </p>
                     <!--Image source: https://icons8.com/icon/116999/web-->
-                    <img src="CSS/assets/pageIcon-homePage.png" width="100" height="100" alt="An icon for the home page displaying a web page">
 
                 </section>
 
                 <section class="descriptionRow topMarg30 bottomMarg30">
                     <!--Image source: https://icons8.com/icon/113644/time-machine-->
-                    <img src="CSS/assets/pageIcon-history.png" width="100" height="100" alt="An icon for the history section displaying a rewinding clock">
-                    <h1 class="aboutTitle">HTML History</h1>
-                    <p class="aboutDescription">
+                    <h1 class="page-content__section-title-history col-12">HTML History</h1>
+
+                    <img class="page-content__page-reference-icon-history col-6" src="CSS/assets/pageIcon-history.png" width="100" height="100" alt="An icon for the history section displaying a rewinding clock">
+                    <p class="page-content__page-description-history col-6">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel porta neque, eu imperdiet turpis. Aenean varius malesuada mauris, vestibulum facilisis elit porta non. Quisque id ultricies nulla, interdum laoreet sem. Sed ac felis ut magna tempor congue. Duis congue, diam in mollis laoreet, neque erat tincidunt velit, vitae feugiat nunc neque ut magna. Vestibulum pharetra pellentesque tortor sit amet efficitur. Quisque faucibus ligula ut sodales finibus. Ut eu maximus lacus, eget semper odio. Aliquam efficitur tincidunt sagittis. Suspendisse placerat, lorem sed pretium posuere, sem justo luctus odio, ut mollis nisl lectus in tellus.
                     </p>
                 </section>
+                
+                <section class="descriptionRow topMarg30 bottomMarg30">
+                    <h1 class="page-content__section-title-bestpractices col-12">HTML History</h1>
 
-                <section>
-                    <p>
+                    <p class="page-content__page-description-bestpractices col-6">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel porta neque, eu imperdiet turpis. Aenean varius malesuada mauris, vestibulum facilisis elit porta non. Quisque id ultricies nulla, interdum laoreet sem. Sed ac felis ut magna tempor congue. Duis congue, diam in mollis laoreet, neque erat tincidunt velit, vitae feugiat nunc neque ut magna. Vestibulum pharetra pellentesque tortor sit amet efficitur. Quisque faucibus ligula ut sodales finibus. Ut eu maximus lacus, eget semper odio. Aliquam efficitur tincidunt sagittis. Suspendisse placerat, lorem sed pretium posuere, sem justo luctus odio, ut mollis nisl lectus in tellus.
                     </p>
                     <!--Image source: https://icons8.com/icon/set/programming/bubbles-->
-                    <img src="CSS/assets/pageIcon-tutorial.png" width="100" height="100" alt="An icon for the tutorial section displaying a magnifying glass hovering over HTML tags">
+                    <img class="page-content__page-reference-icon-bestpractices col-6" src="CSS/assets/pageIcon-tutorial.png" width="100" height="100" alt="An icon for the tutorial section displaying a magnifying glass hovering over HTML tags">
                 </section>
 
                 <section>
+                    <h1 class="page-content__section-title-contact col-12">HTML History</h1>
+
                     <!--Image source: https://icons8.com/icon/112158/test-passed-->
-                    <img src="CSS/assets/pageIcon-bestPractices.png" width="100" height="100" alt="An icon for the best practices section displaying a notepad with checkmarked lines">
-                    <p>
+                    <img class="page-content__page-reference-icon-contact col-6" src="CSS/assets/pageIcon-bestPractices.png" width="100" height="100" alt="An icon for the best practices section displaying a notepad with checkmarked lines">
+                    <p class="page-content__page-description-contact col-6">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel porta neque, eu imperdiet turpis. Aenean varius malesuada mauris, vestibulum facilisis elit porta non. Quisque id ultricies nulla, interdum laoreet sem. Sed ac felis ut magna tempor congue. Duis congue, diam in mollis laoreet, neque erat tincidunt velit, vitae feugiat nunc neque ut magna. Vestibulum pharetra pellentesque tortor sit amet efficitur. Quisque faucibus ligula ut sodales finibus. Ut eu maximus lacus, eget semper odio. Aliquam efficitur tincidunt sagittis. Suspendisse placerat, lorem sed pretium posuere, sem justo luctus odio, ut mollis nisl lectus in tellus.
                     </p>
                 </section>
@@ -81,7 +90,7 @@
         </section>
 
         <!-- Information about the group members for the bottom of the page -->
-        <footer>
+        <footer class="col-12">
 
             <h1>HTML Education</h1>
             <h2>Group 29</h2>
