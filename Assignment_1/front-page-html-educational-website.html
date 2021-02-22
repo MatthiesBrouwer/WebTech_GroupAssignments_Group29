@@ -1,7 +1,9 @@
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- Meta tag for SEO -->
         <meta name="description" content="Read information on the history of the web technology HTML and follow a tutorial.">
@@ -11,28 +13,28 @@
 
         <!-- Link the CSS stylesheet. Only one stylesheet should be used -->
         <link rel="stylesheet" type="text/css" href="CSS/stylesheet_main.css" media="screen, projection" />
-        
+        <link rel="icon" type="image/png" href="icon.png">
     </head>
 
     <!-- Body ID allows page styling without additional markup -->
     <body>
 
         <!-- Descriptive block to appropriately describe the content contained. This is better than <div>'s -->
-            <header>
-                <a href="front-page-html-educational-website.html"><img id="mainLogo" src="CSS/assets/websiteIcon.png" width="100" height="100" alt="Website logo" ></a>
+        <header >
+                <!--img class="page-logo col-2" src="CSS/assets/websiteIcon.png" widht="100" height="100" alt="Website logo" -->
                 <!-- Navigation tags allow for easy and centralised navigation between page content -->
                 <!-- Table of content -->
-                <nav>                   
-                    <a href="history.html">HISTORY</a>
-                    <a href="">TUTORIAL STEP 1</a>
-                    <a href="">TUTORIAL STEP 2</a>
-                    <a href="">BEST PRACTISE</a>
+                <nav class="menu-bar col-10">
+                    <a  class="menu-bar__option menu-bar__option--home col-2" href="front-page-html-educational-website.html">HOME</a>
+                    <a  class="menu-bar__option col-2" href="History.html">HISTORY</a>
+                    <a  class="menu-bar__option col-2" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
+                    <a  class="menu-bar__option col-2" href="">BEST PRACTISE</a>
+                    <a  class="menu-bar__option col-2" href="">CONTACT</a>
                 </nav>
-            
-            </header>
 
-        <!-- Introduction part-->
-        <section id="introductionSection">
+        </header>
+
+        <section class="page-content-enclosure col-12">
             <!-- Introduction text -->
             <article class="descriptions-enclosure">
 
@@ -40,8 +42,8 @@
                     
                     <h1 class="page-description__title col-12">HTML Education - Learn How to Make a Web page</h1>
                     
-                   <div class="col-3">
-                    <img class="page-description__icon" src="CSS/assets/pageIcon-homePage.png"  alt="An icon for the home page displaying a web page">
+                    <div class="col-3">
+                    <img class="page-description__icon" src="CSS/assets/pageIcon-homePage.png" alt="An icon for the home page displaying a web page">
                     </div>
 
                     <p class="page-description__description-text col-9">
@@ -58,29 +60,33 @@
                 <section class="page-description">
                     <!--Image source: https://icons8.com/icon/113644/time-machine-->
                     <h1 class="page-description__title col-12">HTML History</h1>
-
-                    <img class="page-description__icon col-6" src="CSS/assets/pageIcon-history.png" width="100" height="100" alt="An icon for the history section displaying a rewinding clock">
-                    <p class="page-description__description-text col-6">
+                    <div class= "col-3">
+                    <img class="page-description__icon" src="CSS/assets/pageIcon-history.png" alt="An icon for the history section displaying a rewinding clock">
+                    </div>
+                    <p class="page-description__description-text col-9">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel porta neque, eu imperdiet turpis. Aenean varius malesuada mauris, vestibulum facilisis elit porta non. Quisque id ultricies nulla, interdum laoreet sem. Sed ac felis ut magna tempor congue. Duis congue, diam in mollis laoreet, neque erat tincidunt velit, vitae feugiat nunc neque ut magna. Vestibulum pharetra pellentesque tortor sit amet efficitur. Quisque faucibus ligula ut sodales finibus. Ut eu maximus lacus, eget semper odio. Aliquam efficitur tincidunt sagittis. Suspendisse placerat, lorem sed pretium posuere, sem justo luctus odio, ut mollis nisl lectus in tellus.
                     </p>
                 </section>
                 
                 <section class="page-description">
-                    <h1 class="page-description__title col-12">HTML History</h1>
-
-                    <p class="page-description__description-text col-6">
+                    <h1 class="page-description__title col-12">HTML History</h1>                
+                    <!--Image source: https://icons8.com/icon/set/programming/bubbles-->
+                    <div class= "col-3">
+                    <img class="page-description__icon" src="CSS/assets/pageIcon-tutorial.png"  alt="An icon for the tutorial section displaying a magnifying glass hovering over HTML tags">
+                    </div>
+                    <p class="page-description__description-text col-9">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel porta neque, eu imperdiet turpis. Aenean varius malesuada mauris, vestibulum facilisis elit porta non. Quisque id ultricies nulla, interdum laoreet sem. Sed ac felis ut magna tempor congue. Duis congue, diam in mollis laoreet, neque erat tincidunt velit, vitae feugiat nunc neque ut magna. Vestibulum pharetra pellentesque tortor sit amet efficitur. Quisque faucibus ligula ut sodales finibus. Ut eu maximus lacus, eget semper odio. Aliquam efficitur tincidunt sagittis. Suspendisse placerat, lorem sed pretium posuere, sem justo luctus odio, ut mollis nisl lectus in tellus.
                     </p>
-                    <!--Image source: https://icons8.com/icon/set/programming/bubbles-->
-                    <img class="page-description__icon col-6" src="CSS/assets/pageIcon-tutorial.png" width="100" height="100" alt="An icon for the tutorial section displaying a magnifying glass hovering over HTML tags">
                 </section>
 
                 <section class="page-description">
                     <h1 class="page-description__title col-12">HTML History</h1>
 
                     <!--Image source: https://icons8.com/icon/112158/test-passed-->
-                    <img class="page-description__icon col-6" src="CSS/assets/pageIcon-bestPractices.png" width="100" height="100" alt="An icon for the best practices section displaying a notepad with checkmarked lines">
-                    <p class="page-description__description-text col-6">
+                    <div class= "col-3">
+                    <img class="page-description__icon" src="CSS/assets/pageIcon-bestPractices.png"  alt="An icon for the best practices section displaying a notepad with checkmarked lines">
+                    </div>
+                    <p class="page-description__description-text col-9">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel porta neque, eu imperdiet turpis. Aenean varius malesuada mauris, vestibulum facilisis elit porta non. Quisque id ultricies nulla, interdum laoreet sem. Sed ac felis ut magna tempor congue. Duis congue, diam in mollis laoreet, neque erat tincidunt velit, vitae feugiat nunc neque ut magna. Vestibulum pharetra pellentesque tortor sit amet efficitur. Quisque faucibus ligula ut sodales finibus. Ut eu maximus lacus, eget semper odio. Aliquam efficitur tincidunt sagittis. Suspendisse placerat, lorem sed pretium posuere, sem justo luctus odio, ut mollis nisl lectus in tellus.
                     </p>
                 </section>
@@ -89,7 +95,27 @@
         </section>
 
         <!-- Information about the group members for the bottom of the page -->
-        <footer id="footerGroupDescription">
+        <footer class="col-12">
+
+            <h1>HTML Education</h1>
+            <h2>Group 29</h2>
+            <ul>
+                <li>
+                    <b>Kathleen K. de Boer</b>
+                </li>
+                <li>
+                    <b>Lennard Marck</b>
+                </li>
+                <li>
+                    <b>Matthies B. Brouwer</b>
+                </li>
+            </ul>
+        </footer>
+    </body>
+</html>
+
+<!--
+<footer id="footerGroupDescription">
             <h2>Group 29 - WebTechnology course 2021</h2>
             <ul class="Groupmembers">
                 <li>
@@ -115,7 +141,7 @@
             </ul>
         </footer>
     </body>
-</html>
+</html>-->
 
 <!-- This requirements for this webpage assignment are as follows. These will change when additions to the page are made -->
 <!-- {requirement} - {Does the current webpage complete the requirement} -->
@@ -144,6 +170,6 @@
 <!--        - Cusomizable text - ? -->
 <!--        - Understandable content - ? -->
 <!-- Follow the responsive Web guidelines -->
-<!--        - Images - NO -->
+<!--        - Images - NO -->	
 <!--        - Content positioning - YES -->
 <!--        - Units of measurements -->

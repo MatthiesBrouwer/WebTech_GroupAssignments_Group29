@@ -1,78 +1,113 @@
-header {
-    position: sticky;
-    overflow: hidden;
-    height: 40%;
-    width: 45%;
-    background-color: #e34c26;
-    z-index: 1;
-    display: block;
+
+
+* {
+    box-sizing: border-box;
+  }
+
+[class*="col-"] {
     float: left;
+    padding: 5px;
 }
 
-header #mainLogo{
-    float: left;
-}
-
-
-nav a {
-    float: left;
-    color: #ffff;
-    text-align: center;
-    padding: 40px 17px;
-    text-decoration: none;
-    font-size: 20px;
-    font-family: Fantasy;
-}
-
-nav a:hover{   
-    background-color:green;
-    
-}
-
-nav a.active{
-    background-color:#000000;
-}
-
-body {
-    background-color:#464646;
-}
-
-#introductionSection {
-    position: absolute;
-    top: 15%;
-    left: 5%;
-    width: 85%;
-    height: 60%;
-
-
-    background-color: #ffffff;
-    padding: 40px;
-    text-align: center;
-    z-index: 2;
-}
-
-#History_Introduction {
-    position: absolute;
-    top: 15%;
-    left: 5%;
-    width: 85%;
-    height: 70%;
-
-
-    background-color: #ffffff;
-    padding-top: 0%;
-    padding-left:2%;
-    text-align: left;
-    z-index: 2;
+p{
+    margin:0;
+    text-align: justify;
 }
 
 h1{
-font-size: 200%;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
 }
+
+
+/*===============================
+            HEADER CSS
+  ===============================*/
+
+header {
+    width: 100%;
+
+    padding: 0px;
+}
+
+.page-logo {
+    height: 100%;
+    background-color: #e34c26;
+}
+
+.menu-bar {
+    position: relative;
+    height: 100%;
+    background-color: #e34c26;
+    padding: 0px;
+    /*display: inline-block;
+    overflow: hidden;*/
+
+}
+
+.menu-bar__option  {
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: system-ui, sans-serif;
+    font-size: 20px;
+    text-decoration: none;
+    text-align: center;
+
+}
+
+.menu-bar__option:hover {
+    background-color: #db3309;
+}
+
+.menu-bar__option--home {
+    background-color: #b43c1e;
+}
+
+
+/*===============================
+            BODY CSS
+  ===============================*/
+
+body {
+    position: relative;
+    margin: 0;
+    background-color: white;
+}
+
+.page-content-enclosure {
+    
+    position: relative;
+    background-color: rgb(70, 70, 70);
+    overflow:hidden;
+}
+
+.page-description__title {
+    color: #c9d0d4;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 150%;
+    font-weight: 100;
+    line-height: 50px;
+    letter-spacing: 1px;
+    border-bottom: double #555;
+    border-top: double #555;
+    text-align: center;
+}
+
+.page-description__description-text {
+    color: white;
+    font-size: 20px;
+}
+
 .page-description__icon {
     display: block;
     margin: auto;
+    width: 60%; 
+    height: auto; 
 }
+
+
+
 
 
 /*For phones - Base sizes*/
@@ -125,11 +160,14 @@ font-size: 200%;
 
     .menu-bar__option {
 
-        font-size: 15px;
-        width: 20%;   
+        font-size: 25px;
+        width: 20%;
+        padding-bottom: 10px;
+        padding-top: 10px;    
     }
-
-    
+    .page-description__title {
+    font-size: 25px;
+    }
 
 
     /*===============================
@@ -145,9 +183,6 @@ font-size: 200%;
 
 }
 
-footer li {
-    float: left;
-    color: white;
-    text-align: left;
-    padding: 20px 20px;
-}
+
+
+
