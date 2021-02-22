@@ -21,10 +21,6 @@ header {
     padding: 0px;
 }
 
-.page-logo {
-    height: 100%;
-    background-color: #e34c26;
-}
 
 .menu-bar {
     position: relative;
@@ -40,7 +36,7 @@ header {
     cursor: pointer;
     font-weight: bold;
     font-family: system-ui, sans-serif;
-    font-size: 30px;
+    font-size: 20px;
     text-decoration: none;
     text-align: center;
 
@@ -66,16 +62,27 @@ body {
 }
 
 .page-content-enclosure {
-    
     position: relative;
     background-color: rgb(70, 70, 70);
     overflow:hidden;
+
+    
+}
+
+.page-description { 
+    margin-bottom: 30px;
+
+    border-style: solid;
+    border-width:3px;
+    border-color: rgb(39, 39, 39);
+
+    overflow: hidden;
 }
 
 .page-description__title {
     color: #c9d0d4;
     font-family: 'Helvetica Neue', sans-serif;
-    font-size: 46px;
+    font-size: 25px;
     font-weight: 100;
     line-height: 50px;
     letter-spacing: 1px;
@@ -86,7 +93,10 @@ body {
 
 .page-description__description-text {
     color: white;
-    font-size: 20px;
+    font-size: 17px;
+    font-weight: 100;
+
+    text-align: justify;
 }
 
 .page-description__icon {
@@ -165,7 +175,9 @@ body {
         top:25px;
         left: 25px;
     }
-    
+
+
+
 
 }
 
