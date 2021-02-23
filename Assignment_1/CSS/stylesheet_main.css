@@ -18,6 +18,16 @@ h1{
     margin-block-start: 0.5em;
     margin-block-end: 0.5em;
 }
+html{
+    width: 100vw; 
+    height: 100%;  
+}
+
+body{
+    position: relative;
+    min-height: 100%;    
+
+}
 
 
 /*===============================
@@ -25,14 +35,16 @@ h1{
   ===============================*/
 
 header {
-    width: 100%;
-
+    background-color:#e34c26; 
     padding: 0px;
 }
 
 .page-logo {
-    height: 100%;
     background-color: #e34c26;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  
 }
 
 .menu-bar {
@@ -60,7 +72,7 @@ header {
     background-color: #db3309;
 }
 
-.menu-bar__option--home {
+.menu-bar__option.active {
     background-color: #b43c1e;
 }
 
@@ -106,10 +118,6 @@ body {
     height: auto; 
 }
 
-
-
-
-
 /*For phones - Base sizes*/
 [class*="col-"] {
     width: 100%;
@@ -140,10 +148,6 @@ body {
 /* For desktop: */
 @media only screen and (min-width: 768px) {
     
-
-
-
-
     /* Base collumn devisions */
     .col-1 {width: 8.33%;}
     .col-2 {width: 16.66%;}  
@@ -158,6 +162,8 @@ body {
     .col-11 {width: 91.66%;}
     .col-12 {width: 100%;}
 
+
+    /* Kan -s worden toegevoegd om aan te duiden dat dit de css is voor small die wordt overwritten */
     .menu-bar__option {
 
         font-size: 25px;
@@ -170,6 +176,8 @@ body {
     }
 
 
+
+
     /*===============================
             BODY CSS
     ===============================*/
@@ -179,7 +187,21 @@ body {
         top:25px;
         left: 25px;
     }
+     /*===============================
+            Footer CSS
+    ===============================*/
+    .footer{
+        position: absolute;  
+        bottom: 0;
+        height: auto;
+        width: 100%;
+        overflow: auto;
+    }
+
+    .footer-logo {
+        float: right;
     
+    }
 
 }
 

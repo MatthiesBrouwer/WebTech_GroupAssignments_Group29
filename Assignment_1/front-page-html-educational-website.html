@@ -20,19 +20,20 @@
     <body>
 
         <!-- Descriptive block to appropriately describe the content contained. This is better than <div>'s -->
-        <header >
-                <!--img class="page-logo col-2" src="CSS/assets/websiteIcon.png" widht="100" height="100" alt="Website logo" -->
-                <!-- Navigation tags allow for easy and centralised navigation between page content -->
-                <!-- Table of content -->
-                <nav class="menu-bar col-10">
-                    <a  class="menu-bar__option menu-bar__option--home col-2" href="front-page-html-educational-website.html">HOME</a>
-                    <a  class="menu-bar__option col-2" href="History.html">HISTORY</a>
-                    <a  class="menu-bar__option col-2" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
-                    <a  class="menu-bar__option col-2" href="">BEST PRACTISE</a>
-                    <a  class="menu-bar__option col-2" href="">CONTACT</a>
-                </nav>
-
+        <header class="menu-bar col-2">
+            <img class="page-logo" src="CSS/assets/websiteIcon.png" height="40px" alt="Website logo">
         </header>
+
+        <!-- Navigation tags allow for easy and centralised navigation between page content -->
+        <!-- Table of content -->
+        <nav class="menu-bar col-10">
+            <a  class="menu-bar__option active col-2" href="front-page-html-educational-website.html">HOME</a>
+            <a  class="menu-bar__option col-2" href="History.html">HISTORY</a>
+            <a  class="menu-bar__option col-2" href="Tutorial.html">TUTORIAL</a>
+            <a  class="menu-bar__option col-2" href="Best_practise.html">BEST PRACTISE</a>
+            <a  class="menu-bar__option col-2" href="Contact.html">CONTACT</a>
+        </nav>        
+
 
         <section class="page-content-enclosure col-12">
             <!-- Introduction text -->
@@ -98,18 +99,9 @@
         <footer class="col-12">
 
             <h1>HTML Education</h1>
-            <h2>Group 29</h2>
-            <ul>
-                <li>
-                    <b>Kathleen K. de Boer</b>
-                </li>
-                <li>
-                    <b>Lennard Marck</b>
-                </li>
-                <li>
-                    <b>Matthies B. Brouwer</b>
-                </li>
-            </ul>
+            <a href= "https://www.uu.nl/" target="blank">
+            <img class="footer-logo col-3" src="CSS/assets/uu-logo.png" alt="An clickable image displaying the logo of the University of Utrecht. Clicking this image will open the University's website in a new browser tab">
+            </a>
         </footer>
     </body>
 </html>
