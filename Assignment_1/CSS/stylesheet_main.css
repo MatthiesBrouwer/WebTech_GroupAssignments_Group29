@@ -33,6 +33,12 @@ body{
 
 }
 
+.grid-row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
 
 /*===============================
             HEADER CSS
@@ -94,7 +100,6 @@ body {
 }
 
 .page-content-enclosure {
-    
     position: relative;
     background-color: rgb(70, 70, 70);
     overflow:hidden;
@@ -170,7 +175,9 @@ body {
 
 
     .menu-bar {
-        height: 140px;
+        height: 240px;
+
+        z-index: 1;
     }
 
 
@@ -184,12 +191,8 @@ body {
 
     /* Kan -s worden toegevoegd om aan te duiden dat dit de css is voor small die wordt overwritten */
     .menu-bar__option {
-        /*float:right;*/
         font-size: 12px;
-        /*width: 10%;*/
         padding: 15px;
-        /*padding-bottom: 10px;
-        padding-top: 10px;*/    
         text-align: center;
 
     }
@@ -208,10 +211,29 @@ body {
     
     
     .page-content-enclosure {
-        top:25px;
-        left: 25px;
+        position: relative;
+        top: -120px;
+        left: 100px;
         padding-left: 10px;
-        
+        overflow: hidden;
+
+        z-index: 2;
+    }
+
+    .page-description__title {
+        font-size: 2.2vw;
+    }
+
+    .page-description__description-text {
+        position: relative;
+        font-size: 1.2vw;
+        /*margin-left: 10%;*/
+    }
+
+    .page-description__icon {
+        position: relative;
+        /*max-width: 10vw;
+        max-height: 10vw;*/
     }
 
 
@@ -219,7 +241,9 @@ body {
             Footer CSS
     ===============================*/
     .footer{
-        position: absolute;  
+        top: -120px;
+
+        position: relative;  
         bottom: 0;
         height: auto;
         width: 100%;
@@ -230,4 +254,3 @@ body {
         float: right;
     
     }
-
