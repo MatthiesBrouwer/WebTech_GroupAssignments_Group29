@@ -1,14 +1,38 @@
 
 
+/*===============================
+            HEADER CSS
+  ===============================*/
+
 * {
     box-sizing: border-box;
   }
 
 [class*="col-"] {
     float: left;
-    padding: 15px;
+    padding: 5px;
 }
 
+
+p{
+    margin:0;
+    text-align: justify;
+}
+
+h1{
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+}
+html{
+    width: 100vw; 
+    height: 100%;  
+}
+
+body{
+    position: relative;
+    min-height: 100%;    
+
+}
 
 
 /*===============================
@@ -16,16 +40,23 @@
   ===============================*/
 
 header {
-    width: 100%;
-
+    background-color:#e34c26; 
     padding: 0px;
 }
 
+.page-logo {
+    background-color: #e34c26;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  
+}
 
 .menu-bar {
     position: relative;
     height: 100%;
     background-color: #e34c26;
+    padding: 0px;
     /*display: inline-block;
     overflow: hidden;*/
 
@@ -46,7 +77,7 @@ header {
     background-color: #db3309;
 }
 
-.menu-bar__option--home {
+.menu-bar__option.active {
     background-color: #b43c1e;
 }
 
@@ -62,70 +93,35 @@ body {
 }
 
 .page-content-enclosure {
+    
     position: relative;
     background-color: rgb(70, 70, 70);
     overflow:hidden;
-
-    
-}
-
-.page-description { 
-    margin-bottom: 30px;
-
-    border-style: solid;
-    border-width:3px;
-    border-color: rgb(39, 39, 39);
-
-    overflow: hidden;
 }
 
 .page-description__title {
     color: #c9d0d4;
     font-family: 'Helvetica Neue', sans-serif;
-    font-size: 25px;
+    font-size: 150%;
     font-weight: 100;
     line-height: 50px;
     letter-spacing: 1px;
-    padding: 0 0 40px;
     border-bottom: double #555;
+    border-top: double #555;
     text-align: center;
 }
 
 .page-description__description-text {
     color: white;
-    font-size: 17px;
-    font-weight: 100;
-
-    text-align: justify;
+    font-size: 20px;
 }
 
 .page-description__icon {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 20%;
-    height: auto;
+    margin: auto;
+    width: 60%; 
+    height: auto; 
 }
-
-
-/* For tablets: 
-@media only screen and (min-width: 600px) {
-    /* Base collumn devisions 
-    .col-s-1 {width: 8.33%;}
-    .col-s-2 {width: 16.66%;}  
-    .col-s-3 {width: 25%;}
-    .col-s-4 {width: 33.33%;}
-    .col-s-5 {width: 41.66%;}
-    .col-s-6 {width: 50%;}
-    .col-s-7 {width: 58.33%;}
-    .col-s-8 {width: 66.66%;}
-    .col-s-9 {width: 75%;}
-    .col-s-10 {width: 83.33%;}
-    .col-s-11 {width: 91.66%;}
-    .col-s-12 {width: 100%;}
-
-
-    
 
 /*For phones - Base sizes*/
 [class*="col-"] {
@@ -157,10 +153,6 @@ body {
 /* For desktop: */
 @media only screen and (min-width: 768px) {
     
-
-
-
-
     /* Base collumn devisions */
     .col-1 {width: 8.33%;}
     .col-2 {width: 16.66%;}  
@@ -175,11 +167,20 @@ body {
     .col-11 {width: 91.66%;}
     .col-12 {width: 100%;}
 
+
+    /* Kan -s worden toegevoegd om aan te duiden dat dit de css is voor small die wordt overwritten */
     .menu-bar__option {
 
-        font-size: 15px;
-        width: 20%;   
+        font-size: 25px;
+        width: 20%;
+        padding-bottom: 10px;
+        padding-top: 10px;    
     }
+    .page-description__title {
+    font-size: 25px;
+    }
+
+
 
 
     /*===============================
@@ -191,12 +192,19 @@ body {
         top:25px;
         left: 25px;
     }
+     /*===============================
+            Footer CSS
+    ===============================*/
+    .footer{
+        position: absolute;  
+        bottom: 0;
+        height: auto;
+        width: 100%;
+        overflow: auto;
+    }
 
-
-
-
-}
-
-
-
+    .footer-logo {
+        float: right;
+    
+    }
 
