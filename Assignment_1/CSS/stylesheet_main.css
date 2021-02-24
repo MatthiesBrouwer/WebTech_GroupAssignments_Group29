@@ -24,7 +24,6 @@ h1{
     margin-block-end: 0.5em;
 }
 html{
-    width: 100vw; 
     height: 100%;  
 }
 
@@ -207,10 +206,15 @@ body {
     ===============================*/
 
     
+    
     .page-content-enclosure {
         top:25px;
         left: 25px;
+        padding-left: 10px;
+        
     }
+
+
      /*===============================
             Footer CSS
     ===============================*/
