@@ -141,14 +141,25 @@ body {
     height: auto;
     margin-top: 3em; 
 }
+
+.page-description__reference-imagecaption{
+    margin-top:0;
+    text-align: center;
+}
+
+.page-description__icon-bottom{
+    margin-bottom: 3em;
+}
+
+
 .page-description__bestpractise li{
     margin-bottom: 0;
 }
 
-
 .page-description__reference-image--fullwidth {
     width: 100%;
 }
+
 
 .history-timeline {
     font-family: Arial, Helvetica, sans-serif;
@@ -347,6 +358,10 @@ body {
         position: relative;
         margin-top: 2em;
         margin-bottom: 2em;
+    }
+
+    .page-description__bestpractise {
+        margin-top: 0;
     }
 
     .page-description__icon {
