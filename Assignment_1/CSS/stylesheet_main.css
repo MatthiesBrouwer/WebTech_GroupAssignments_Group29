@@ -30,7 +30,12 @@ html{
 body{
     position: relative;
     min-height: 100%;    
+}
 
+.grid-row::after {
+    content: "";
+    clear: both;
+    display: table;
 }
 
 
@@ -90,11 +95,10 @@ header {
 body {
     position: relative;
     margin: 0;
-    background-color: white;
+    background-color: #283d4d/*rgba(0, 0, 0, 0.288)*/;
 }
 
 .page-content-enclosure {
-    
     position: relative;
     background-color: rgb(70, 70, 70);
     overflow:hidden;
@@ -123,6 +127,46 @@ body {
     width: 60%; 
     height: auto; 
 }
+
+.footer{
+    background-color: #556068;
+    outline: 2px dashed #98abb9;
+    outline-offset: -5px;
+}
+
+.footer__title {
+    font-size: 10vw;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+
+    border-bottom: double rgb(65, 63, 63);
+    padding-bottom: 3vw;
+
+}
+
+.group-details__title {
+    font-size: 5vw;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: white;
+
+    padding-left: 5%;
+}
+
+.group-details__members {
+    color: white;
+}
+
+.group-details__members li {
+    list-style-type: none;
+    border-bottom: 1px solid white;
+    /*background-color: #717f8a;*/
+    margin: 10px;
+}
+
+
 
 /*For phones - Base sizes*/
 [class*="col-"] {
@@ -170,7 +214,9 @@ body {
 
 
     .menu-bar {
-        height: 140px;
+        height: 240px;
+
+        z-index: 1;
     }
 
 
@@ -184,12 +230,8 @@ body {
 
     /* Kan -s worden toegevoegd om aan te duiden dat dit de css is voor small die wordt overwritten */
     .menu-bar__option {
-        /*float:right;*/
         font-size: 12px;
-        /*width: 10%;*/
         padding: 15px;
-        /*padding-bottom: 10px;
-        padding-top: 10px;*/    
         text-align: center;
 
     }
@@ -208,10 +250,31 @@ body {
     
     
     .page-content-enclosure {
-        top:25px;
-        left: 25px;
+        position: relative;
+        top: -130px;
+        left: 80px;
         padding-left: 10px;
-        
+        overflow: hidden;
+
+        box-shadow: -14px -4px 10px 6px rgba(0, 0, 0, 0.267);
+
+        z-index: 2;
+    }
+
+    .page-description__title {
+        font-size: 2.2vw;
+    }
+
+    .page-description__description-text {
+        position: relative;
+        font-size: 1.2vw;
+        /*margin-left: 10%;*/
+    }
+
+    .page-description__icon {
+        position: relative;
+        /*max-width: 10vw;
+        max-height: 10vw;*/
     }
 
 
@@ -219,15 +282,37 @@ body {
             Footer CSS
     ===============================*/
     .footer{
-        position: absolute;  
-        bottom: 0;
+        top: -120px;
+        position: relative;  
         height: auto;
         width: 100%;
         overflow: auto;
     }
 
-    .footer-logo {
-        float: right;
+    .footer__title {
+        font-size: 4vw;
+
+        text-align: left;
+        padding-bottom: 3vw;
+        padding-left: 2vw;
+    }
     
+
+    .group-details__title {
+        font-size: 2vw;    
+        padding-left: 5%;
     }
 
+
+    .group-details__members li {
+    list-style-type: none;
+    border-bottom: 1px solid white;
+    margin: 20px;
+    padding-left: 5%;
+    width: 500px;
+}
+
+    .footer__logo {
+        float: right;
+    }
+}
