@@ -1,5 +1,3 @@
-
-
 /*===============================
             HEADER CSS
   ===============================*/
@@ -38,6 +36,10 @@ body{
     display: table;
 }
 
+figcaption {
+    color: white;
+}
+
 
 /*===============================
             HEADER CSS
@@ -53,17 +55,16 @@ header {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    
+    height: 3em;
 }
 
 .menu-bar {
     position: relative;
     height: 100%;
     background-color: #e34c26;
-    padding: 0px;
+    padding: 0px;/*
     display: inline-block;
-    overflow: hidden;
-
+    overflow: hidden;*/
 }
 
 
@@ -73,7 +74,7 @@ header {
     cursor: pointer;
     font-weight: bold;
     font-family: system-ui, sans-serif;
-    font-size: 20px;
+    font-size: 2em;
     text-decoration: none;
     text-align: center;
 
@@ -104,7 +105,7 @@ body {
     overflow:hidden;
 }
 
-.page-description__title {
+.page-description__title, .history-timeline__title {
     color: #c9d0d4;
     font-family: 'Helvetica Neue', sans-serif;
     font-size: 150%;
@@ -118,24 +119,99 @@ body {
 
 .page-description__description-text {
     color: white;
-    font-size: 20px;
+    font-size: 1.5em;
+   
 }
 
-.page-description__icon {
+.page-description__icon, .page-description__reference-image  {
     display: block;
     margin: auto;
     width: 60%; 
     height: auto; 
 }
 
+.page-description__reference-image--fullwidth {
+    width: 100%;
+}
+
+.history-timeline {
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.30em;
+    margin: 0;
+    width: 100%;
+    table-layout: fixed;
+
+}
+
+.history-timeline__title {
+    font-size: 1.4em;
+    margin: 0.8em;
+}
+
+
+
+.history-timeline__attributes {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    overflow: hidden;
+    padding: 2;
+    position: absolute;
+}
+
+
+.history-timeline__row {
+    border: 1px solid rgb(177, 177, 177);
+    border-bottom: 3px solid gray;
+    display: block;
+    margin-bottom: .6em;
+
+    background-color: #ffffff;
+    padding: 0.4em;
+}
+
+
+
+.history-timeline__attributes th {
+    font-size: 0.9em;
+    letter-spacing: 0.2em;
+    padding: 0.6em;
+    width: 20%;
+    color: red;
+}
+
+.history-timeline__entries td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: 0.8em;
+    text-align: right;
+}
+
+.history-timeline__entries td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+}
+
+
+
+.history-timeline__entries td:first-child {
+    font-weight: bold;
+}
+
+.history-timeline__entries td:last-child {
+    border-bottom: 0;
+}
+
+
 .footer{
-    background-color: #556068;
+    background-color: #5b6268;
     outline: 2px dashed #98abb9;
     outline-offset: -5px;
 }
 
 .footer__title {
-    font-size: 10vw;
+    font-size: 2em;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     text-align: center;
@@ -143,11 +219,15 @@ body {
 
     border-bottom: double rgb(65, 63, 63);
     padding-bottom: 3vw;
+}
 
+.footer__back-to-top-button {
+    color: #e34c26;
+    list-style-type: none;
 }
 
 .group-details__title {
-    font-size: 5vw;
+    font-size: 1.5em;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     color: white;
@@ -162,7 +242,6 @@ body {
 .group-details__members li {
     list-style-type: none;
     border-bottom: 1px solid white;
-    /*background-color: #717f8a;*/
     margin: 10px;
 }
 
@@ -174,28 +253,18 @@ body {
 }
 
 
-/* For tablets: 
-@media only screen and (min-width: 600px) {
-    /* Base collumn devisions 
-    .col-s-1 {width: 8.33%;}
-    .col-s-2 {width: 16.66%;}  
-    .col-s-3 {width: 25%;}
-    .col-s-4 {width: 33.33%;}
-    .col-s-5 {width: 41.66%;}
-    .col-s-6 {width: 50%;}
-    .col-s-7 {width: 58.33%;}
-    .col-s-8 {width: 66.66%;}
-    .col-s-9 {width: 75%;}
-    .col-s-10 {width: 83.33%;}
-    .col-s-11 {width: 91.66%;}
-    .col-s-12 {width: 100%;}
-
-
-    
-
-}*/
 
 /* For desktop: */
+
+/*Below is a collumn based grid system following the
+  guideline from the w3schools tutorial: "Responsive Web Design - Grid View"
+  Link: https://www.w3schools.com/css/css_rwd_grid.asp
+  
+  The elements within a page are assigned collums with width
+  percentages ranging from 0% to 100%. These elements than stack horizontally
+  like building blocks.This allows a developer to
+  easily restucture elements in a way thats responsive to the size of a
+  screen.*/
 @media only screen and (min-width: 768px) {
     
     /* Base collumn devisions */
@@ -228,27 +297,18 @@ body {
         float:left;
     }
 
-    /* Kan -s worden toegevoegd om aan te duiden dat dit de css is voor small die wordt overwritten */
     .menu-bar__option {
-        font-size: 12px;
-        padding: 15px;
+        font-size: 1em;
+        padding: 1em;
         text-align: center;
 
     }
-    .page-description__title {
-    font-size: 25px;
-    }
-
-
-
-
 
     /*===============================
             BODY CSS
     ===============================*/
 
-    
-    
+
     .page-content-enclosure {
         position: relative;
         top: -130px;
@@ -262,20 +322,32 @@ body {
     }
 
     .page-description__title {
-        font-size: 2.2vw;
+        font-size: 2em;
     }
 
     .page-description__description-text {
         position: relative;
-        font-size: 1.2vw;
-        /*margin-left: 10%;*/
+        margin-top: 2em;
+        margin-bottom: 2em;
     }
 
     .page-description__icon {
         position: relative;
-        /*max-width: 10vw;
-        max-height: 10vw;*/
     }
+
+
+    .history-timeline{
+        min-width: 600px;
+
+    }
+
+    .history-timeline__entries td {
+        border-bottom: 1px solid #ddd;
+        display: block;
+        font-size: 1.2em;
+        text-align: right;
+    }
+
 
 
      /*===============================
@@ -290,16 +362,16 @@ body {
     }
 
     .footer__title {
-        font-size: 4vw;
+        font-size: 2.5em;
 
         text-align: left;
-        padding-bottom: 3vw;
+        padding-bottom: 2vw;
         padding-left: 2vw;
     }
     
 
     .group-details__title {
-        font-size: 2vw;    
+        font-size: 2em;    
         padding-left: 5%;
     }
 
@@ -310,6 +382,7 @@ body {
     margin: 20px;
     padding-left: 5%;
     width: 500px;
+    font-size: 1em;
 }
 
     .footer__logo {
