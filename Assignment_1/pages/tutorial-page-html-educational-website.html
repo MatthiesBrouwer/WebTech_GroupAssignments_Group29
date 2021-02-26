@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<!--SCHRIJF HIER KORTE SAMENVATTING OVER INSPIRATIE-->
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Meta tag for SEO -->
+        <meta name="description" content="Read information on the history of the
+            web technology HTML and follow a tutorial.">
+
+        <!-- Title for information and SEO -->
+        <title>HTML-education, Main Page</title>
+
+        <!-- Link the CSS stylesheet. Only one stylesheet should be used -->
+        <link rel="stylesheet" type="text/css" href="../CSS/stylesheet_main.css"
+            media="screen, projection" />
+        <link rel="icon" type="image/png" href="icon.png">
+    </head>
+
+    <!-- Body ID allows page styling without additional markup -->
+    <body>
+
+        <!-- Descriptive block to appropriately describe the content contained. This is better than <div>'s -->
+        <header class="menu-bar col-2">
+            <img class="page-logo"src="../CSS/assets/website-icon.png"
+                alt="Website logo">
+        </header>
+
+        <!-- Navigation tags allow for easy and centralised navigation between page content -->
+        <!-- Table of content -->
+        <nav class="menu-bar col-8">
+            <a class="menu-bar__option  col-2"
+                href="front-page-html-educational-website.html">HOME</a>
+            <a class="menu-bar__option col-2"
+                href="history-page-html-educational-website.html">HISTORY</a>
+            <a class="menu-bar__option active col-2" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
+            <a class="menu-bar__option col-2" href="Best_practise.html">BEST
+                PRACTISE</a>
+            <a class="menu-bar__option col-2" href="Contact.html">CONTACT</a>
+        </nav>
+
+
+
+        <!--Section to hold the main body contents of this page. It is devided into articles for easy distribution-->
+        <article class="page-content-enclosure col-11">
+            <!-- Introduction text -->
+            <section class="descriptions-enclosure">
+
+                <section class="page-description">
+                    <h1 class="page-description__title col-12">HTML Tutorial</h1>
+
+
+                    <section class="grid-row">
+                        <div class="col-1"></div>
+
+                        <p class="page-description__description-text col-6">
+                            HyperText Markup Language (HTML) is the standard markup
+                            language for web pages. "HyperText" refers to the hyperlinks
+                            contained in a HTML webpage, and "Markup Language" refers to
+                            HTML's use of tags to define the layout and elements of a
+                            web page.
+                        </p>
+                        <div class="col-5"></div>
+                    </section>
+                </section>
+
+                <section class="page-description">
+                    <h1 class="page-description__title col-12">Tag Breakdown</h1>
+                    <section class="grid-row">
+
+                        <div class="col-1"></div>
+                        <p class="page-description__description-text col-6">
+                            A <strong>tag</strong> is a generic term used for language
+                            element descriptor. HTML tags are usually defined as "a set"
+                            of characters constituting a formatted command for a web
+                            page".
+                            Most tags must have two parts. The first part is the <b>Opening
+                                tag</b>,
+                            consisting of an element name within angle brackets (<span>&#60;</span><span>&#62;</span>),
+                            signifying
+                            the start of an element. The second part is the <b>closing
+                                tag</b>,
+                            consisting of the same structure as the opening tag, but
+                            with a forward-slash (/)
+                            before the element name. However, There are some tags
+                            that dont require a
+                            closing tag (i.e. images). When used in an HTML
+                            document, tags form
+                            the building blocks for HTML <strong>elements</strong>.
+                            An HTML element
+                            tells the browser what content to display and how to
+                            display it.
+                        </p>
+
+                    </section>
+
+                    <section class="grid-row">
+                        
+                        <div class="col-1"></div>
+
+                        <!--A reference to the anatomy of an HTML tag-->
+                        <!--Image source: https://www.computerhope.com/jargon/h/html.htm-->
+                        <div class="col-7">
+                            <img class="page-description__reference-image page-description__reference-image--fullwidth"
+                                src="../CSS/assets/tag-breakdown-reference.png"
+                                alt="A reference image to the anatomy of an HTML tag"">
+                                <figcaption class="page-description__reference-image">Anatomy of an HTML tag"</figcaption>
+
+                        </div>
+
+                    </section>
+
+
+                    <section class="grid-row">
+
+                        <div class="col-1"></div>
+                        <p class="page-description__description-text col-5">
+                            Attributes define additional properties of an element such as an input type, a links value reference, or
+                            the width and height of an image. Attributes are always specified within the opening tag of an element and 
+                            consist of the attributes name and it's value enclosed within quotation marks (name="value").
+                        </p>
+        
+                        <p class="page-description__description-text col-5">There are too many elements to list, but the elements
+                            outlined below are most commonly used
+                            in web development:
+                        </p>
+                        <ul>
+                            <li>
+                                <span>&#60;</span>p<span>&#62;</span>: Defines a
+                                text paragraph. Browsers automatically add a
+                                whitespace before
+                                and after a paragraph.
+                            </li>
+                            <li>
+                                <span>&#60;</span>h1<span>&#62;</span>, <span>&#60;</span>h2<span>&#62;</span>,
+                                <span>&#60;</span>h...<span>&#62;</span>, <span>&#60;</span>h6<span>&#62;</span>:
+                                Defines a title text.
+                            </li>
+                            <li>
+                                <span>&#60;</span>a<span>&#62;</span>: Defines a
+                                link. The element between the opening and closing tags can be clicked on to refer 
+                                the user to another page.
+                            </li>
+        
+                            <li>
+                                <span>&#60;</span>b<span>&#62;</span>: Declares that a text should be <b>bold</b>.
+                                <ul>
+                                    <li>
+                                        <span>&#60;</span>strong<span>&#62;</span>: Declares a <strong>bold</strong> with emphasys.
+                                    </li>
+                                </ul>
+                            </li>
+        
+                            <li>
+                                <span>&#60;</span>img<span>&#62;</span>: Defines an image to be displayed on the page.
+                            </li>
+        
+                            <li>
+                                <span>&#60;</span>ol<span>&#62;</span>, <span>&#60;</span>ul<span>&#62;</span>: 
+                                Define a list of elements thats either ordered or unordered.
+                                <ul>
+                                    <li>
+                                        <span>&#60;</span>li<span>&#62;</span>: Define used by lists to define a list item.
+                                    </li>
+                                </ul>
+                            </li>
+                           
+        
+                        </ul>
+                    </section>
+                </section>
+
+
+
+
+
+
+
+
+
+
+
+                <section class="page-description">
+                    <h1 class="page-description__title col-12">Tutorial</h1>
+                    <section class="grid-row">
+                        <div class="col-2"></div>
+                        <p class="page-description__description-text col-5">
+                            If you want to set foot towards your first HTML page
+                            this is the place to be! You will get basic
+                            information about HTML and learn about language
+                            specific terms such as tags and elements. Some tags
+                            are more used then others, so therefore the most
+                            common tags are shown and an example is given on how
+                            to structure your first ever HTML webpage. Goodluck
+                            on your first ever HTML project!
+
+                        </p>
+
+                        <div class="col-1"></div>
+                        <!--Image source: https://icons8.com/icon/set/programming/bubbles-->
+                        <div class="col-3">
+                            <img class="page-description__icon"
+                                src="../CSS/assets/page-icon-tutorial.png"
+                                alt="An icon for the tutorial section displaying
+                                a magnifying glass hovering over HTML tags">
+                        </div>
+                        <div class="col-1"></div>
+
+                    </section>
+
+
+
+                </section>
+
+                <section class="page-description">
+                    <h1 class="page-description__title col-12">Best practice</h1>
+                    <section class="grid-row">
+                        <div class="col-2"></div>
+                        <p class="page-description__description-text col-5">
+                            On this page you will find 7 easy but important tips
+                            for writing HTML for beginners. There will be tips
+                            on how to organise your code and how to optimise
+                            your page for search engines.
+                            Best Practices require you to decide consciously
+                            whether your coding is good or bad.Practise these
+                            tips while you are working on your code to become a
+                            HTML pro.
+                        </p>
+
+                        <div class="col-1"></div>
+                        <!--Image source: https://icons8.com/icon/112158/test-passed-->
+                        <div class="col-3">
+                            <img class="page-description__icon"
+                                src="../CSS/assets/page-icon-best-practices.png"
+                                alt="An icon for the best practices section
+                                displaying a notepad with checkmarked lines">
+                        </div>
+                        <div class="col-1"></div>
+
+                    </section>
+
+
+
+
+                </section>
+
+            </section>
+        </article>
+
+        <!-- Information about the group members for the bottom of the page -->
+        <footer class="footer col-12">
+
+            <h1 class="footer__title">HTML Education</h1>
+            <section class="group-details col-12">
+                <h2 class="group-details__title">Group 29</h2>
+                <ul class="group-details__members">
+                    <li>
+                        <b>Kathleen K. de Boer</b>
+                    </li>
+                    <li>
+                        <b>Lennard Marck</b>
+                    </li>
+                    <li>
+                        <b>Matthies B. Brouwer</b>
+                    </li>
+                </ul>
+            </section>
+
+            <a class="footer__back-to-top-button" href="#top">Back to top</a>
+            <a href="https://www.uu.nl/" target="blank">
+                <img class="footer__logo col-3" src="../CSS/assets/uu-logo.png"
+                    alt="An clickable image displaying the logo of the
+                    University of Utrecht. Clicking this image will open the
+                    University's website in a new browser tab">
+            </a>
+        </footer>
+    </body>
+</html>
