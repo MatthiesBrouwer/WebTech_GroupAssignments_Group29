@@ -40,6 +40,17 @@ figcaption {
     color: white;
 }
 
+li{
+    margin-bottom: 1.5em;
+    margin-left: 1.5em;
+
+}
+
+figure{
+    text-align: center;
+    margin: auto;
+}
+
 
 /*===============================
             HEADER CSS
@@ -127,12 +138,28 @@ body {
     display: block;
     margin: auto;
     width: 60%; 
-    height: auto; 
+    height: auto;
+    margin-top: 3em; 
+}
+
+.page-description__reference-imagecaption{
+    margin-top:0;
+    text-align: center;
+}
+
+.page-description__icon-bottom{
+    margin-bottom: 3em;
+}
+
+
+.page-description__bestpractise li{
+    margin-bottom: 0;
 }
 
 .page-description__reference-image--fullwidth {
     width: 100%;
 }
+
 
 .history-timeline {
     font-family: Arial, Helvetica, sans-serif;
@@ -224,6 +251,8 @@ body {
 .footer__back-to-top-button {
     color: #e34c26;
     list-style-type: none;
+    text-align: center;
+    font-size: 1.5em;
 }
 
 .group-details__title {
@@ -329,6 +358,10 @@ body {
         position: relative;
         margin-top: 2em;
         margin-bottom: 2em;
+    }
+
+    .page-description__bestpractise {
+        margin-top: 0;
     }
 
     .page-description__icon {
