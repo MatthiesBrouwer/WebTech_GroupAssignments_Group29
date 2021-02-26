@@ -46,6 +46,11 @@ li{
 
 }
 
+figure{
+    text-align: center;
+    margin: auto;
+}
+
 
 /*===============================
             HEADER CSS
@@ -235,6 +240,8 @@ body {
 .footer__back-to-top-button {
     color: #e34c26;
     list-style-type: none;
+    text-align: center;
+    font-size: 1.5em;
 }
 
 .group-details__title {
