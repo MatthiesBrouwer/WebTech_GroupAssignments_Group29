@@ -40,6 +40,12 @@ figcaption {
     color: white;
 }
 
+li{
+    margin-bottom: 1.5em;
+    margin-left: 1.5em;
+
+}
+
 
 /*===============================
             HEADER CSS
@@ -127,8 +133,13 @@ body {
     display: block;
     margin: auto;
     width: 60%; 
-    height: auto; 
+    height: auto;
+    margin-top: 3em; 
 }
+.page-description__bestpractise li{
+    margin-bottom: 0;
+}
+
 
 .page-description__reference-image--fullwidth {
     width: 100%;
