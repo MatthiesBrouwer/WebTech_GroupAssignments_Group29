@@ -1,3 +1,6 @@
+/*===============================
+            HEADER CSS
+  ===============================*/
 
 * {
     box-sizing: border-box;
@@ -53,7 +56,7 @@ figure{
             HEADER CSS
   ===============================*/
 
-  header {
+header {
     background-color:#e34c26; 
     padding: 0px;
 }
