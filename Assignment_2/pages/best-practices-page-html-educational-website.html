@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Meta tag for SEO -->
+        <meta name="description" content="Read information on the history of the
+            web technology HTML and follow a tutorial.">
+
+        <meta name="keywords" content="HTML tutorial, HTML, HTML best practices,
+        HTML history, HTML guide, HTML howto">
+
+
+        <!-- Title for information and SEO -->
+        <title>HTML-education, Main Page</title>
+
+        <!-- Link the CSS stylesheet. Only one stylesheet should be used -->
+        <link rel="stylesheet" type="text/css" href="../CSS/stylesheet_main.css"
+            media="screen, projection" />
+        <link rel="icon" type="image/png" href="icon.png">
+    </head>
+
+    <!-- Body ID allows page styling without additional markup -->
+    <body>
+
+        <!-- Descriptive block to appropriately describe the content contained. This is better than <div>'s -->
+        <header class="menu-bar col-2">
+            <img class="page-logo"src="../CSS/assets/website-icon.png"
+                alt="Website logo">
+        </header>
+
+        <!-- Navigation tags allow for easy and centralised navigation between page content -->
+        <!-- Table of content -->
+        <nav class="menu-bar col-8">
+            <a class="menu-bar__option col-2" href="front-page-html-educational-website.html">HOME</a>
+            <a class="menu-bar__option col-2" href="history-page-html-educational-website.html">HISTORY</a>
+            <a class="menu-bar__option col-2" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
+            <a class="menu-bar__option active col-2" href="best-practices-page-html-educational-website.html">BEST PRACTISE</a>
+            <a class="menu-bar__option col-2" href="contact-page-html-educational-website.html">CONTACT</a>
+        </nav>
+
+
+
+        <!--Section to hold the main body contents of this page. It is devided into articles for easy distribution-->
+        <article class="page-content-enclosure col-11">
+            <!-- Introduction text -->
+            <section class="descriptions-enclosure">
+
+                <section class="page-description">
+                    <h1 class="page-description__title col-12">Best Practices for Beginners</h1>
+
+
+                    <section class="grid-row">
+                        <div class="col-1"></div>
+
+                        <p class="page-description__description-text col-6">
+                            Listed below are some of the best practices to keep in mind while working with HTML.
+                        </p>
+                        <div class="col-5"></div>
+                    </section>
+
+                </section>
+
+                <section class="grid-row">
+                    <div class="col-1"></div>
+                        <ol class="page-description__description-text page-description__bestpractise col-11">
+                            <li class = "col-9"><h4>Be consistent with a proper document structure</h4></li>
+                            <p class = "col-9">
+                                It is important to be consistent using the proper decument structure.
+                                HTML documents will still work without elements such as html, head, and body, 
+                                however some browsers will not render the page correctly.
+                                
+
+                            </p>
+                            <li class = "col-9"><h4>Declare the correct doctype</h4></li>
+                            <p class = "col-9">
+                                The doctype declaration should be the first thing in your HTML documents. 
+                                The doctype declaration tells the browser about the XHTML standards you will be using and helps it read and render your markup correctly.
+                            </p>
+                          <!--  <div class= "col-3">
+                                <img class="Best_practices_one" src="CSS/assets/doctype_BestPractices.png"  alt="A piece of html code with the doctype specified">
+                                </div>-->
+                            <li class = "col-9"><h4> Keep your styles separate from your HTML mark-up.</h4></li>
+                            <p class = "col-9">
+                                It may seem easier to place your styling in line with the code instead of creating an external style sheet in CSS. However, 
+                                inline styles are not a good coding practice because it makes it harder to update and maintain your website.
+                            </p>
+                            <li class = "col-9"><h4 >Use alt attribute with images and take care of accecibility</h4></li>
+                            <p class = "col-9">
+                                It is important to have a meaningful alt attribute for validation and accessibility reasons. 
+                                The required alt attribute specifies an alternate text for an image, if the image cannot be displayed. 
+                                The alt attribute provides context to screen readers so it should be descriptive as to what the image contains when a user for some reason cannot view it (because of slow connection, an error in the src attribute, 
+                                or if the user uses a screen reader).
+                            </p>
+                            <li class = "col-9"><h4 >Validate frequently</h4></li>
+                            <p class = "col-9">
+                                Do not valdidate your code for the first time after writing it when you are done. Just because your work validates doesn’t automatically mean it’s good code.
+                                So while writing HTML, make it a habit to validate frequently to avoid issues that harder to redo later on when the work in completed or lengthier.
+                            </p>
+                            <li class = "col-9"><h4 >Use meaningful tags</h4></li>
+                            <p class = "col-9">
+                                Make your webpage search-engine friendly with the correct usage of tags. 
+                                For example the text inside the title tag will appear in the result page of the search-engine. 
+                                Another important tag to make good use of is the description meta tag. 
+                                This tag describes the basic purpose of your web page. So you have to put a consise and relevant summary in the tag.
+                                This will also show up in the search-engine result page. 
+                                And last but not least, use "keywords" that relate to your webpage. These keywords will add even more meaning to the web page. 
+                            </p>
+                            <li class = "col-9"><h4 >Close Your Tags</h4></li>
+                            <p class = "col-9">
+                                Some browsers may still render your pages correctly when you do not close your tags, 
+                                however not closing your tags is invalid under standards.
+                                So close your tags to avoid validation errors.
+
+                      </ol>                    </p>
+                    <div class="col-5"></div>
+                </section>
+
+            </section>
+
+            </section>
+        </article>
+
+        <!-- Information about the group members for the bottom of the page -->
+        <footer class="footer col-12">
+
+            <h1 class="footer__title">HTML Education</h1>
+            <section class="group-details col-5">
+                <h2 class="group-details__title">Group 29</h2>
+                <ul class="group-details__members">
+                    <li>
+                        <b>Kathleen K. de Boer</b>
+                    </li>
+                    <li>
+                        <b>Lennard Marck</b>
+                    </li>
+                    <li>
+                        <b>Matthies B. Brouwer</b>
+                    </li>
+                </ul>
+            </section>
+            <a class="footer__back-to-top-button col-2" href="#top">Back to top</a> 
+            <a href="https://www.uu.nl/" target="blank">
+                <img class="footer__logo col-3" src="../CSS/assets/uu-logo.png"
+                    alt="An clickable image displaying the logo of the
+                    University of Utrecht. Clicking this image will open the
+                    University's website in a new browser tab">
+            </a>
+        </footer>
+    </body>
+</html>

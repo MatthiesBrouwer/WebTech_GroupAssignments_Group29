@@ -1,0 +1,421 @@
+
+* {
+    box-sizing: border-box;
+  }
+
+[class*="col-"] {
+    float: left;
+    padding: 5px;
+}
+
+
+p{
+    margin:0;
+    text-align: justify;
+}
+
+h1{
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+}
+html{
+    height: 100%;  
+}
+
+body{
+    position: relative;
+    min-height: 100%;    
+}
+
+.grid-row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+figcaption {
+    color: white;
+}
+
+li{
+    margin-bottom: 1.5em;
+    margin-left: 1.5em;
+
+}
+
+figure{
+    text-align: center;
+    margin: auto;
+}
+
+
+/*===============================
+            HEADER CSS
+  ===============================*/
+
+  header {
+    background-color:#e34c26; 
+    padding: 0px;
+}
+
+.page-logo {
+    background-color: #e34c26;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 3em;
+}
+
+.menu-bar {
+    position: relative;
+    height: 100%;
+    background-color: #e34c26;
+    padding: 0px;/*
+    display: inline-block;
+    overflow: hidden;*/
+}
+
+
+
+.menu-bar__option  {
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: system-ui, sans-serif;
+    font-size: 2em;
+    text-decoration: none;
+    text-align: center;
+
+}
+
+.menu-bar__option:hover {
+    background-color: #db3309;
+}
+
+.menu-bar__option.active {
+    background-color: #b43c1e;
+}
+
+
+/*===============================
+            BODY CSS
+  ===============================*/
+
+body {
+    position: relative;
+    margin: 0;
+    background-color: #283d4d/*rgba(0, 0, 0, 0.288)*/;
+}
+
+.page-content-enclosure {
+    position: relative;
+    background-color: rgb(70, 70, 70);
+    overflow:hidden;
+}
+
+.page-description__title, .history-timeline__title {
+    color: #c9d0d4;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 150%;
+    font-weight: 100;
+    line-height: 50px;
+    letter-spacing: 1px;
+    border-bottom: double #555;
+    border-top: double #555;
+    text-align: center;
+}
+
+.page-description__description-text {
+    color: white;
+    font-size: 1.5em;
+   
+}
+
+.page-description__icon, .page-description__reference-image  {
+    display: block;
+    margin: auto;
+    width: 60%; 
+    height: auto;
+    margin-top: 3em; 
+}
+
+.page-description__reference-imagecaption{
+    margin-top:0;
+    text-align: center;
+}
+
+.page-description__icon-bottom{
+    margin-bottom: 3em;
+}
+
+
+.page-description__bestpractise li{
+    margin-bottom: 0;
+}
+
+.page-description__reference-image--fullwidth {
+    width: 100%;
+}
+
+
+.history-timeline {
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.30em;
+    margin: 0;
+    width: 100%;
+    table-layout: fixed;
+
+}
+
+.history-timeline__title {
+    font-size: 1.4em;
+    margin: 0.8em;
+}
+
+
+
+.history-timeline__attributes {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    overflow: hidden;
+    padding: 2;
+    position: absolute;
+}
+
+
+.history-timeline__row {
+    border: 1px solid rgb(177, 177, 177);
+    border-bottom: 3px solid gray;
+    display: block;
+    margin-bottom: .6em;
+
+    background-color: #ffffff;
+    padding: 0.4em;
+}
+
+
+
+.history-timeline__attributes th {
+    font-size: 0.9em;
+    letter-spacing: 0.2em;
+    padding: 0.6em;
+    width: 20%;
+    color: red;
+}
+
+.history-timeline__entries td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: 0.8em;
+    text-align: right;
+}
+
+.history-timeline__entries td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+}
+
+
+
+.history-timeline__entries td:first-child {
+    font-weight: bold;
+}
+
+.history-timeline__entries td:last-child {
+    border-bottom: 0;
+}
+
+
+.footer{
+    background-color: #5b6268;
+    outline: 2px dashed #98abb9;
+    outline-offset: -5px;
+}
+
+.footer__title {
+    font-size: 2em;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+
+    border-bottom: double rgb(65, 63, 63);
+    padding-bottom: 3vw;
+}
+
+.footer__back-to-top-button {
+    color: #e34c26;
+    list-style-type: none;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.group-details__title {
+    font-size: 1.5em;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: white;
+
+    padding-left: 5%;
+}
+
+.group-details__members {
+    color: white;
+}
+
+.group-details__members li {
+    list-style-type: none;
+    border-bottom: 1px solid white;
+    margin: 10px;
+}
+
+
+
+/*For phones - Base sizes*/
+[class*="col-"] {
+    width: 100%;
+}
+
+
+
+/* For desktop: */
+
+/*Below is a collumn based grid system following the
+  guideline from the w3schools tutorial: "Responsive Web Design - Grid View"
+  Link: https://www.w3schools.com/css/css_rwd_grid.asp
+  
+  The elements within a page are assigned collums with width
+  percentages ranging from 0% to 100%. These elements than stack horizontally
+  like building blocks.This allows a developer to
+  easily restucture elements in a way thats responsive to the size of a
+  screen.*/
+@media only screen and (min-width: 768px) {
+    
+    /* Base collumn devisions */
+    .col-1 {width: 8.33%;}
+    .col-2 {width: 16.66%;}  
+    .col-3 {width: 25%;}
+    .col-4 {width: 33.33%;}
+    .col-5 {width: 41.66%;}
+    .col-6 {width: 50%;}
+    .col-7 {width: 58.33%;}
+    .col-8 {width: 66.66%;}
+    .col-9 {width: 75%;}
+    .col-10 {width: 83.33%;}
+    .col-11 {width: 91.66%;}
+    .col-12 {width: 100%;}
+
+
+    .menu-bar {
+        height: 240px;
+
+        z-index: 1;
+    }
+
+
+    .page-logo {
+        height: 100px;
+        padding: 30px;
+        padding-left: 5px;
+        padding-top: 10px;
+        float:left;
+    }
+
+    .menu-bar__option {
+        font-size: 1em;
+        padding: 1em;
+        text-align: center;
+
+    }
+
+    /*===============================
+            BODY CSS
+    ===============================*/
+
+
+    .page-content-enclosure {
+        position: relative;
+        top: -130px;
+        left: 80px;
+        padding-left: 10px;
+        overflow: hidden;
+
+        box-shadow: -14px -4px 10px 6px rgba(0, 0, 0, 0.267);
+
+        z-index: 2;
+    }
+
+    .page-description__title {
+        font-size: 2em;
+    }
+
+    .page-description__description-text {
+        position: relative;
+        margin-top: 2em;
+        margin-bottom: 2em;
+    }
+
+    .page-description__bestpractise {
+        margin-top: 0;
+    }
+
+    .page-description__icon {
+        position: relative;
+    }
+
+
+    .history-timeline{
+        min-width: 600px;
+
+    }
+
+    .history-timeline__entries td {
+        border-bottom: 1px solid #ddd;
+        display: block;
+        font-size: 1.2em;
+        text-align: right;
+    }
+
+
+
+     /*===============================
+            Footer CSS
+    ===============================*/
+    .footer{
+        top: -120px;
+        position: relative;  
+        height: auto;
+        width: 100%;
+        overflow: auto;
+    }
+
+    .footer__title {
+        font-size: 2.5em;
+
+        text-align: left;
+        padding-bottom: 2vw;
+        padding-left: 2vw;
+    }
+    
+
+    .group-details__title {
+        font-size: 2em;    
+        padding-left: 5%;
+    }
+
+
+    .group-details__members li {
+    list-style-type: none;
+    border-bottom: 1px solid white;
+    margin: 20px;
+    padding-left: 5%;
+    width: 500px;
+    font-size: 1em;
+    }
+
+    .footer__logo {
+        float: right;
+    }
+}
