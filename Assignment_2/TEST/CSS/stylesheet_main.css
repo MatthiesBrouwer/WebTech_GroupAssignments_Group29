@@ -128,14 +128,101 @@ body {
     grid-template-columns: 100%;
 }
 
-
-.page-description__icon {
+.main-content__reference-image {
     display: block;
     margin: auto;
-    width: 60%;
+
+}
+
+.main-content__reference-image img{
     height: auto;
+    width: auto;
+}
+
+.page-description__icon {
+    width: 60%;
     margin-top: 3em;
 }
+
+
+
+
+/*----------History timeline --------------*/
+
+.history-timeline {
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.30em;
+    margin: 0;
+    width: 100%;
+    table-layout: fixed;
+
+}
+
+.history-timeline__title {
+    font-size: 1.4em;
+    margin: 0.8em;
+
+    color: white;
+    font-family: 'Raleway',sans-serif;
+    
+}
+
+
+
+.history-timeline__attributes {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    overflow: hidden;
+    padding: 2;
+    position: absolute;
+}
+
+
+.history-timeline__row {
+    border: 1px solid rgb(177, 177, 177);
+    border-bottom: 3px solid gray;
+    display: block;
+    margin-bottom: .6em;
+
+    background-color: #ffffff;
+    padding: 0.4em;
+}
+
+
+
+.history-timeline__attributes th {
+    font-size: 0.9em;
+    letter-spacing: 0.2em;
+    padding: 0.6em;
+    width: 20%;
+    color: red;
+}
+
+.history-timeline__entries td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: 0.8em;
+    text-align: right;
+}
+
+.history-timeline__entries td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+}
+
+
+
+.history-timeline__entries td:first-child {
+    font-weight: bold;
+}
+
+.history-timeline__entries td:last-child {
+    border-bottom: 0;
+}
+
+
 
 
 /*===============================
@@ -326,17 +413,34 @@ footer{
     .main-content__text--base{
         margin-top: 2em;
         margin-bottom: 2em;
+        margin-left: 0;
     }
 
-
-    .page-description__icon {
-
+    .main-content__reference-image {
         margin-top: auto;
         margin-bottom: auto;
         width: 100%;
         height: auto;
+
     }
 
+    .main-content__reference-image img{
+        width: 100%;
+        
+    }
+
+
+    .history-timeline{
+        min-width: 600px;
+
+    }
+
+    .history-timeline__entries td {
+        border-bottom: 1px solid #ddd;
+        display: block;
+        font-size: 1.2em;
+        text-align: right;
+    }
 
 
 
