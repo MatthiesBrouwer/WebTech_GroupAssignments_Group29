@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
     <head>
         <meta charset="utf-8">
@@ -12,7 +13,7 @@
 
 
         <!-- Title for information and SEO -->
-        <title>HTML-education, Main Page</title>
+        <title>HTML-education, Contact Page</title>
 
         <!-- Link the CSS stylesheet. Only one stylesheet should be used -->
         <link rel="stylesheet" type="text/css" href="../CSS/stylesheet_main.css"
@@ -24,131 +25,121 @@
     <body>
 
         <!-- Descriptive block to appropriately describe the content contained. This is better than <div>'s -->
-        <header class="menu-bar col-2">
-            <img class="page-logo"src="../CSS/assets/website-icon.png"
-                alt="Website logo">
-        </header>
-
-        <!-- Navigation tags allow for easy and centralised navigation between page content -->
-        <!-- Table of content -->
-        <nav class="menu-bar col-8">
-            <a class="menu-bar__option col-2" href="front-page-html-educational-website.html">HOME</a>
-            <a class="menu-bar__option col-2" href="history-page-html-educational-website.html">HISTORY</a>
-            <a class="menu-bar__option col-2" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
-            <a class="menu-bar__option col-2" href="best-practices-page-html-educational-website.html">BEST PRACTISE</a>
-            <a class="menu-bar__option active col-2" href="contact-page-html-educational-website.html">CONTACT</a>
-        </nav>
-
-
+        
+            <header>
+                <section class="grid-container header-bar__grid-container">
+                    <img class="header-bar__page-logo col-s__1 col-e__2 row-s__1 row-e__2"src="../CSS/assets/website-icon.png"
+                        alt="Website logo">
+                    <!-- Navigation tags allow for easy and centralised navigation between page content -->
+                    <!-- Table of content -->
+                    <nav id = "header-menu-bar" class="menu-bar__dropdown grid-container  menu-bar__grid-container col-s__2 col-e__3 row-s__1 row-e__2">
+                        <a class="menu-bar__option menu-bar__option--1" href="front-page-html-educational-website.html">HOME</a>
+                        <a class="menu-bar__option menu-bar__option--2" href="history-page-html-educational-website.html">HISTORY</a>
+                        <a class="menu-bar__option menu-bar__option--3" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
+                        <a class="menu-bar__option menu-bar__option--4" href="best-practices-page-html-educational-website.html">BEST PRACTISE</a>
+                        <a class="menu-bar__option menu-bar__option--5" href="contact-page-html-educational-website.html">CONTACT</a>
+                
+                        <a href="javascript:void(0);" id="menu-bar__dropdown-icon" class="col-s__6 col-e__7 ">&#9776;</a>
+                    </nav>
+    
+    
+                </section>
+            </header>
 
         <!--Section to hold the main body contents of this page. It is devided into articles for easy distribution-->
-        <article class="page-content-enclosure col-11">
-            <!-- Introduction text -->
-            <section class="descriptions-enclosure">
+        <article class="main-content-enclosure">
 
-                <section class="page-description">
-                    <h1 class="page-description__title col-12">Who are we?</h1>
+            <section class="grid-container main-content__grid-container--base">
 
+                <h1 class="main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2">Who are we?
+                </h1>
 
-                    <section class="grid-row">
-                        <div class="col-1"></div>
-
-                        <p class="page-description__description-text col-10">
-                            We are a group of diverse students all united to improve our web development skill. 
+                <p class="main-content__text--base col-s__2 col-e__10">
+                    We are a group of diverse students all united to improve our web development skill. 
                             Even though we all have different study backgrounds the moment we set foot into that online teams chat was a moment to never forget. 
                             We were all asking for a group until suddenly one anonymous person found his calling and connected this epic trio. 
                             Our first meeting was the most remarkable one. Hearing the song “jingle bells” being whistled two months after Christmas, by two unexpected visitors, Micheal and Maya. 
                             This extraordinary development evolved the group from a simple trio into a marvelous quintet, with lots of web development adventures to come...  
-                        </p>
-                        
-                    </section>                  
-                </section>
-                <section class="page-description">
-                    <h1 class="page-description__title col-12">Special Thanks to: Emotional Support Birds</h1>
-                    
-                    <section class="grid-row">
-                        <div class="col-2"></div>
-                        <figure class = "col-3">
-                            <img class="page-description__icon"
-                            src="../CSS/assets/bird2.png"
-                            alt="A bird with his wings spread">
-                            <figcaption>Micheal</figcaption>
-                          </figure>
-                          <div class="col-2"></div>
-                          <figure class = "col-3" >
-                            <img class="page-description__icon"
-                            src="../CSS/assets/bird3.jpg"
-                            alt="A green yellow bird not moving">
-                            <figcaption>Maya</figcaption>
-                          </figure>
-                    </section>
-                </section>
-
-                <section class="page-description">
-                    <h1 class="page-description__title col-12"> Group 29: Let us introduce ourselves</h1>
-                    <section class="grid-row">
-
-                        <div class="col-1"></div>
-                        <p class="page-description__description-text col-6">
-                            <strong>Kathleen de Boer</strong> :
-                        Artificial Intelligence student at UU
-                        </p>
-                        <div class= "col-5">
-                            <figure >
-                                <img class="page-description__icon"
-                                src="../CSS/assets/kathleen.jpg"
-                                alt="A picture of the team member Kathleen">
-                                
-                              </figure>
-                        </div>
-
-                    </section>
-                    <section class="grid-row">
-
-                        <div class="col-1"></div>
-                        <p class="page-description__description-text col-6">
-                            <strong>Matthies Brouwer</strong> :
-                    ICT student at HU University of Applied Sciences
-
-                        </p>
-                        <div class= "col-5">
-                            <figure >
-                                <img class="page-description__icon"
-                                src="../CSS/assets/mathies.jpg"
-                                alt="A picture of the team member Matthies">
-                                
-                              </figure>
-                        </div>
-
-                    </section>
-                </section>
-                <section class="grid-row">
-
-                    <div class="col-1"></div>
-                    <p class="page-description__description-text col-6">
-                        <strong>Lennard Marck</strong> :
-                        Information science student at UU
-
-                    </p>
-                    <div class= "col-5">
-                        <figure >
-                            <img class="page-description__icon page-description__icon-bottom "
-                            src="../CSS/assets/lennard.JPG"
-                            alt="A picture of the team member Lennard">
-                            
-                          </figure>
-                    </div>
-
-                </section>
+                </p>
 
             </section>
+
+            <section class="grid-container main-content__grid-container--base">
+
+                <h1 class="main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2">Special Thanks to: Emotional Support Birds
+                </h1>
+
+                <div class="main-content__reference-image col-s__3 col-e__5 row-s__2 row-e__3">
+                    <img
+                            src="../CSS/assets/bird2.png"
+                            alt="A green yellow bird not moving">
+                            
+                            <figcaption>Micheal</figcaption>
+                </div>
+                
+                <div class="main-content__reference-image col-s__7 col-e__9 row-s__2 row-e__3">
+                    <img 
+                    src="../CSS/assets/bird3.jpg"
+                    alt="A bird with his wings spread">
+                    <figcaption>Maya</figcaption>
+                </div>
+            </section>
+
+            <section class="grid-container main-content__grid-container--base">
+
+                <h1 class="main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2"> Group 29: Let us introduce ourselves
+                </h1>
+
+                <p class="main-content__text--base col-s__2 col-e__7 row-s__3 row-e__4">
+                    <strong>Kathleen de Boer</strong> :
+                        Artificial Intelligence student at UU
+                </p>
+
+
+                <div class="main-content__reference-image col-s__8 col-e__10 row-s__2 row-e__5">
+                    <img 
+                                src="../CSS/assets/kathleen.jpg"
+                                alt="A picture of the team member Kathleen">
+                </div>
+
+
+                <p class="main-content__text--base col-s__2 col-e__7 row-s__6 row-e__7">
+                    <strong>Matthies Brouwer</strong> :
+                    ICT student at HU University of Applied Sciences
+                </p>
+
+
+                <div class="main-content__reference-image col-s__8 col-e__10 row-s__5 row-e__8">
+                    <img 
+                                src="../CSS/assets/mathies.jpg"
+                                alt="A picture of the team member Matthies">
+                </div>
+
+                <p class="main-content__text--base col-s__2 col-e__7 row-s__9 row-e__10">
+                    <strong>Lennard Marck</strong> :
+                    Information science student at UU
+                </p>
+
+
+                <div class="main-content__reference-image col-s__8 col-e__10 row-s__8 row-e__11">
+                    <img
+                            src="../CSS/assets/lennard.JPG"
+                            alt="A picture of the team member Lennard">
+                </div>
+
+            </section>
+
+           
+
         </article>
+        
+
 
         <!-- Information about the group members for the bottom of the page -->
-        <footer class="footer col-12">
+        <footer class="grid-container">
 
-            <h1 class="footer__title">HTML Education</h1>
-            <section class="group-details col-5">
+            <h1 class="footer__title col-s__1 col-e__11">HTML Education</h1>
+            <section class="group-details col-s__1 col-e__4 row-s__2 row-e__3">
                 <h2 class="group-details__title">Group 29</h2>
                 <ul class="group-details__members">
                     <li>
@@ -162,13 +153,16 @@
                     </li>
                 </ul>
             </section>
-            <a class="footer__back-to-top-button col-2" href="#top">Back to top</a> 
-            <a href="https://www.uu.nl/" target="blank">
-                <img class="footer__logo col-3" src="../CSS/assets/uu-logo.png"
+            <a class="footer__back-to-top-button col-s__5 col-e__7 row-s__2 row-e__3" href="#top">Back to top</a> 
+            <a class="footer__logo col-s__8 col-e__11 row-s__2 row-e__3" href="https://www.uu.nl/" target="blank">
+                <img  src="../CSS/assets/uu-logo.png"
                     alt="An clickable image displaying the logo of the
                     University of Utrecht. Clicking this image will open the
                     University's website in a new browser tab">
             </a>
         </footer>
     </body>
+
+    <!-- HEADER SCRIPTS-->
+    <script src="../JS/header-bar-scripts.js"></script>
 </html>
