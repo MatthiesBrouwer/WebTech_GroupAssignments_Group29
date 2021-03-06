@@ -1,60 +1,61 @@
 <!DOCTYPE html>
+
 <html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- Meta tag for SEO -->
         <meta name="description" content="Read information on the history of the
-            web technology HTML and follow a tutorial with a guide on the best
-            practices.">
+            web technology HTML and follow a tutorial.">
 
         <meta name="keywords" content="HTML tutorial, HTML, HTML best practices,
-            HTML history, HTML guide, HTML howto">
+        HTML history, HTML guide, HTML howto">
+
 
         <!-- Title for information and SEO -->
-        <title>HTML-education, Main Page</title>
+        <title>HTML-education, History Page</title>
 
         <!-- Link the CSS stylesheet. Only one stylesheet should be used -->
         <link rel="stylesheet" type="text/css" href="../CSS/stylesheet_main.css"
             media="screen, projection" />
-        <link rel="icon" type="image/png" href="icon.png">
     </head>
 
     <!-- Body ID allows page styling without additional markup -->
     <body>
 
         <!-- Descriptive block to appropriately describe the content contained. This is better than <div>'s -->
-        <header class="menu-bar col-2">
-            <img class="page-logo" src="../CSS/assets/website-icon.png"
-                alt="Website logo">
+        
+        <header>
+            <section class="grid-container header-bar__grid-container">
+                <img class="header-bar__page-logo col-s__1 col-e__2 row-s__1 row-e__2"src="../CSS/assets/website-icon.png"
+                    alt="Website logo">
+                <!-- Navigation tags allow for easy and centralised navigation between page content -->
+                <!-- Table of content -->
+                <nav id = "header-menu-bar" class="menu-bar__dropdown grid-container  menu-bar__grid-container col-s__2 col-e__3 row-s__1 row-e__2">
+                    <a class="menu-bar__option menu-bar__option--1" href="front-page-html-educational-website.html">HOME</a>
+                    <a class="menu-bar__option menu-bar__option--2" href="history-page-html-educational-website.html">HISTORY</a>
+                    <a class="menu-bar__option menu-bar__option--3" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
+                    <a class="menu-bar__option menu-bar__option--4" href="best-practices-page-html-educational-website.html">BEST PRACTISE</a>
+                    <a class="menu-bar__option menu-bar__option--5" href="contact-page-html-educational-website.html">CONTACT</a>
+            
+                    <a href="javascript:void(0);" id="menu-bar__dropdown-icon" class="col-s__6 col-e__7 ">&#9776;</a>
+                </nav>
+
+
+            </section>
         </header>
 
-        <!-- Navigation tags allow for easy and centralised navigation between page content -->
-        <!-- Table of content -->
-        <nav class="menu-bar col-8">
-            <a class="menu-bar__option col-2" href="front-page-html-educational-website.html">HOME</a>
-            <a class="menu-bar__option active col-2" href="history-page-html-educational-website.html">HISTORY</a>
-            <a class="menu-bar__option col-2" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
-            <a class="menu-bar__option col-2" href="best-practices-page-html-educational-website.html">BEST PRACTISE</a>
-            <a class="menu-bar__option col-2" href="contact-page-html-educational-website.html">CONTACT</a>
-        </nav>
+        <!--Section to hold the main body contents of this page. It is devided into articles for easy distribution-->
+        <article class="main-content-enclosure">
 
+            <section class="grid-container main-content__grid-container--base">
 
+                <h1 class="main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2">The history of
+                    HTML
+                </h1>
 
-        <article class="page-content-enclosure col-11">
-
-            <section class="descriptions-enclosure">
-
-                <section class="page-description">
-
-                    <h1 class="page-description__title col-12">The history of
-                        HTML</h1>
-
-                    <section class="grid-row">
-                        <div class="col-1"></div>
-
-                        <p class="page-description__description-text col-6">
-                            HTML is orginally created by Timothy Berners-Lee in
+                <p class="history-section__text main-content__text--base col-s__2 col-e__7">
+                    HTML is orginally created by Timothy Berners-Lee in
                             late 1990.
                             When he invented the World Wide Web in 1989, he
                             found the need for a standardized language which
@@ -71,116 +72,106 @@
                             (another formatting standard), however when time
                             went by, HTML progressed and became a standalone
                             concept.
-                        </p>
+                </p>
 
-                        <div class="col-1"></div>
+                <div class="main-content__reference-image col-s__8 col-e__10">
+                    <img 
+                        src="../CSS/assets/sir-tim-berners-lee.jpg"
+                        alt="A portrait of HTML's inventor, sir Tim Berners Lee">
+                        <figcaption class= "page-description__reference-imagecaption">Portrait of Sir Tim Berners Lee in 2014</figcaption>
 
-                        <div class="col-4">
-                            <img class="page-description__reference-image"
-                                src="../CSS/assets/sir-tim-berners-lee.jpg"
-                                alt="A portrait of HTML's inventor, sir Tim Berners Lee">
-                                <figcaption class= "page-description__reference-imagecaption">Portrait of Sir Tim Berners Lee in 2014</figcaption>
+                </div>
 
-                        </div>
-                    </section>
+            </section>
 
-                    
-                </section>
+            <section class="grid-container main-content__grid-container--base">
 
-                <section class="page-description">
+                <table class="history-timeline col-s__2 col-e__8 row-s__2 row-e__3">
+                    <caption class="history-timeline__title">HTML history
+                        timeline</caption>
+                    <thead class="history-timeline__attributes">
+                        <tr class="history-timeline__row">
+                            <th>VERSION</th>
+                            <th>RELEASE DATE</th>
+                            <th>CHANGES FEATURES</th>
+                            <th>NOTES</th>
+                        </tr>
+                    </thead>
 
-                    <div class="col-1"></div>
+                    <tbody class="history-timeline__entries">
+                        <tr class="history-timeline__row">
 
-                    <table class="history-timeline col-6">
-                        <caption class="history-timeline__title">HTML history
-                            timeline</caption>
-                        <thead class="history-timeline__attributes">
-                            <tr class="history-timeline__row">
-                                <th>VERSION</th>
-                                <th>RELEASE DATE</th>
-                                <th>CHANGES FEATURES</th>
-                                <th>NOTES</th>
-                            </tr>
-                        </thead>
+                            <td data-label="VERSION">HTML</td>
+                            <td data-label="RELEASE DATE">1993</td>
+                            <td data-label="CHANGES FEATURES">18 new
+                                different elements</td>
+                            <td data-label="NOTES">This was a draft version
+                                which expired in 1994</td>
+                        </tr>
+                        <tr class="history-timeline__row">
+                            <td data-label="VERSION" scope="row">HTML 2.0</td>
+                            <td data-label="RELEASE DATE">November 1994</td>
+                            <td data-label="CHANGES FEATURES">Form-based
+                                file uploads, client size image maps, tables
+                                and more</td>
+                            <td data-label="NOTES">This was a working draft,
+                                which was abandoned in 2009</td>
+                        </tr>
+                        <tr class="history-timeline__row">
+                            <td data-label="VERSION" scope="row">HTML 3.0</td>
+                            <td data-label="RELEASE DATE">April 1995</td>
+                            <td data-label="CHANGES FEATURES">Not many new
+                                technical features, most added features
+                                could be found in style formatting
+                                extentions</td>
+                            <td data-label="NOTES">This verion did not
+                                succeed for many reasons, including the 150
+                                page draft</td>
+                        </tr>
+                        <tr class="history-timeline__row">
+                            <td data-label="VERSION" scope="row">HTML 3.2</td>
+                            <td data-label="RELEASE DATE">January 1997</td>
+                            <td data-label="CHANGES FEATURES">Removal of
+                                math formulas, adopted most of Netscape's
+                                visual markup tags</td>
+                            <td data-label="NOTES">The first version
+                                developed and standardized exclusively by
+                                the W3C</td>
+                        </tr>
+                        <tr class="history-timeline__row">
+                            <td data-label="VERSION" scope="row">HTML 4.0</td>
+                            <td data-label="RELEASE DATE">December 1997</td>
+                            <td data-label="CHANGES FEATURES">Adoption of
+                                many browser-specific element types</td>
+                            <td data-label="NOTES">Released as three
+                                variations: Strict, Transitional and
+                                Frameset</td>
+                        </tr>
+                        <tr class="history-timeline__row">
+                            <td data-label="VERSION" scope="row">HTML 5</td>
+                            <td data-label="RELEASE DATE">January 2008</td>
+                            <td data-label="CHANGES FEATURES">Added detailed
+                                processing models to encourage more
+                                interoperable implementations</td>
+                            <td data-label="NOTES">The current specification
+                                is known as the HTML Living Standard and is
+                                used to create this website</td>
+                        </tr>
 
-                        <tbody class="history-timeline__entries">
-                            <tr class="history-timeline__row">
-
-                                <td data-label="VERSION">HTML</td>
-                                <td data-label="RELEASE DATE">1993</td>
-                                <td data-label="CHANGES FEATURES">18 new
-                                    different elements</td>
-                                <td data-label="NOTES">This was a draft version
-                                    which expired in 1994</td>
-                            </tr>
-                            <tr class="history-timeline__row">
-                                <td data-label="VERSION" scope="row">HTML 2.0</td>
-                                <td data-label="RELEASE DATE">November 1994</td>
-                                <td data-label="CHANGES FEATURES">Form-based
-                                    file uploads, client size image maps, tables
-                                    and more</td>
-                                <td data-label="NOTES">This was a working draft,
-                                    which was abandoned in 2009</td>
-                            </tr>
-                            <tr class="history-timeline__row">
-                                <td data-label="VERSION" scope="row">HTML 3.0</td>
-                                <td data-label="RELEASE DATE">April 1995</td>
-                                <td data-label="CHANGES FEATURES">Not many new
-                                    technical features, most added features
-                                    could be found in style formatting
-                                    extentions</td>
-                                <td data-label="NOTES">This verion did not
-                                    succeed for many reasons, including the 150
-                                    page draft</td>
-                            </tr>
-                            <tr class="history-timeline__row">
-                                <td data-label="VERSION" scope="row">HTML 3.2</td>
-                                <td data-label="RELEASE DATE">January 1997</td>
-                                <td data-label="CHANGES FEATURES">Removal of
-                                    math formulas, adopted most of Netscape's
-                                    visual markup tags</td>
-                                <td data-label="NOTES">The first version
-                                    developed and standardized exclusively by
-                                    the W3C</td>
-                            </tr>
-                            <tr class="history-timeline__row">
-                                <td data-label="VERSION" scope="row">HTML 4.0</td>
-                                <td data-label="RELEASE DATE">December 1997</td>
-                                <td data-label="CHANGES FEATURES">Adoption of
-                                    many browser-specific element types</td>
-                                <td data-label="NOTES">Released as three
-                                    variations: Strict, Transitional and
-                                    Frameset</td>
-                            </tr>
-                            <tr class="history-timeline__row">
-                                <td data-label="VERSION" scope="row">HTML 5</td>
-                                <td data-label="RELEASE DATE">January 2008</td>
-                                <td data-label="CHANGES FEATURES">Added detailed
-                                    processing models to encourage more
-                                    interoperable implementations</td>
-                                <td data-label="NOTES">The current specification
-                                    is known as the HTML Living Standard and is
-                                    used to create this website</td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-
-                    <div class="col-5"></div>
-
-                </section>
+                    </tbody>
+                </table>
 
 
-                <section class="page-description col-12">
+            </section>
 
-                    <h2 class="page-description__title col-12">The Living
-                        Standard</h2>
+            <section class="grid-container main-content__grid-container--base">
 
-                    <section class="grid-row">
-                        <div class="col-1"></div>
+                <h1 class="main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2">The history of
+                    HTML
+                </h1>
 
-                        <p class="page-description__description-text col-6">
-                            HTML5 is the fifth and last major HTML version which
+                <p class="history-section__text main-content__text--base col-s__2 col-e__7 row-s__2 row-e__3">
+                    HTML5 is the fifth and last major HTML version which
                             got
                             recommended by W3C. The current specification of
                             HTML 5
@@ -198,26 +189,17 @@
                             <em><span>&#60;</span>audio<span>&#62;</span></em>
                             and
                             <em><span>&#60;</span>canvas<span>&#62;</span></em>
-                        </p>
+                </p>
 
-                        <div class="col-1"></div>
+                <div class="main-content__reference-image col-s__8 col-e__10 row-s__2 row-e__3">
+                    <img src="../CSS/assets/living-standard-icon.png"
+                    alt="The unofficial icon of HTML the Living Standard">
+                    <figcaption class="page-description__reference-imagecaption">The unofficial icon of HTML the Living Standard</figcaption>
 
-                        <div class="col-3">
-                            <img class="page-description__reference-image"
-                                src="../CSS/assets/living-standard-icon.png"
-                                alt="The unofficial icon of HTML the Living Standard">
-                                <figcaption class="page-description__reference-imagecaption">The unofficial icon of HTML the Living Standard</figcaption>
+                </div>
 
-                        </div>
-                        <div class="col-1"></div>
-
-                    </section>
-
-                    <section class="grid-row">
-                        <div class="col-1"></div>
-
-                        <p class="page-description__description-text col-10">
-                            In addition to including multimedia tags, HTML5 also
+                <p class="history-section__text main-content__text--base col-s__2 col-e__9 row-s__3 row-e__4">
+                    In addition to including multimedia tags, HTML5 also
                             standardized a new way of structuring the HTML
                             documents. Structure elements such as
                             <em><span>&#60;</span>main<span>&#62;</span></em>,
@@ -235,17 +217,10 @@
                             process invalid documents, it also made advancement
                             in the usability and accessibility of browsers more
                             prominent.
-                        </p>
+                </p>
 
-                        <div class="col-5"></div>
-
-                    </section>
-
-                    <section class="grid-row">
-                        <div class="col-1"></div>
-
-                        <p class="page-description__description-text col-10">
-                            Now, why is HTML5 called the living standard? To
+                <p class="history-section__text main-content__text--base col-s__2 col-e__9 row-s__5 row-e__6">
+                    Now, why is HTML5 called the living standard? To
                             answer this question, you need a little background.
                             During the development of HTML5 there was a great
                             conflict between the two main parties working on
@@ -261,36 +236,23 @@
                             the platform. So if you ask us, the WHATWG did a
                             good job at convincing W3C of implementing their
                             structural idea.
-                        </p>
-                        <div class="col-1"></div>
+                </p>
 
-                        
-                    </section>
-                    <section>
-                        <div class="col-1"></div>
-                        <p class="page-description__description-text col-10">
-
-                            Fun fact: Given the circumstances it’s not likely
+                <p class="history-section__text main-content__text--base col-s__2 col-e__9 row-s__7 row-e__8">
+                    Fun fact: Given the circumstances it’s not likely
                             there will ever be a HTML6.
-
-                        </p>
-
-                        <div class="col-5"></div>
-
-                    </section>
-                </section>
-
-
-
+                </p>
 
             </section>
+
         </article>
 
-        <!-- Information about the group members for the bottom of the page -->
-        <footer class="footer col-12">
 
-            <h1 class="footer__title">HTML Education</h1>
-            <section class="group-details col-5">
+        <!-- Information about the group members for the bottom of the page -->
+        <footer class="grid-container">
+
+            <h1 class="footer__title col-s__1 col-e__11">HTML Education</h1>
+            <section class="group-details col-s__1 col-e__4 row-s__2 row-e__3">
                 <h2 class="group-details__title">Group 29</h2>
                 <ul class="group-details__members">
                     <li>
@@ -304,13 +266,19 @@
                     </li>
                 </ul>
             </section>
-            <a class="footer__back-to-top-button col-2" href="#top">Back to top</a> 
-            <a href="https://www.uu.nl/" target="blank">
-                <img class="footer__logo col-3" src="../CSS/assets/uu-logo.png"
+            <a class="footer__back-to-top-button col-s__5 col-e__7 row-s__2 row-e__3" href="#top">Back to top</a> 
+            <a class="footer__logo col-s__8 col-e__11 row-s__2 row-e__3" href="https://www.uu.nl/" target="blank">
+                <img  src="../CSS/assets/uu-logo.png"
                     alt="An clickable image displaying the logo of the
                     University of Utrecht. Clicking this image will open the
                     University's website in a new browser tab">
             </a>
         </footer>
     </body>
+
+
+
+
+    <!-- HEADER SCRIPTS-->
+    <script src="../JS/header-bar-scripts.js"></script>
 </html>
