@@ -18,4 +18,4 @@ function registerEvents() {
 }
 
 
-window.addEventListener('DOMContentLoaded', registerEvents, false);
+window.addEventListener('DOMContentLoaded', registerEvents(), false);
