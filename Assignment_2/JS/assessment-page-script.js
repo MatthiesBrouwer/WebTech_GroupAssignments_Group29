@@ -27,11 +27,14 @@ function submitText(e){
 }
 
 function clickFormItem(e){   
-    if(e.target.nodeName == "INPUT" || e.target.nodeName == "LABEL"){ // e.target didnt works    
-        var questionId = e.target.parentNode.id;
-        // https://stackoverflow.com/questions/10003683/how-can-i-extract-a-number-from-a-string-in-javascript
-        var index = parseInt(questionId.replace( /^\D+/g, '')) -1; //extract the indexnumber from the question id
-        questionList[index].check(e.target.textContent);       
+    var questionId = e.target.parentNode.id;
+    // https://stackoverflow.com/questions/10003683/how-can-i-extract-a-number-from-a-string-in-javascript
+    var index = parseInt(questionId.replace( /^\D+/g, '')) -1; //extract the indexnumber from the question id
+    if(e.target.nodeName == "LABEL"){ // e.target didnt works    
+        questionList[index].check(e.target.textContent);   //for label press    
+    }
+    else if (e.target.nodeName == "INPUT"){
+        questionList[index].check(e.target.nextSibling.textContent); //for radio button press
     }
 };
 
@@ -41,8 +44,9 @@ class questions {
         this.title = title;
         this.problem = problem;
         this.correctAnswer = correctAnswer;
-        questionList.push(this);
-        questionCounter++;
+ 
+        console.log(questionList);
+
 
     }       
 };
@@ -70,6 +74,9 @@ class fillInBlanks extends questions{
         
     }
     questionDisplay(){      
+        questionList.push(this);
+        questionCounter++;
+
         var section = document.createElement('section');
         section.setAttribute('class', 'grid-container main-content__grid-container--base');
         article.appendChild(section);        
@@ -94,7 +101,12 @@ class fillInBlanks extends questions{
         var inputBox = document.createElement('input');
         inputBox.setAttribute('type', 'text');
         //inputBox.addEventListener("submit", clickFormItem, false);
-        inputForm.appendChild(inputBox);       
+        inputForm.appendChild(inputBox);
+        var submitButton = document.createElement('input');
+        submitButton.setAttribute('type', 'submit');
+        submitButton.setAttribute('value', 'Submit');
+        inputForm.appendChild(submitButton);
+        inputForm.appendChild(submitButton);          
         innerSection.appendChild(inputForm); 
         
     }
@@ -106,6 +118,9 @@ class multipleChoice extends questions{
         this.options = options;
     }
     questionDisplay(){
+        questionList.push(this);
+        questionCounter++;
+
         var section = document.createElement('section');
         section.setAttribute('class', 'grid-container main-content__grid-container--base');
         article.appendChild(section);    
@@ -130,13 +145,15 @@ class multipleChoice extends questions{
         for (var i=0; i<this.options.length; i++){
             var inputOptions = document.createElement('input');
             inputOptions.setAttribute('type','radio');  
-            inputOptions.setAttribute('name', 'option'); //have to watch this one if adding multiple questions
+            inputOptions.setAttribute('name', 'options_question' + questionCounter); //have to watch this one if adding multiple questions
+            inputOptions.setAttribute('value', 'option' + (i+1));
+            inputOptions.setAttribute('id', 'option' + (i+1) + "_question" + questionCounter);
             choiceForm.appendChild(inputOptions);
             var inputLabels = document.createElement('label');
-            inputLabels.setAttribute('for', 'option' + (i+1));
+            inputLabels.setAttribute('for', 'option' + (i+1) + "_question" + questionCounter);
             inputLabels.appendChild(document.createTextNode(this.options[i]));
             choiceForm.appendChild(inputLabels);
-        };      
+        };       
     }
 };
 
