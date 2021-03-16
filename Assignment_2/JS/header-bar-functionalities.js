@@ -41,7 +41,7 @@ function fillModificationMenuSemanticPicker() {
             }
         }
         if (semanticList.length > 1){
-            semanticPicker.insertBefore(newOptgroup, semanticPicker.options[semanticPicker.length - semanticList.length]);
+            semanticPicker.insertBefore(newOptgroup, semanticPicker.options[semanticPicker.length - semanticList.length -i]);
         }
     }
 
