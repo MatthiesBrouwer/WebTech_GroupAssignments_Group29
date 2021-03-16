@@ -230,7 +230,10 @@ body {
     border-bottom: 0;
 }
 
-
+.figure
+{
+    text-align: center;
+}
 .footer{
     background-color: #5b6268;
     outline: 2px dashed #98abb9;
