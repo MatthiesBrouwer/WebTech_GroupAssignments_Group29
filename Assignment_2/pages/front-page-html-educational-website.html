@@ -31,17 +31,46 @@
                     alt="Website logo">
                 <!-- Navigation tags allow for easy and centralised navigation between page content -->
                 <!-- Table of content -->
-                <nav id = "header-menu-bar" class="menu-bar__dropdown grid-container  menu-bar__grid-container col-s__2 col-e__3 row-s__1 row-e__2">
-                    <a class="menu-bar__option menu-bar__option--1" href="front-page-html-educational-website.html">HOME</a>
-                    <a class="menu-bar__option menu-bar__option--2" href="history-page-html-educational-website.html">HISTORY</a>
-                    <a class="menu-bar__option menu-bar__option--3" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
-                    <a class="menu-bar__option menu-bar__option--4" href="best-practices-page-html-educational-website.html">BEST PRACTISE</a>
-                    <a class="menu-bar__option menu-bar__option--5" href="contact-page-html-educational-website.html">CONTACT</a>
+                <nav id = "header-bar__menu" class="header-bar__menu--dropdown-inactive grid-container  menu-bar__grid-container col-s__2 col-e__3 row-s__1 row-e__2">
+                    <a class="header-bar__menu-option header-bar__menu-option--1" href="front-page-html-educational-website.html">HOME</a>
+                    <a class="header-bar__menu-option header-bar__menu-option--2" href="history-page-html-educational-website.html">HISTORY</a>
+                    <a class="header-bar__menu-option header-bar__menu-option--3" href="tutorial-page-html-educational-website.html">TUTORIAL</a>
+                    <a class="header-bar__menu-option header-bar__menu-option--4" href="best-practices-page-html-educational-website.html">BEST PRACTISE</a>
+                    <a class="header-bar__menu-option header-bar__menu-option--5" href="contact-page-html-educational-website.html">CONTACT</a>
             
-                    <a href="javascript:void(0);" id="menu-bar__dropdown-icon" class="col-s__6 col-e__7 ">&#9776;</a>
+                    <!--a href="javascript:void(0);" id="menu-bar__dropdown-icon" class="col-s__6 col-e__7 ">&#9776;</a-->
+                    <button id="header-bar__dropdown-menu-button" type="button" class="col-s__6 col-e__7">&#9776;</button>
+
                 </nav>
 
 
+                <!-- Modification menu -->
+                <form name="page-editor" id="modification-menu">
+                    <button id="page-editor__dropdown-button" name="page-editor__dropdown-button" type="button">&#9998;</button>
+
+                    <article id="page-editor__menu" class="page-editor__menu page-editor__menu--dropdown-inactive">
+                    
+                        <h1>Page Editor</h1>
+
+                        <fieldset class="page-editor__fieldset">
+                            <label for="page-editor__semantic-selector">Select a page element</label>
+                            <select name="page-editor__semantic-selector" id="page-editor__semantic-selector"></select>
+                        </fieldset>
+                        
+                        <fieldset class="page-editor__fieldset">
+                            <label for="page-editor__font-size-selector">Font size</label>
+                            <input type="number" name="page-editor__font-size-selector" placeholder="1" min="1" max="25">
+
+                            <label for="page-editor__background-color-selector">Background color</label>
+                            <input type="color" name="page-editor__background-color-selector" placeholder="#ffffff">
+                        </fieldset> 
+
+                        <input class="page-editor__apply-button" type="submit" value="Apply style">
+                    
+                    </article>
+
+                
+                </form>
             </section>
 
             
@@ -164,8 +193,11 @@
 
                 </div>
 
-                
+
+
             </section>
+
+
 
         </article>
         
@@ -197,10 +229,10 @@
                     University's website in a new browser tab">
             </a>
         </footer>
-
+        
 
     </body>
 
-    <!-- HEADER SCRIPTS-->
-    <script src="../JS/header-bar-scripts.js"></script>
+    <!-- HEADER FUNCTIONALITY SCRIPTS -->
+    <script src="../JS/header-bar-ifunctionalities.js"></script>
 </html>
