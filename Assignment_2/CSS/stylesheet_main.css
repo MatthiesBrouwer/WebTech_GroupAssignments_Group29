@@ -62,7 +62,7 @@ header {
     height: 3em;
 }
 
-.menu-bar__option {
+.header-bar__menu-option {
     color: white;
     cursor: pointer;
     font-weight: bold;
@@ -72,23 +72,23 @@ header {
     font-size: 1.5em;
 }
 
-.menu-bar__option--1 {
+.header-bar__menu-option--1 {
     font-size: 2em;
     background-color: #b43c1e;
 
 }
 
-.menu-bar__option:not(:first-child) {
+.header-bar__menu-option:not(:first-child) {
     display: none;
 }
 
-.menu-bar__option:hover {
+.header-bar__menu-option:hover {
     background-color: #e03e15;
     color: white
 }
 
 
-#menu-bar__dropdown-icon {
+#header-bar__dropdown-menu-button {
     display: block;
     color: black;
     font-size: 30px;
@@ -98,20 +98,107 @@ header {
     grid-row: 2 / 3;
     margin-left: auto;
     margin-right: auto;
-
-
 }
 
-.menu-bar__dropdown--active {
+
+
+#page-editor__dropdown-button {
+    position: relative;
+
+    background-color: rgb(41, 37, 37);
+    border: none;
+    color: white;
+    padding: 10px 15px; 
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 3em;
+    margin: 10px 10px;
+    cursor: pointer;
+    border-radius: 100%;
+}
+
+#page-editor__dropdown-button:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+  }
+
+.page-editor__menu {
+    position: relative;
+    display: none;
+    font-family: sans-serif;
+    margin: 10px auto 20px auto;
+    width: 70%;
+    border: 2px solid white;
+    border-radius: 2% 6% 5% 4% / 1% 1% 2% 4%;
+    letter-spacing: 0.3ch;
+    background: rgb(41, 37, 37); 
+    position: relative;
+
+    
+}
+
+.page-editor__menu::before {
+    border: 2px solid white;
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0) scale(1.015) rotate(0.5deg);
+    border-radius: 1% 1% 2% 4% / 2% 6% 5% 4%; /*1% 1% 2% 4% / 2% 6% 5% 4%;*/
+}
+
+
+.page-editor__menu h1{
+    font-size: 2em;
+    color: #fff;
+    text-align: center;
+    padding-top: 10px;
+    font-weight: bolder;
+}
+
+
+.page-editor__fieldset {
+    margin: 10px 20px;
+    border-radius: 10px;
+    
+}
+
+.page-editor__fieldset label{
+    display: block;
+    width: 100%;
+    text-align: center;
+    color: white;
+}
+
+.page-editor__fieldset input{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page-editor__apply-button {
+    position: relative;
+    display: block;
+    background-color: #b43c1e;
+    border-radius: 5px;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: white;
+    margin: 10px auto 10px auto;
+}
+
+
+
+*[class$="--dropdown-active"] {
     position: relative;
 }
 
-
-.menu-bar__dropdown--active .menu-bar__option {
+*[class$="--dropdown-active"] .header-bar__menu-option, *[class$="--dropdown-active"]  {
     float: none;
     display: block;
 }
-
 
 
 
@@ -397,7 +484,7 @@ footer{
     .header-bar__grid-container {
         grid-template-columns: 20% auto;
         grid-template-rows: repeat(1, [row] 70px);
-        height: 250px;
+        height: 400px;
         width: 80%;
     }
     
@@ -416,12 +503,12 @@ footer{
         height: auto;
     }
 
-    .menu-bar__option {
+    .header-bar__menu-option {
         font-size: 1em;
         padding: 1.2em;
     }
 
-    .menu-bar__option:not(:first-child) {
+    .header-bar__menu-option:not(:first-child) {
         grid-column: 4/6;
         z-index: 3;
         background-color: #313131;
@@ -429,7 +516,7 @@ footer{
     }
 
 
-    #menu-bar__dropdown-icon {
+    #header-bar__dropdown-menu-button {
         grid-column: 7 / 8;
         grid-row: 1 / 2;
         margin-top: 20px;
@@ -437,14 +524,23 @@ footer{
         margin-right: 20px;
     }
 
+    #page-editor__dropdown-button  {
+        top: 200px;
+    }
+
+    .page-editor__menu{
+        z-index: 4;
+        width: 300px;
+        left: 100px;
+    }
 /*===============================
             BODY CSS
   ===============================*/
 
     .main-content-enclosure {
         position: relative;
-        top: -130px;
-        left: 80px;
+        top: -280px;
+        left: 100px;
         padding-left: 10px;
         box-shadow: -14px -4px 10px 6px rgba(0, 0, 0, 0.267);
         z-index: 2;
@@ -542,18 +638,18 @@ footer{
 @media only screen and (min-width: 1000px) {
    
 
-    #menu-bar__dropdown-icon {
+    #header-bar__dropdown-menu-button {
         display: none;
     }
 
-    .menu-bar__option:not(:first-child){
+    .header-bar__menu-option:not(:first-child){
         grid-column: auto;
         display: block;
         background-color: transparent;
         border: none;
     }
 
-    .menu-bar__option:hover {
+    .header-bar__menu-option:hover {
         background-color: #e03e15;
     }
 }
