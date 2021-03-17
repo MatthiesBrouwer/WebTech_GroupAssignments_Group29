@@ -69,13 +69,12 @@ header {
     text-decoration: none;
     text-align: center;    
     font-size: 1.5em;
-    background-color: #852a13;
+
 }
 
 .header-bar__menu-option--1 {
     font-size: 2em;
-    background-color: #b43c1e;
-
+    text-decoration: underline;
 }
 
 .header-bar__menu-option:not(:first-child) {
@@ -85,6 +84,10 @@ header {
 .header-bar__menu-option:hover {
     background-color: #e03e15;
     color: white
+}
+
+.header-bar__menu-option.active{
+    background-color: #b43c1e;
 }
 
 
@@ -273,12 +276,11 @@ body {
     margin-top: 3em;
 }
 
-
 /*---------- Assessment page questions --------------*/
 .question-enclosure {
     padding: 1rem;
     width: 90%;
-    box-shadow: 0 15px 30px 0 black, 0 5px 15px 0 black);
+    box-shadow: 0 15px 30px 0 black, 0 5px 15px 0 black;
     background-color: white;
     border-left: 0 solid #01eb8d;
     border-radius: 0.6rem;
@@ -557,15 +559,12 @@ footer{
         padding: 1.2em 0.5em;
     }
 
-    
-
     .header-bar__menu-option:not(:first-child) {
         grid-column: 4/6;
         z-index: 3;
         background-color: #313131;
         border-bottom: 2px solid #ddd;
     }
-
 
     #header-bar__dropdown-menu-button {
         grid-column: 7 / 8;
@@ -584,6 +583,9 @@ footer{
         width: 300px;
         left: 100px;
     }
+
+
+
 /*===============================
             BODY CSS
   ===============================*/
@@ -644,6 +646,8 @@ footer{
 
 
 
+
+
 /*===============================
             FOOTER CSS
   ===============================*/
@@ -700,9 +704,12 @@ footer{
         border: none;
     }
 
-    
+    .header-bar__menu-option.active{
+        background-color: #b43c1e;
+    }    
 
     .header-bar__menu-option:hover {
         background-color: #e03e15;
     }
+    
 }
