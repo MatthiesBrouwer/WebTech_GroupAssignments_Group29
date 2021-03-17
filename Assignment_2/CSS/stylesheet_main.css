@@ -598,7 +598,7 @@ footer{
   ===============================*/
 
     footer {
-        top: -120px;
+        top: -260px;
         position: relative;  
 
         grid-template-columns: repeat(10, 10%);
