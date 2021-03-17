@@ -219,7 +219,15 @@ body {
 
     grid-template-columns: auto;
 }
-
+.page__title--base{
+    color:#ffffff;
+    font-family: 'Helvetica Neue';
+    font-size: 300%;
+    letter-spacing: 1px;
+    text-align: left;
+    margin-left: 5%;
+    margin-right: 5%;
+}
 .main-content__title--base {
     color: #c9d0d4;
     font-family: 'Helvetica Neue', sans-serif;
@@ -250,12 +258,14 @@ body {
 .main-content__reference-image {
     display: block;
     margin: auto;
+    height: auto;
+    width: 100%;
 
 }
 
 .main-content__reference-image img{
     height: auto;
-    width: auto;
+    width: 100%;
 }
 
 .page-description__icon {

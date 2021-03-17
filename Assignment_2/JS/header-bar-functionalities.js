@@ -24,7 +24,6 @@ function fillModificationMenuSemanticPicker() {
     for (let i = 0; i < semanticElements.length; i++) {
         semanticList = document.getElementsByTagName(semanticElements[i])
         
-        var optionHolder = [];
         
         for (let j = 0; j < semanticList.length; j++) {
             var newOption = document.createElement("option");
