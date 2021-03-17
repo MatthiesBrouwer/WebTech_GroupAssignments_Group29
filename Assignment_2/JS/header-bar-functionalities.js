@@ -23,6 +23,9 @@ function fillModificationMenuSemanticPicker() {
     /* Check for each element if it exists on the page and index them accordingly */
     for (let i = 0; i < semanticElements.length; i++) {
         semanticList = document.getElementsByTagName(semanticElements[i])
+        
+        var optionHolder = [];
+        
         for (let j = 0; j < semanticList.length; j++) {
             var newOption = document.createElement("option");
             newOption.value = semanticElements[i] + "-" + j;
@@ -43,8 +46,6 @@ function fillModificationMenuSemanticPicker() {
             semanticPicker.insertBefore(newOptgroup, semanticPicker.options[semanticPicker.length - semanticList.length - i]);
         }
     }
-
-    console.log(semanticPicker);
 }
 
 // Function to process any style changes by the user

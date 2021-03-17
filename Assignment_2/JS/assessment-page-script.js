@@ -66,9 +66,11 @@ questions.prototype.questionDisplay = function (){
 
 //standard check function for comparing general input with the object's correctAnswer
 questions.prototype.check = function (input){ 
+    console.log((input == this.correctAnswer) ? "You've got the right answer" : "My boi you got it all wrong");
+    /*
     if (input == this.correctAnswer) console.log("You've got the right answer");
     else console.log("My boi you got it all wrong");
-
+    */
 };
 
 //First subclass "fillInBlanks" 
