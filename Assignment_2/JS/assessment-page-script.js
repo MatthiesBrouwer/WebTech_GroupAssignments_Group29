@@ -21,7 +21,7 @@ section.appendChild(h1);
 function submitText(e){
     e.preventDefault();  //to prevent page reloading
     var questionId = e.target.id;
-    //https://stackoverflow.com/questions/10003683/how-can-i-extract-a-number-from-a-string-in-javascript
+    //Used for inspiration on how to extract numbers from a string: https://stackoverflow.com/questions/10003683/how-can-i-extract-a-number-from-a-string-in-javascript
     var index = parseInt(questionId.replace( /^\D+/g, '')) -1; //extract the indexnumber from the question id
     questionList[index].check(e.target.children[1].value); 
    
@@ -37,16 +37,6 @@ function clickFormItem(e){
         questionList[index].check(e.target.nextSibling.textContent);    //for radio button press
     }
 };
-
-/*function questionFeedback(e) {
-    var questionId = e.target.parentNode.id;
-    var index = parseInt(questionId.replace( /^\D+/g, '');
-    var feedbackBox = document.getElementById('feedbackBox' + );
-    var dropdownElement = document.getElementById(dropdownElementId);
-    console.log(dropdownElement);
-   
-
-}*/
 
 //Super class and general display method
 class question {
@@ -82,7 +72,7 @@ question.prototype.questionDisplay = function (){
 
 //standard check function for comparing general input with the object's correctAnswer
 question.prototype.check = function (input){ 
-    var index = questionList.indexOf(this) + 1;
+    var index = questionList.indexOf(this) + 1; //get the index of the question object in questionList
     var feedbackBox = document.getElementById('feedbackBox' + index);    
     feedbackBox.src = (input == this.correctAnswer) ? "CSS/assets/assessment-feedbackicon-correct.png" : "CSS/assets/assessment-feedbackicon-incorrect.png";
     feedbackBox.style.visibility = "visible";     
