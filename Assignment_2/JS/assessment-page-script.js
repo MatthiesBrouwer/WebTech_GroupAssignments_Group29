@@ -21,7 +21,7 @@ section.appendChild(h1);
 function submitText(e){
     e.preventDefault();  //to prevent page reloading
     var questionId = e.target.id;
-    // https://stackoverflow.com/questions/10003683/how-can-i-extract-a-number-from-a-string-in-javascript
+    //https://stackoverflow.com/questions/10003683/how-can-i-extract-a-number-from-a-string-in-javascript
     var index = parseInt(questionId.replace( /^\D+/g, '')) -1; //extract the indexnumber from the question id
     questionList[index].check(e.target.children[1].value); 
    
@@ -50,12 +50,9 @@ class questions {
 
 questions.prototype.questionDisplay = function (){
     questionCounter++;  //increase questionCounter by one for variable id assignation / needs to be in display method because of code structure
-    //consistent use of section and innersection taken from the structure of the other webpages
-    var section = document.createElement('section');
-    section.setAttribute('class', 'grid-container main-content__grid-container--base');
-    article.appendChild(section);        
+    //consistent use of section and innersection taken from the structure of the other webpages       
     var innerSection = document.createElement('section');
-    innerSection.setAttribute('class', 'main-content__text--base col-s__2 col-e__9 row-s__3 row-e__4');
+    innerSection.setAttribute('class', 'main-content__text--base col-s__2 col-e__9');
     innerSection.setAttribute('id', 'innerSection' + questionCounter); //for later retrieval of this section (simple solve for complex matter of retreiving local variables by getting them through functions)
     section.appendChild(innerSection);     
     
