@@ -67,13 +67,14 @@ question.prototype.questionDisplay = function (){
     questionCounter++;  //increase questionCounter by one for variable id assignation / needs to be in display method because of code structure
     //consistent use of section and innersection taken from the structure of the other webpages       
     var innerSection = document.createElement('section');
-    innerSection.setAttribute('class', 'main-content__text--base col-s__2 col-e__9');
+    innerSection.setAttribute('class', 'main-content__text--base col-s__2 col-e__9 question-enclosure');
     innerSection.setAttribute('id', 'innerSection' + questionCounter); //for later retrieval of this section (simple solve for complex matter of retreiving local variables by getting them through functions)
     var feedbackBox = document.createElement('img');
     feedbackBox.setAttribute('class', 'feedbackBox');
     feedbackBox.setAttribute('id', 'feedbackBox' + questionCounter);
-    feedbackBox.setAttribute('src', "");
-    feedbackBox.style.visibilty = "hidden";
+    feedbackBox.setAttribute('src', "CSS/assets/assessment-feedbackicon-incorrect.png");
+    feedbackBox.style.visibility = "hidden";
+    innerSection.appendChild(feedbackBox);
     section.appendChild(innerSection);     
     
     //creation of questiontitle
@@ -89,9 +90,9 @@ question.prototype.questionDisplay = function (){
 //standard check function for comparing general input with the object's correctAnswer
 question.prototype.check = function (input){ 
     var index = questionList.indexOf(this) + 1;
-    var feedbackBox = getElementById('feedbackBox' + index);    
+    var feedbackBox = document.getElementById('feedbackBox' + index);    
     feedbackBox.src = (input == this.correctAnswer) ? "CSS/assets/assessment-feedbackicon-correct.png" : "CSS/assets/assessment-feedbackicon-incorrect.png";
-    feedbackBox.style.visibilty = "visible";     
+    feedbackBox.style.visibility = "visible";     
 };
 
 //First subclass "fillInBlanks" 
