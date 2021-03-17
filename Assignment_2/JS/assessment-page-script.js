@@ -28,17 +28,11 @@ function submitText(e){
 };
 
 function clickFormItem(e){ 
-    var questionId = e.target.parentNode.id;
-    var index = parseInt(questionId.replace( /^\D+/g, '')) -1; //extract the indexnumber from the question id
-    if(e.target.nodeName === "LABEL"){ 
-        questionList[index].check(e.target.textContent);                //for label press    
-    }   
-    
-    console.log(questionId.replace( /^\D+/g, ''));
-    /*else if (e.target.nodeName === "INPUT"){ 
-        console.log(index);
-        questionList[index].check(e.target.nextSibling.textContent);    //for radio button press
-    }*/
+    var questionId = e.target.parentNode.parentNode.id;  //Extraxt the form ID
+    var index = parseInt(questionId.replace( /^\D+/g, '')) -1; //extract the indexnumber from the form id
+    if(e.target.nodeName === "INPUT"){  //for press on one of the objects
+        questionList[index].check(e.target.parentNode.textContent);    
+    }
 };
 
 //Super class and general display method
