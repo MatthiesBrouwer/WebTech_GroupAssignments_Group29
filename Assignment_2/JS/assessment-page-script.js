@@ -129,14 +129,14 @@ class multipleChoice extends question{
 
         //the display for multiple choice options so you can have an variable amount of options 
         for (var i=0; i<this.options.length; i++){
+            var inputLabels = document.createElement('label');
+            inputLabels.setAttribute('for', 'option' + (i+1) + "_question" + questionCounter);
             var inputOptions = document.createElement('input');
             inputOptions.setAttribute('type','radio');  
             inputOptions.setAttribute('name', 'options_question' + questionCounter); 
             inputOptions.setAttribute('value', 'option' + (i+1));
             inputOptions.setAttribute('id', 'option' + (i+1) + "_question" + questionCounter);
-            choiceForm.appendChild(inputOptions);
-            var inputLabels = document.createElement('label');
-            inputLabels.setAttribute('for', 'option' + (i+1) + "_question" + questionCounter);
+            inputLabels.appendChild(inputOptions);
             inputLabels.appendChild(document.createTextNode(this.options[i])); //text display for options
             choiceForm.appendChild(inputLabels);
         }       
