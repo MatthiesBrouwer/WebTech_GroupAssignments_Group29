@@ -219,7 +219,15 @@ body {
 
     grid-template-columns: auto;
 }
-
+.page__title--base{
+    color:#ffffff;
+    font-family: 'Helvetica Neue';
+    font-size: 300%;
+    letter-spacing: 1px;
+    text-align: left;
+    margin-left: 5%;
+    margin-right: 5%;
+}
 .main-content__title--base {
     color: #c9d0d4;
     font-family: 'Helvetica Neue', sans-serif;
