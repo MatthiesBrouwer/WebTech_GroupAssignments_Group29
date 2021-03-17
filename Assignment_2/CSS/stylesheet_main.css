@@ -100,8 +100,6 @@ header {
     margin-right: auto;
 }
 
-
-
 #page-editor__dropdown-button {
     position: relative;
 
@@ -252,12 +250,14 @@ body {
 .main-content__reference-image {
     display: block;
     margin: auto;
+    height: auto;
+    width: 100%;
 
 }
 
 .main-content__reference-image img{
     height: auto;
-    width: auto;
+    width: 100%;
 }
 
 .page-description__icon {
