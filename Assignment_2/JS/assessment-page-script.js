@@ -38,8 +38,18 @@ function clickFormItem(e){
     }
 };
 
+/*function questionFeedback(e) {
+    var questionId = e.target.parentNode.id;
+    var index = parseInt(questionId.replace( /^\D+/g, '');
+    var feedbackBox = document.getElementById('feedbackBox' + );
+    var dropdownElement = document.getElementById(dropdownElementId);
+    console.log(dropdownElement);
+   
+
+}*/
+
 //Super class and general display method
-class questions {
+class question {
     constructor(title, problem, correctAnswer) {
         this.title = title;
         this.problem = problem;
@@ -48,12 +58,17 @@ class questions {
     }       
 };
 
-questions.prototype.questionDisplay = function (){
+question.prototype.questionDisplay = function (){
     questionCounter++;  //increase questionCounter by one for variable id assignation / needs to be in display method because of code structure
     //consistent use of section and innersection taken from the structure of the other webpages       
     var innerSection = document.createElement('section');
     innerSection.setAttribute('class', 'main-content__text--base col-s__2 col-e__9');
     innerSection.setAttribute('id', 'innerSection' + questionCounter); //for later retrieval of this section (simple solve for complex matter of retreiving local variables by getting them through functions)
+    var feedbackBox = document.createElement('img');
+    feedbackBox.setAttribute('class', 'feedbackBox');
+    feedbackBox.setAttribute('id', 'feedbackBox' + questionCounter);
+    feedbackBox.setAttribute('src', "");
+    feedbackBox.style.visibilty = "hidden";
     section.appendChild(innerSection);     
     
     //creation of questiontitle
@@ -65,14 +80,15 @@ questions.prototype.questionDisplay = function (){
 };
 
 //standard check function for comparing general input with the object's correctAnswer
-questions.prototype.check = function (input){ 
-    if (input == this.correctAnswer) console.log("You've got the right answer");
-    else console.log("My boi you got it all wrong");
-
+question.prototype.check = function (input){ 
+    var index = questionList.indexOf(this) + 1;
+    var feedbackBox = getElementById('feedbackBox' + index);    
+    feedbackBox.src = (input == this.correctAnswer) ? "CSS/assets/assessment-feedbackicon-correct.png" : "CSS/assets/assessment-feedbackicon-incorrect.png";
+    feedbackBox.style.visibilty = "visible";     
 };
 
 //First subclass "fillInBlanks" 
-class fillInBlanks extends questions{
+class fillInBlanks extends question{
     constructor(title, problem, correctAnswer){
         super(title, problem, correctAnswer)            //takes all the parameter inputs from the superclass constructor      
     }
@@ -102,7 +118,7 @@ class fillInBlanks extends questions{
 };
 
 //second subclass "multipleChoice"
-class multipleChoice extends questions{
+class multipleChoice extends question{
     constructor(title, problem, correctAnswer, options){ //can add a parameter for one or more answers
         super(title, problem, correctAnswer) 
         this.options = options;
