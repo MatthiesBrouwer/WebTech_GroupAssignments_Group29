@@ -131,7 +131,6 @@ header {
   letter-spacing: 0.3ch;
   background: rgb(41, 37, 37); 
   position: relative;
-
   
 }
 
@@ -185,6 +184,72 @@ header {
   font-weight: bold;
   color: white;
   margin: 10px auto 10px auto;
+}
+
+
+/*USER AUTHENTICATION */
+
+.user-authentication__enclosure {
+  position: relative;
+}
+
+#user-authentication__dropdown-button {
+  position: relative;
+  background-color: rgb(26, 102, 120);
+  border: none;
+  color: white;
+  padding: 10px 15px; 
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 3em;
+  margin: 10px 10px;
+  cursor: pointer;
+  border-radius:  15px 50px;
+}
+
+#user-authentication__dropdown-button img{
+  width: 50px;
+  height: auto;
+}
+
+
+.user-authentication__menu {
+  position: relative;
+  display: none;
+  margin: 10px auto 20px auto;
+  border: 8px solid rgb(245, 109, 109);
+  border-radius: 20px;
+  background: white; 
+  position: relative;
+  width: 90%;
+}
+
+
+.user-authentication__menu h1{
+  font-family: "Arial Black", sans-serif;
+  font-size: 2em;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.user-authentication__menu label{
+  font-family: "Trebuchet", sans-serif;
+  letter-spacing: 1px;
+  display: block;
+}
+
+
+.user-authentication__credential-input{
+  margin: 10px 20px;
+  border-radius: 10px;
+}
+
+.user-authentication__menu input {
+  margin: 10px auto 20px auto;
+  display: block;
+  width: 80%;
+  font-size: 1.5em;
 }
 
 
@@ -529,12 +594,18 @@ footer{
 /*===============================
           HEADER CSS
 ===============================*/
+  .header__grid-container {
+    grid-template-columns: 80% 20%;
+  }
+
 
   .header-bar__grid-container {
       grid-template-columns: 20% auto;
       grid-template-rows: repeat(1, [row] 70px);
       height: 400px;
-      width: 80%;
+      margin: 0;
+      padding: 0;
+      position:relative;
   }
   
 
@@ -542,6 +613,7 @@ footer{
       display: grid;
       grid-template-columns: repeat(6, 15%);
       grid-template-rows: 70px;
+      margin: 0;
   }
 
   .header-bar__page-logo {
@@ -583,6 +655,25 @@ footer{
       z-index: 4;
       width: 300px;
       left: 100px;
+  }
+
+
+
+  /* USER AUTHENTICATION */
+  .user-authentication__enclosure {
+    position:relative;
+  }
+
+  #user-authentication__dropdown-button {
+    float: right
+  }
+  .user-authentication__menu {
+    float: right;
+    position: absolute;
+    z-index: 4;
+    right: 100px;
+    width: 300px;
+    overflow: hidden;
   }
 /*===============================
           BODY CSS

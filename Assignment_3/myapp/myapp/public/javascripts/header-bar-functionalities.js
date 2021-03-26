@@ -78,6 +78,9 @@ function registerEvents() {
     var menubarDropdownButton = document.getElementById("header-bar__dropdown-menu-button");
     menubarDropdownButton.addEventListener("click", function () { handleDropdownMenu("header-bar__menu"); }, true);
 
+    var userAuthenticationDropdownButton = document.getElementById("user-authentication__dropdown-button");
+    userAuthenticationDropdownButton.addEventListener("click", function () { handleDropdownMenu("user-authentication__menu"); }, true);
+
 }
 
 
