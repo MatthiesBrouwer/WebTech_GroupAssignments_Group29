@@ -4,12 +4,12 @@ function handleDropdownMenu(dropdownElementId, dropdownElement) {
     var dropdownElement = document.getElementById(dropdownElementId);
     console.log(dropdownElement);
     if (dropdownElement.classList.contains(dropdownElementId + "--dropdown-active")) {
-        dropdownElement.classList.remove(dropdownElementId + "--dropdown-active")
-        dropdownElement.classList.add(dropdownElementId + "--dropdown-inactive")
+        dropdownElement.classList.remove(dropdownElementId + "--dropdown-active");
+        dropdownElement.classList.add(dropdownElementId + "--dropdown-inactive");
     }
     else {
-        dropdownElement.classList.remove(dropdownElementId + "--dropdown-inactive")
-        dropdownElement.classList.add(dropdownElementId + "--dropdown-active")
+        dropdownElement.classList.remove(dropdownElementId + "--dropdown-inactive");
+        dropdownElement.classList.add(dropdownElementId + "--dropdown-active");
     }
 
 }
@@ -22,7 +22,7 @@ function fillModificationMenuSemanticPicker() {
 
     /* Check for each element if it exists on the page and index them accordingly */
     for (let i = 0; i < semanticElements.length; i++) {
-        semanticList = document.getElementsByTagName(semanticElements[i])
+        semanticList = document.getElementsByTagName(semanticElements[i]);
         
         
         for (let j = 0; j < semanticList.length; j++) {
@@ -81,6 +81,6 @@ function registerEvents() {
 }
 
 
-registerEvents()
+registerEvents();
 
 

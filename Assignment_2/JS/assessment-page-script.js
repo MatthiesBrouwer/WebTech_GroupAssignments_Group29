@@ -7,15 +7,21 @@ var article = document.createElement('article');
 article.setAttribute('class', 'main-content-enclosure');
 body.appendChild(article);
 
+var h1 = document.createElement('h1');
+h1.setAttribute('class','page__title--base col-s__1 col-e__11 row-s__1 row-e__2')  
+var pageTitle1 = document.createTextNode("Assessment");
+h1.append(pageTitle1);
+article.appendChild(h1);
+
 //page title placed inside a seperate section
 var section = document.createElement('section');
 section.setAttribute('class', 'grid-container main-content__grid-container--base');
 article.appendChild(section);
-var h1 = document.createElement('h1');
-h1.setAttribute('class','main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2')   
+var h1ContentTitle = document.createElement('h1');
+h1ContentTitle.setAttribute('class','main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2')   
 var pageTitle = document.createTextNode("5 questions about HTML");
-h1.appendChild(pageTitle);
-section.appendChild(h1);
+h1ContentTitle.appendChild(pageTitle);
+section.appendChild(h1ContentTitle);
 
 //event handlers
 function submitText(e){
@@ -25,7 +31,7 @@ function submitText(e){
     var index = parseInt(questionId.replace( /^\D+/g, '')) -1; //extract the indexnumber from the question id
     questionList[index].check(e.target.children[1].value); 
    
-};
+}
 
 function clickFormItem(e){ 
     var questionId = e.target.parentNode.parentNode.id;  //Extraxt the form ID
@@ -33,7 +39,7 @@ function clickFormItem(e){
     if(e.target.nodeName === "INPUT"){  //for press on one of the objects
         questionList[index].check(e.target.parentNode.textContent);    
     }
-};
+}
 
 //Super class and general display method
 class question {
@@ -43,7 +49,7 @@ class question {
         this.correctAnswer = correctAnswer;
         questionList.push(this);                //add objects to array:questionList
     }       
-};
+}
 
 question.prototype.questionDisplay = function (){
     questionCounter++;  //increase questionCounter by one for variable id assignation / needs to be in display method because of code structure
@@ -65,7 +71,7 @@ question.prototype.questionDisplay = function (){
     questionTitle.appendChild(questionTitleText);
     innerSection.appendChild(questionTitle);
    
-};
+}
 
 //standard check function for comparing general input with the object's correctAnswer
 question.prototype.check = function (input){ 
@@ -73,7 +79,7 @@ question.prototype.check = function (input){
     var feedbackBox = document.getElementById('feedbackBox' + index);    
     feedbackBox.src = (input == this.correctAnswer) ? "CSS/assets/assessment-feedbackicon-correct.png" : "CSS/assets/assessment-feedbackicon-incorrect.png";
     feedbackBox.style.visibility = "visible";     
-};
+}
 
 //First subclass "fillInBlanks" 
 class fillInBlanks extends question{
@@ -103,7 +109,7 @@ class fillInBlanks extends question{
         innerSection.appendChild(inputForm); 
         
     }
-};
+}
 
 //second subclass "multipleChoice"
 class multipleChoice extends question{
@@ -138,7 +144,7 @@ class multipleChoice extends question{
             choiceForm.appendChild(inputLabels);
         }       
     }
-};
+}
 
 // the actual questions created as objects (Note: they don't need to be in a variable because they already get stored in an array by the question constructor)
 new fillInBlanks("History question", "Tim-Berners-Lee invented HTML in", "1989");
