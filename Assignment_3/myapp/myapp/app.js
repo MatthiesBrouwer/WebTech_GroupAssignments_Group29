@@ -1,17 +1,24 @@
 const express = require('express');
 const path = require("path");
 var logger = require('morgan');
+//var bodyParser = require("body-parser");
+var apiRouter = require ("./routes/api_router.js");
 
-const app = express();
+var app = express();
 
-var staticPath = path.join(__dirname, "static");
-var publicPath = path.join(__dirname, 'public');
+var staticPath = path.resolve(__dirname, "static");
 app.use(express.static(staticPath));
+var publicPath = path.resolve(__dirname, 'public');
 app.use(express.static(publicPath));
 
-app.use(logger('dev'));
+//var routesPath = path.join(__dirname, 'routes');
+//app.use(express.static(routesPath));
 
+app.use(logger('dev'));
 console.log("LOADED");
+app.use(express.urlencoded({extended: false})); //Bodyparser now uses express.urlencoded()https://stackoverflow.com/questions/24330014/bodyparser-is-deprecated-express-4
+app.use("/routes", apiRouter)
+
 
 module.exports = app;
 

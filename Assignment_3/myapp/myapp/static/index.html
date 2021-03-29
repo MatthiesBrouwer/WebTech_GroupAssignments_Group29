@@ -74,13 +74,13 @@
             </section>
 
             <section class="user-authentication__enclosure">
-                <form method="POST">
+                <form method="POST" action="http://localhost:8029/routes/loginForm">
                     <button id="user-authentication__dropdown-button" type="button" class="col-s__6 col-e__7"><img src="images/user-authentication-icon.png" alt="The icon for the login menu, displaying a human silhouete"></button>
                     <article id="user-authentication__menu" class="user-authentication__menu user-authentication__menu--dropdown-inactive">
                         <h1>User Login</h1>
                         <fieldset class="user-authentication__credential-input">
-                            <input type="text" placeholder="Username" name="user-authentication__username-input" required>
-                            <input type="password" placeholder="Password" name="user-authentication__password-input" required>
+                            <input type="text" placeholder="Username" name="authentication__username" required>
+                            <input type="password" placeholder="Password" name="authentication__password" required>
                             <button type="submit">Login</button>
                         </fieldset>
     
