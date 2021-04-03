@@ -9,9 +9,12 @@ if(!exists) {
 const sqlite3 = require('sqlite3').verbose();
 const Promise = require('bluebird')
 
+var db = new sqlite3.Database(dbFile);
+
+
 class DatabaseServer {
-    constructor(dbFilePath){
-        this.dbFilePath = dbFilePath; /*new sqlite3.Database(__dirname + "/" + dbFile, (err) => {
+    constructor(db){
+        this.db = db; /*new sqlite3.Database(__dirname + "/" + dbFile, (err) => {
             if (err) {
                 console.log("Could not connect to the database", err);
             }
@@ -23,161 +26,67 @@ class DatabaseServer {
 };
 
 DatabaseServer.prototype.executeRUNQuery = function(queryString, params = []){
-    console.log("Executing: " + queryString);
-    console.log("With values" + params);
+    return new Promise((resolve, reject) => {
+        console.log("Executing: " + queryString);
+        this.db.serialize( function() {
+            var runStmt = db.prepare(queryString);
+            runStmt.run(params, function (err) {
+                if (err) {
+                    console.log('Error running query: ', queryString, ", with parameters: " + params);
+                    console.log(err);
+                    reject(err);
+                }
+                else {
+                    console.log("No error caught");
+                    resolve( {id : this.lastID})
+                }
+            });
 
-    const db = new sqlite3.Database(this.dbFilePath);
-
-    db.serialize( () =>{
-        var runStmt = db.prepare(queryString);
-        runStmt.run(params, function (err) {
-            if (err) {
-                console.log('Error running query: ', queryString, ", with parameters: " + params);
-                console.log(err);
-            }
-            else {
-                console.log("No error caught");
-            }
+            runStmt.finalize();
         });
-
-        runStmt.finalize();
     });
 
-    db.close((err) => {
-        if (err) {
-            return console.error(err.message);
-        }
-    });
 };
 
 DatabaseServer.prototype.executeGETQuery = function(queryString, params = []) {
-
-    const db = new sqlite3.Database(this.dbFilePath);
-
-    db.serialize( () => {
-        db.each(queryString, params, (err, result) => {
-            if(err){
-                console.log('Error running GET query: ' + queryString + ", with parameters: " + params);
-                console.log(err);
-            }
-            else{
-                console.log("No error caught");
-                console.log(result);
-                return result;
-            }
+    return new Promise((resolve, reject) => {
+        this.db.serialize( function() {
+            var getStmt = db.prepare(queryString);
+            getStmt.get(queryString, params, (err, result) => {
+                if(err){
+                    console.log('Error running GET query: ' + queryString + ", with parameters: " + params);
+                    console.log(err);
+                    reject(err);
+                }
+                else{
+                    resolve(result);
+                }
+            });
+            getStmt.finalize();
         });
-    });
-    console.log("Closing database!");
-
-    db.close((err) => {
-        if (err) {
-            return console.error(err.message);
-        }
+        console.log("Closing database!");
     });
 };
 
 DatabaseServer.prototype.executeALLQuery = function(queryString, params = []) {
-
-    const db = new sqlite3.Database(this.dbFilePath);
-
-    this.db.all(queryString, params, (err, result) => {
-        if (err){
-            console.log('Error running ALL query: ' + queryString + ", with parameters: " + params);
-            console.log(err);
-        }
-        else{
-            console.log("No error caught");
-        }
-    });
-   
-    db.close((err) => {
-        if (err) {
-            return console.error(err.message);
-        }
+    return new Promise((resolve, reject) => {
+        this.db.all(queryString, params, (err, result) => {
+            if (err){
+                console.log('Error running ALL query: ' + queryString + ", with parameters: " + params);
+                console.log(err);
+                reject(err);
+            }
+            else{
+                resolve(result);
+            }
+        });
     });
 };
 
 
-class DatabaseTable {
-    constructor(db, tableName, attributeStatements = []){
-        this.db = db;
-        this.tableName = tableName;
-    }
-};
-
-DatabaseTable.prototype.createTable = function(attributeStatements = [], constraints = []){
-    this.attributes = [];
-    var queryString = 'CREATE TABLE IF NOT EXISTS ' + this.tableName + " (";
-
-    var statementCounter = attributeStatements.length;
-    for (statement of attributeStatements){
-        queryString += statement + (!--statementCounter ? "" : "," );
-        this.attributes.push(statement.split(' ')[0]);
-    }
-
-    this.attributes.splice(this.attributes.indexOf("id"), 1); //Remove the "id" variable from the attribute list, as it is not used during queries
 
 
-    var constraintCounter = constraints.length;
-    queryString += (!constraintCounter ? ");" : ",");
-
-    for (constraint of constraints){
-        queryString += constraint + (!--constraintCounter ? ");" : "," );
-    }
-
-    return this.db.executeRUNQuery(queryString);
-};
-
-
-DatabaseTable.prototype.newEntry = function(attributeValues = []) {
-    var queryString = "INSERT INTO " + this.tableName  + " (" + this.attributes.toString() + ") VALUES (";
-    var statementCounter = attributeValues.length;
-    for (var i = 0; i < attributeValues.length; i++){
-        queryString += "?" + (!--statementCounter ? ");" : "," );
-    }
-    console.log(queryString);
-
-    return this.db.executeRUNQuery(queryString, attributeValues);
-};
-
-DatabaseTable.prototype.getById = function(id) {
-    return this.db.executeGETQuery(
-        'SELECT * FROM ' + this.tableName + ' WHERE id = ?;', [id]
-    );
-};
-
-
-
-const dbServer = new DatabaseServer(dbFile);
-
-const quizTopicTable = new DatabaseTable(dbServer, "QuizTopic");
-const quizTable = new DatabaseTable(dbServer, "Quiz");
-
-quizTopicTable.createTable(["id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT", 
-                                     "title VARCHAR(50) NOT NULL", 
-                                     "descriptionLink VARCHAR(255) NOT NULL", 
-                                     "enabled BOOLEAN NOT NULL"]);
-quizTable.createTable(["id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT", 
-                       "topicId INT NOT NULL",
-                       "title VARCHAR(50) NOT NULL", 
-                       "enabled BOOLEAN NOT NULL",
-                       ], [
-                        "CONSTRAINT FK_Quiz_topic FOREIGN KEY (topicId) REFERENCES QuizTopic(id) ON DELETE NO ACTION ON UPDATE CASCADE"
-
-                       ]);
-
-
-console.log("Adding values");
-var entryValues = ["'HTML Tutorial'", "'LOL NEE'", true];
-
-quizTopicTable.newEntry(entryValues);
-console.log("GETTING BY ID");
-console.log(quizTopicTable.getById(1) + "----------------");
-console.log("GITGOT BY ID JO");
-
-
-                                        
-/*
+/*QUIZ TOPIC*/
 class QuizTopic{
     constructor(db){
         this.db = db;
@@ -234,6 +143,7 @@ QuizTopic.prototype.getEntryById = function(id) {
 };
 
 
+/*QUIZ*/
 class Quiz{
     constructor(db){
         this.db = db;
@@ -298,14 +208,15 @@ Quiz.prototype.getAllEntries = function() {
 
 
 
-*/
 
 
 
 
 
 
-/*const quiztopic1 = {title : 'html tutorial', descriptionLink : 'Lol, nee', enabled : true};
+
+const dbServer = new DatabaseServer(db);
+const quiztopic1 = {title : 'html tutorial', descriptionLink : 'Lol, nee', enabled : true};
 const quiztopic2 = {title : 'html best practice', descriptionLink : 'Wat zei ik nou. Nee', enabled : false};
 const quiz1 = {topicId : 1, title : "Basic HTML #1", enabled : true};
 const quiz2 = {topicId : 2, title : "Basic HTML #2", enabled : false};
@@ -383,7 +294,7 @@ quizTopicRepo.createTable()
         console.log("Error!!!: ");
         console.log(JSON.stringify(err))
     })
-*/
+
 
 
 
