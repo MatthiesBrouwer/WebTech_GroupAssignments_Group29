@@ -1,0 +1,15 @@
+doctype html
+html
+title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    article(id="user-authentication__menu", class="user-authentication__menu user-authentication__menu--dropdown-inactive")
+        form(action= "/login", method="POST")
+            h1 User Login
+            fieldset(class="user-authentication__credential-input")
+                input(type="text", name="username", placeholder="Username", required)
+                br
+                input(type="password", name="password", placeholder="Password", required)
+                br
+                button(type="submit") Login
+        a(href="/register") Register
