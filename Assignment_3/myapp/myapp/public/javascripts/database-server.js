@@ -1,17 +1,15 @@
 
-var fs = require("fs");
+const { raw } = require('express');
 const { resolve } = require('path');
-var dbFile = "test.db";
-var exists = fs.existsSync(dbFile);
-if(!exists) {
-    fs.openSync(dbFile, "w");
-}
 const sqlite3 = require('sqlite3').verbose();
-const Promise = require('bluebird')
+var dbFilePath = "test.db";
+const fs = require("fs");
 
-class DatabaseServer {
+
+class QueryHandler {
     constructor(dbFilePath){
-        this.dbFilePath = dbFilePath; /*new sqlite3.Database(__dirname + "/" + dbFile, (err) => {
+        this.dbFilePath = dbFilePath; 
+        console.log("QUERY HANDLER CREATED!!");/*new sqlite3.Database(__dirname + "/" + dbFile, (err) => {
             if (err) {
                 console.log("Could not connect to the database", err);
             }
@@ -22,11 +20,15 @@ class DatabaseServer {
     }
 };
 
-DatabaseServer.prototype.executeRUNQuery = function(queryString, params = []){
-    console.log("Executing: " + queryString);
-    console.log("With values" + params);
+QueryHandler.prototype.executeRUNQuery = function(queryString, params = []){
+    console.log("\n\nExecuting RUN: " + queryString);
+    console.log("With values: " + params + "\n\n");
 
-    const db = new sqlite3.Database(this.dbFilePath);
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
 
     db.serialize( () =>{
         var runStmt = db.prepare(queryString);
@@ -37,6 +39,8 @@ DatabaseServer.prototype.executeRUNQuery = function(queryString, params = []){
             }
             else {
                 console.log("No error caught");
+                console.log("\n\nFINISHED Executing RUN: " + queryString + "\n\n");
+
             }
         });
 
@@ -48,11 +52,18 @@ DatabaseServer.prototype.executeRUNQuery = function(queryString, params = []){
             return console.error(err.message);
         }
     });
+
+
 };
 
-DatabaseServer.prototype.executeGETQuery = function(queryString, params = []) {
-
-    const db = new sqlite3.Database(this.dbFilePath);
+QueryHandler.prototype.executeGETQuery = function(queryString, params = []) {
+    console.log("\n\nExecuting GET: " + queryString);
+    console.log("With values: " + params);
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
 
     db.serialize( () => {
         db.each(queryString, params, (err, result) => {
@@ -76,9 +87,13 @@ DatabaseServer.prototype.executeGETQuery = function(queryString, params = []) {
     });
 };
 
-DatabaseServer.prototype.executeALLQuery = function(queryString, params = []) {
+QueryHandler.prototype.executeALLQuery = function(queryString, params = []) {
 
-    const db = new sqlite3.Database(this.dbFilePath);
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
 
     this.db.all(queryString, params, (err, result) => {
         if (err){
@@ -99,8 +114,8 @@ DatabaseServer.prototype.executeALLQuery = function(queryString, params = []) {
 
 
 class DatabaseTable {
-    constructor(db, tableName, attributeStatements = []){
-        this.db = db;
+    constructor(queryHandler, tableName, attributeStatements = []){
+        this.queryHandler = queryHandler;
         this.tableName = tableName;
     }
 };
@@ -125,7 +140,8 @@ DatabaseTable.prototype.createTable = function(attributeStatements = [], constra
         queryString += constraint + (!--constraintCounter ? ");" : "," );
     }
 
-    return this.db.executeRUNQuery(queryString);
+
+    //return this.queryHandler.executeRUNQuery(queryString);
 };
 
 
@@ -137,20 +153,142 @@ DatabaseTable.prototype.newEntry = function(attributeValues = []) {
     }
     console.log(queryString);
 
-    return this.db.executeRUNQuery(queryString, attributeValues);
+    return this.queryHandler.executeRUNQuery(queryString, attributeValues);
 };
 
 DatabaseTable.prototype.getById = function(id) {
-    return this.db.executeGETQuery(
+    return this.queryHandler.executeGETQuery(
         'SELECT * FROM ' + this.tableName + ' WHERE id = ?;', [id]
     );
 };
 
 
+class DatabaseServer {
+    constructor(dbFilePath) {
+        var exists = fs.existsSync(dbFilePath);
+        
+            //An object in charge of executing queries with the database
+        this.queryHandler = new QueryHandler(dbFilePath); 
 
-const dbServer = new DatabaseServer(dbFile);
+            //The tables of the database
+        this.quizTopicTable = new DatabaseTable(this.queryHandler, "QuizTopic");
+        this.quizTable = new DatabaseTable(this.queryHandler, "Quiz");
+        this.quizQuestionTypeTable = new DatabaseTable(this.queryHandler, "QuizQuestionType");
+        this.quizQuestionTable = new DatabaseTable(this.queryHandler, "QuizQuestion");
+        this.quizQuestionAnswerTable = new DatabaseTable(this.queryHandler, "QuizQuestionAnswer");
+        this.userTable = new DatabaseTable(this.queryHandler, "User");
+        this.userAttemptStatusTable = new DatabaseTable(this.queryHandler, "UserAttemptStatus");
+        this.userAttemptTable = new DatabaseTable(this.queryHandler, "UserAttempt");
+        this.userAttemptAnswer = new DatabaseTable(this.queryHandler, "UserAttemptAnswer");
+        
+        if(!exists) {
+            fs.openSync(dbFilePath, "w");
+            this.createDatabase();
+        }
 
-const quizTopicTable = new DatabaseTable(dbServer, "QuizTopic");
+    };
+};
+
+DatabaseServer.prototype.createDatabase = function(){
+
+    
+
+    this.quizTopicTable.createTable([
+        "id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT", 
+        "title VARCHAR(50) NOT NULL", 
+        "description_link VARCHAR(255) NOT NULL", 
+        "enabled BOOLEAN NOT NULL"
+    ]);
+
+    this.quizTable.createTable([
+        "id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT", 
+        "topic_id INT NOT NULL",
+        "title VARCHAR(50) NOT NULL", 
+        "enabled BOOLEAN NOT NULL",
+        ],[
+        "CONSTRAINT FK_QuizTopic FOREIGN KEY (topic_id) REFERENCES QuizTopic(id) ON DELETE NO ACTION ON UPDATE CASCADE"
+    ]);
+
+    this.quizQuestionTypeTable.createTable([
+        "id INTEGER CONSTRAINT PK_QuizQuestionType PRIMARY KEY AUTOINCREMENT", 
+        "type VARCHAR(50) NOT NULL UNIQUE"
+    ]);
+
+    this.quizQuestionTable.createTable([
+        "id INTEGER CONSTRAINT PK_QuizQuestion PRIMARY KEY AUTOINCREMENT", 
+        "quiz_id INT NOT NULL",
+        "quiz_question_type_id INT NOT NULL",
+        "title VARCHAR(50) NOT NULL",
+        "problem_statement VARCHAR(255) NOT NULL",
+        "enabled BOOLEAN NOT NULL"
+        ],[
+        "CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE CASCADE ON UPDATE CASCADE",
+        "CONSTRAINT FK_QuizQuestionType FOREIGN KEY (quiz_question_type_id) REFERENCES QuizQuestionType(id) ON DELETE NO ACTION ON UPDATE CASCADE"
+    ]);
+
+    this.quizQuestionAnswerTable.createTable([
+        "id INTEGER CONSTRAINT PK_QuizQuestionAnswer PRIMARY KEY AUTOINCREMENT", 
+        "quiz_question_id INT NOT NULL",
+        "answer VARCHAR(255) NOT NULL",
+        "correct BOOLEAN NOT NULL"
+        ],[
+        "CONSTRAINT FK_QuizQuestion FOREIGN KEY (quiz_question_id) REFERENCES QuizQuestion(id) ON DELETE CASCADE ON UPDATE CASCADE"
+    ]);
+
+    this.userTable.createTable([
+        "id INTEGER CONSTRAINT PK_User PRIMARY KEY AUTOINCREMENT",
+        "fistname VARCHAR(50) NOT NULL",
+        "middlename VARCHAR(50)",
+        "lastname VARCHAR(50) NOT NULL",
+        "username VARCHAR(50) NOT NULL UNIQUE",
+        "password VARCHAR(50) NOT NULL",
+    ]);
+    
+    this.userAttemptStatusTable.createTable([
+        "id INTEGER CONSTRAINT PK_UserAttemptStatus PRIMARY KEY AUTOINCREMENT",
+        "status VARCHAR(50) NOT NULL UNIQUE"
+    ]);
+
+    this.userAttemptTable.createTable([
+        "id INTEGER CONSTRAINT PK_UserAttempt PRIMARY KEY AUTOINCREMENT",
+        "user_id INT NOT NULL",
+        "quiz_id INT NOT NULL",
+        "user_attempt_status_id INT ONT NULL",
+        "session_id INT NOT NULL",
+        ],[
+        "CONSTRAINT FK_User FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE",
+        "CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE SET NULL ON UPDATE CASCADE",
+        "CONSTRAINT FK_UserAttemptStatus FOREIGN KEY (user_attempt_status_id) REFERENCES UserAttemptStatus(id) ON DELETE NO ACTION ON UPDATE CASCADE"
+    ]);
+
+    this.userAttemptAnswer.createTable([
+        "id INTEGER CONSTRAINT PK_UserAttemptAnswer PRIMARY KEY AUTOINCREMENT",
+        "user_attempt_id INT NOT NULL",
+        "quiz_question_answer_id INT NOT NULL",
+        ],[
+        "CONSTRAINT FK_UserAttempt FOREIGN KEY (user_attempt_id) REFERENCES UserAttempt(id) ON DELETE CASCADE ON UPDATE CASCADE",
+        "CONSTRAINT FK_QuizQuestionAnswer FOREIGN KEY (quiz_question_answer_id) REFERENCES QuizQuestionAnswer(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
+    ]);
+
+
+
+
+    //Insert predefined quizez into the database
+    let rawJsonData = fs.readFileSync('base_quiz_container.json');
+
+    var quizData = JSON.parse(rawJsonData);
+    this.quizTable.getById(1);
+    for (key in quizData){
+
+        this.quizTable.newEntry(quizData[key]);
+    }
+};
+
+
+
+const dbServer = new DatabaseServer(dbFilePath);
+
+/*const quizTopicTable = new DatabaseTable(dbServer, "QuizTopic");
 const quizTable = new DatabaseTable(dbServer, "Quiz");
 
 quizTopicTable.createTable(["id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT", 
@@ -163,7 +301,6 @@ quizTable.createTable(["id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCRE
                        "enabled BOOLEAN NOT NULL",
                        ], [
                         "CONSTRAINT FK_Quiz_topic FOREIGN KEY (topicId) REFERENCES QuizTopic(id) ON DELETE NO ACTION ON UPDATE CASCADE"
-
                        ]);
 
 
@@ -172,11 +309,11 @@ var entryValues = ["'HTML Tutorial'", "'LOL NEE'", true];
 
 quizTopicTable.newEntry(entryValues);
 console.log("GETTING BY ID");
-console.log(quizTopicTable.getById(1) + "----------------");
+quizTopicTable.getById(1);
 console.log("GITGOT BY ID JO");
 
 
-                                        
+                     */                   
 /*
 class QuizTopic{
     constructor(db){
