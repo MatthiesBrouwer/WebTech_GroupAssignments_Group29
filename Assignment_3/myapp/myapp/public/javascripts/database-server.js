@@ -6,17 +6,169 @@ var dbFilePath = "test.db";
 const fs = require("fs");
 
 
+
+
+
+class DatabaseServer {
+    constructor(dbFilePath) {
+        this.dbFilePath = dbFilePath;
+        var exists = fs.existsSync(dbFilePath);
+
+        if(!exists) {
+            fs.openSync(dbFilePath, "w");
+            this.createDatabase();
+        }
+
+    };
+};
+
+DatabaseServer.prototype.createDatabase = function(){
+    
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+
+    db.serialize( function(){
+        //Create all tabels
+        db.run(
+            `
+            CREATE TABLE IF NOT EXISTS QuizTopic (
+                id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT, 
+                title VARCHAR(50) NOT NULL, 
+                description_link VARCHAR(255) NOT NULL, 
+                enabled BOOLEAN NOT NULL
+            );
+            `
+        ).run(
+            `
+            CREATE TABLE IF NOT EXISTS Quiz (
+                id INTEGER  PRIMARY KEY AUTOINCREMENT, 
+                topic_id INT NOT NULL,
+                title VARCHAR(50) NOT NULL, 
+                enabled BOOLEAN NOT NULL,
+                CONSTRAINT FK_QuizTopic FOREIGN KEY (topic_id) REFERENCES QuizTopic(id) ON DELETE NO ACTION ON UPDATE CASCADE
+            );
+            `
+        ).run(
+            `
+            CREATE TABLE IF NOT EXISTS QuizQuestionType (
+                id INTEGER CONSTRAINT PK_QuizQuestionType PRIMARY KEY AUTOINCREMENT, 
+                type VARCHAR(50) NOT NULL UNIQUE
+            );
+            `
+        ).run(
+            `
+            CREATE TABLE IF NOT EXISTS QuizQuestion (
+                id INTEGER CONSTRAINT PK_QuizQuestion PRIMARY KEY AUTOINCREMENT, 
+                quiz_id INT NOT NULL,
+                quiz_question_type_id INT NOT NULL,
+                title VARCHAR(50) NOT NULL,
+                problem_statement VARCHAR(255) NOT NULL,
+                enabled BOOLEAN NOT NULL,
+                CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE CASCADE ON UPDATE CASCADE,
+                CONSTRAINT FK_QuizQuestionType FOREIGN KEY (quiz_question_type_id) REFERENCES QuizQuestionType(id) ON DELETE NO ACTION ON UPDATE CASCADE
+            );
+            `
+        ).run(
+            `
+            CREATE TABLE IF NOT EXISTS QuizQuestionAnswer (
+                id INTEGER CONSTRAINT PK_QuizQuestionAnswer PRIMARY KEY AUTOINCREMENT, 
+                quiz_question_id INT NOT NULL,
+                answer VARCHAR(255) NOT NULL,
+                correct BOOLEAN NOT NULL,
+                CONSTRAINT FK_QuizQuestion FOREIGN KEY (quiz_question_id) REFERENCES QuizQuestion(id) ON DELETE CASCADE ON UPDATE CASCADE
+            );
+            `
+        ).run(
+            `
+            CREATE TABLE IF NOT EXISTS User (
+                id INTEGER CONSTRAINT PK_User PRIMARY KEY AUTOINCREMENT,
+                fistname VARCHAR(50) NOT NULL,
+                middlename VARCHAR(50),
+                lastname VARCHAR(50) NOT NULL,
+                username VARCHAR(50) NOT NULL UNIQUE,
+                password VARCHAR(50) NOT NULL
+            );
+            `
+        ).run(
+            `
+            CREATE TABLE IF NOT EXISTS UserAttemptStatus (
+                id INTEGER CONSTRAINT PK_UserAttemptStatus PRIMARY KEY AUTOINCREMENT,
+                status VARCHAR(50) NOT NULL UNIQUE
+            );
+            `
+        ).run(
+            `
+            CREATE TABLE IF NOT EXISTS UserAttempt (
+                id INTEGER CONSTRAINT PK_UserAttempt PRIMARY KEY AUTOINCREMENT,
+                user_id INT NOT NULL,
+                quiz_id INT NOT NULL,
+                user_attempt_status_id INT ONT NULL,
+                session_id INT NOT NULL,
+                CONSTRAINT FK_User FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE,
+                CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE SET NULL ON UPDATE CASCADE,
+                CONSTRAINT FK_UserAttemptStatus FOREIGN KEY (user_attempt_status_id) REFERENCES UserAttemptStatus(id) ON DELETE NO ACTION ON UPDATE CASCADE
+                );
+            `
+        ).run(
+            `
+            CREATE TABLE IF NOT EXISTS UserAttemptAnswer (
+                id INTEGER CONSTRAINT PK_UserAttemptAnswer PRIMARY KEY AUTOINCREMENT,
+                user_attempt_id INT NOT NULL,
+                quiz_question_answer_id INT NOT NULL,
+                CONSTRAINT FK_UserAttempt FOREIGN KEY (user_attempt_id) REFERENCES UserAttempt(id) ON DELETE CASCADE ON UPDATE CASCADE,
+                CONSTRAINT FK_QuizQuestionAnswer FOREIGN KEY (quiz_question_answer_id) REFERENCES QuizQuestionAnswer(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+            );
+            `
+        );
+        let rawJsonData = fs.readFileSync('base_quiz_container.json');
+        var quizData = JSON.parse(rawJsonData);
+        var stmt = db.prepare("INSERT INTO Quiz (topic_id, title, enabled) VALUES (?, ?, ?);")
+        for (key in quizData){
+            var values = []
+            for(object in quizData[key]){
+                console.log(quizData[key][object].value + " , " + quizData[key][object] + " , " + quizData[key][object]);
+                stmt.run(quizData[key][object], quizData[key][object], quizData[key][object]);        }
+            }
+        stmt.finalize();
+        
+    });
+
+    db.close((err) => {
+        if (err) {
+            return console.error(err.message);
+        }
+    });
+
+    //Insert predefined quizez into the database
+    /*let rawJsonData = fs.readFileSync('base_quiz_container.json');
+
+    var quizData = JSON.parse(rawJsonData);
+    this.quizTable.getById(1);
+    for (key in quizData){
+
+        this.quizTable.newEntry(quizData[key]);
+    }*/
+};
+
+
+
+const dbServer = new DatabaseServer(dbFilePath);
+
+/*
 class QueryHandler {
     constructor(dbFilePath){
         this.dbFilePath = dbFilePath; 
-        console.log("QUERY HANDLER CREATED!!");/*new sqlite3.Database(__dirname + "/" + dbFile, (err) => {
+        console.log("QUERY HANDLER CREATED!!");new sqlite3.Database(__dirname + "/" + dbFile, (err) => {
             if (err) {
                 console.log("Could not connect to the database", err);
             }
             else {
                 console.log("Succesfully connected to the database");
             }
-        });*/
+        });
     }
 };
 
@@ -120,7 +272,7 @@ class DatabaseTable {
     }
 };
 
-DatabaseTable.prototype.createTable = function(attributeStatements = [], constraints = []){
+DatabaseTable.prototype.createTable = function(attributeStatements = [], constraints = [], callback){
     this.attributes = [];
     var queryString = 'CREATE TABLE IF NOT EXISTS ' + this.tableName + " (";
 
@@ -140,8 +292,11 @@ DatabaseTable.prototype.createTable = function(attributeStatements = [], constra
         queryString += constraint + (!--constraintCounter ? ");" : "," );
     }
 
+    
 
-    //return this.queryHandler.executeRUNQuery(queryString);
+    this.queryHandler.executeRUNQuery(queryString);
+
+    callback();
 };
 
 
@@ -163,132 +318,9 @@ DatabaseTable.prototype.getById = function(id) {
 };
 
 
-class DatabaseServer {
-    constructor(dbFilePath) {
-        var exists = fs.existsSync(dbFilePath);
-        
-            //An object in charge of executing queries with the database
-        this.queryHandler = new QueryHandler(dbFilePath); 
 
-            //The tables of the database
-        this.quizTopicTable = new DatabaseTable(this.queryHandler, "QuizTopic");
-        this.quizTable = new DatabaseTable(this.queryHandler, "Quiz");
-        this.quizQuestionTypeTable = new DatabaseTable(this.queryHandler, "QuizQuestionType");
-        this.quizQuestionTable = new DatabaseTable(this.queryHandler, "QuizQuestion");
-        this.quizQuestionAnswerTable = new DatabaseTable(this.queryHandler, "QuizQuestionAnswer");
-        this.userTable = new DatabaseTable(this.queryHandler, "User");
-        this.userAttemptStatusTable = new DatabaseTable(this.queryHandler, "UserAttemptStatus");
-        this.userAttemptTable = new DatabaseTable(this.queryHandler, "UserAttempt");
-        this.userAttemptAnswer = new DatabaseTable(this.queryHandler, "UserAttemptAnswer");
-        
-        if(!exists) {
-            fs.openSync(dbFilePath, "w");
-            this.createDatabase();
-        }
-
-    };
-};
-
-DatabaseServer.prototype.createDatabase = function(){
-
-    
-
-    this.quizTopicTable.createTable([
-        "id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT", 
-        "title VARCHAR(50) NOT NULL", 
-        "description_link VARCHAR(255) NOT NULL", 
-        "enabled BOOLEAN NOT NULL"
-    ]);
-
-    this.quizTable.createTable([
-        "id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT", 
-        "topic_id INT NOT NULL",
-        "title VARCHAR(50) NOT NULL", 
-        "enabled BOOLEAN NOT NULL",
-        ],[
-        "CONSTRAINT FK_QuizTopic FOREIGN KEY (topic_id) REFERENCES QuizTopic(id) ON DELETE NO ACTION ON UPDATE CASCADE"
-    ]);
-
-    this.quizQuestionTypeTable.createTable([
-        "id INTEGER CONSTRAINT PK_QuizQuestionType PRIMARY KEY AUTOINCREMENT", 
-        "type VARCHAR(50) NOT NULL UNIQUE"
-    ]);
-
-    this.quizQuestionTable.createTable([
-        "id INTEGER CONSTRAINT PK_QuizQuestion PRIMARY KEY AUTOINCREMENT", 
-        "quiz_id INT NOT NULL",
-        "quiz_question_type_id INT NOT NULL",
-        "title VARCHAR(50) NOT NULL",
-        "problem_statement VARCHAR(255) NOT NULL",
-        "enabled BOOLEAN NOT NULL"
-        ],[
-        "CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE CASCADE ON UPDATE CASCADE",
-        "CONSTRAINT FK_QuizQuestionType FOREIGN KEY (quiz_question_type_id) REFERENCES QuizQuestionType(id) ON DELETE NO ACTION ON UPDATE CASCADE"
-    ]);
-
-    this.quizQuestionAnswerTable.createTable([
-        "id INTEGER CONSTRAINT PK_QuizQuestionAnswer PRIMARY KEY AUTOINCREMENT", 
-        "quiz_question_id INT NOT NULL",
-        "answer VARCHAR(255) NOT NULL",
-        "correct BOOLEAN NOT NULL"
-        ],[
-        "CONSTRAINT FK_QuizQuestion FOREIGN KEY (quiz_question_id) REFERENCES QuizQuestion(id) ON DELETE CASCADE ON UPDATE CASCADE"
-    ]);
-
-    this.userTable.createTable([
-        "id INTEGER CONSTRAINT PK_User PRIMARY KEY AUTOINCREMENT",
-        "fistname VARCHAR(50) NOT NULL",
-        "middlename VARCHAR(50)",
-        "lastname VARCHAR(50) NOT NULL",
-        "username VARCHAR(50) NOT NULL UNIQUE",
-        "password VARCHAR(50) NOT NULL",
-    ]);
-    
-    this.userAttemptStatusTable.createTable([
-        "id INTEGER CONSTRAINT PK_UserAttemptStatus PRIMARY KEY AUTOINCREMENT",
-        "status VARCHAR(50) NOT NULL UNIQUE"
-    ]);
-
-    this.userAttemptTable.createTable([
-        "id INTEGER CONSTRAINT PK_UserAttempt PRIMARY KEY AUTOINCREMENT",
-        "user_id INT NOT NULL",
-        "quiz_id INT NOT NULL",
-        "user_attempt_status_id INT ONT NULL",
-        "session_id INT NOT NULL",
-        ],[
-        "CONSTRAINT FK_User FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE",
-        "CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE SET NULL ON UPDATE CASCADE",
-        "CONSTRAINT FK_UserAttemptStatus FOREIGN KEY (user_attempt_status_id) REFERENCES UserAttemptStatus(id) ON DELETE NO ACTION ON UPDATE CASCADE"
-    ]);
-
-    this.userAttemptAnswer.createTable([
-        "id INTEGER CONSTRAINT PK_UserAttemptAnswer PRIMARY KEY AUTOINCREMENT",
-        "user_attempt_id INT NOT NULL",
-        "quiz_question_answer_id INT NOT NULL",
-        ],[
-        "CONSTRAINT FK_UserAttempt FOREIGN KEY (user_attempt_id) REFERENCES UserAttempt(id) ON DELETE CASCADE ON UPDATE CASCADE",
-        "CONSTRAINT FK_QuizQuestionAnswer FOREIGN KEY (quiz_question_answer_id) REFERENCES QuizQuestionAnswer(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
-    ]);
-
-
-
-
-    //Insert predefined quizez into the database
-    let rawJsonData = fs.readFileSync('base_quiz_container.json');
-
-    var quizData = JSON.parse(rawJsonData);
-    this.quizTable.getById(1);
-    for (key in quizData){
-
-        this.quizTable.newEntry(quizData[key]);
-    }
-};
-
-
-
-const dbServer = new DatabaseServer(dbFilePath);
-
-/*const quizTopicTable = new DatabaseTable(dbServer, "QuizTopic");
+-------------------------------------------------
+const quizTopicTable = new DatabaseTable(dbServer, "QuizTopic");
 const quizTable = new DatabaseTable(dbServer, "Quiz");
 
 quizTopicTable.createTable(["id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT", 

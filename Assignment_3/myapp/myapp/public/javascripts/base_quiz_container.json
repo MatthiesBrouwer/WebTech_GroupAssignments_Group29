@@ -1,0 +1,16 @@
+{
+    "quiz": [
+        {   "topic_id":1,
+            "title":"First Quiz",
+            "enabled":true
+        },
+        {   "topic_id":1,
+            "title":"Second Quiz",
+            "enabled":false
+        },
+        {   "topic_id":2,
+            "title":"Third Quiz",
+            "enabled":true
+        }
+    ]
+}
