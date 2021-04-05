@@ -24,7 +24,7 @@
     <body>
 
         <!-- Descriptive block to appropriately describe the content contained. This is better than <div>'s -->
-            <header>
+            <header class="grid-container header__grid-container">
                 <section class="grid-container header-bar__grid-container">
                     <img class="header-bar__page-logo col-s__1 col-e__2 row-s__1 row-e__2" src="images/website-icon.png"
                         alt="Website logo">
@@ -42,7 +42,6 @@
                         <button id="header-bar__dropdown-menu-button" type="button" class="col-s__6 col-e__7">&#9776;</button>
     
                     </nav>
-    
     
                     <!-- Modification menu -->
                     <form name="page-editor" id="modification-menu">
@@ -73,7 +72,20 @@
                     </form>
                 </section>
     
-                
+                <section class="user-authentication__enclosure">
+                    <form method="POST" action="http://localhost:8029/routes/loginForm">
+                        <button id="user-authentication__dropdown-button" type="button" class="col-s__6 col-e__7"><img src="images/user-authentication-icon.png" alt="The icon for the login menu, displaying a human silhouete"></button>
+                        <article id="user-authentication__menu" class="user-authentication__menu user-authentication__menu--dropdown-inactive">
+                            <h1>User Login</h1>
+                            <fieldset class="user-authentication__credential-input">
+                                <input type="text" placeholder="Username" name="authentication__username" required>
+                                <input type="password" placeholder="Password" name="authentication__password" required>
+                                <button type="submit">Login</button>
+                            </fieldset>
+        
+                        </article>
+                    </form> 
+                </section>
             
             </header>
 
