@@ -150,3 +150,17 @@ new multipleChoice("Basic HTML question", "Which tag should be used to create em
 for (let i of questionList) {
 i.questionDisplay();
 }
+
+var req = new XMLHttpRequest();
+window.onload = function()
+{
+req.onreadystatechange= function ()
+{
+    if (this.readyState == 4 && this.status == 200)
+    {
+        console.log(req.responseText)
+    }
+
+}
+req.open("GET", "testdata.json", true);
+req.send();}
