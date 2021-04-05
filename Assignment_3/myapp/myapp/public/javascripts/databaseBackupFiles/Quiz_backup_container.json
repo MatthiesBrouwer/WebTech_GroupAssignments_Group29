@@ -1,5 +1,5 @@
 {
-    "quiz": [
+    "Quiz": [
         {   "topic_id":1,
             "title":"First Quiz",
             "enabled":true
