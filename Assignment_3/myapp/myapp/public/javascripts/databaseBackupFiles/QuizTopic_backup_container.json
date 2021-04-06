@@ -1,24 +1,19 @@
 {
     "QuizTopic": [
         {   
+            "title":"History",
+            "description_link":"history.html",
+            "enabled":true
+        },
+        {   
             "title":"HTML Tutorial",
-            "description_link":"get fucked",
+            "description_link":"tutorial.html",
             "enabled":true
         },
         {   
-            "title":"HTML Best Practices",
-            "description_link":"again, get fucked",
-            "enabled":false
-        },
-        {   
-            "title":"HTML History",
-            "description_link":"No clue",
+            "title":"HTML Best practice",
+            "description_link":"best-practices.html",
             "enabled":true
-        },
-        {   
-            "title":"HTML History",
-            "description_link":"The second one",
-            "enabled":false
         }
     ]
 }

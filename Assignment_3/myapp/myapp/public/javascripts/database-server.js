@@ -7,7 +7,7 @@ const fs = require("fs");
 
 
 const required = name => {
-    throw new Error(`Parameter ${name} is required`);
+    throw new Error("Parameter " + name + " is required");
 };
 
 
@@ -275,7 +275,7 @@ DatabaseServer.prototype.removeUser = function(userId = required('userId')){
     });
     db.serialize( () => {
         var deleteStmt = db.prepare(`DELETE FROM User WHERE id = ?;`);
-        deleteStmt.run([username], (err, user) => {
+        deleteStmt.run([userId], (err) => {
             if (err){
                 console.log("Could not find user by id: " + userId);
                 throw err;
@@ -287,7 +287,36 @@ DatabaseServer.prototype.removeUser = function(userId = required('userId')){
     db.close((err) => { if (err) {return console.error(err.message);}});
 };
 
+DatabaseServer.prototype.updateUser = function(updatedUser = required('UpdatedUser')){
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+
+    db.serialize( () => {
+        var updateStmt = db.prepare(`UPDATE User SET firstname=?, middlename=?, lastname=?, username=?, password=? WHERE id = ?;`);
+        console.log("RUNNING");
+        updateStmt.run( [updatedUser.firstname,
+                         updatedUser.middlename,
+                         updatedUser.lastname,
+                         updatedUser.username,
+                         updatedUser.password,
+                         updatedUser.id], (err) => {
+            if (err){
+                console.log("Could not find user: " + updatedUser);
+                throw err;
+            }
+            console.log("updated user: " + updatedUser.firstname);
+        });
+        updateStmt.finalize();
+    });
+
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
 const dbServer = new DatabaseServer(dbFilePath);
+/*
 //console.log("DB Created");
 dbServer.getUserById(2, function(user){console.log("Gotten user: " + user["id"]);});
 //console.log("User gitotten");
@@ -301,3 +330,14 @@ dbServer.getUserByUsername("MatthiesBrouwer", function(user){console.log("Gotten
 console.log(user);
 
 dbServer.removeUser(4);
+console.log("AFTER REMOVE");
+var alteredUser;
+dbServer.getUserById(1, function(user){
+    console.log("Before change: " + user.firstname); 
+    user.firstname = "Ties"; 
+    console.log("After change: " + user.firstname);
+    dbServer.updateUser(user);
+    });
+console.log("AFTER ID")
+console.log("AFTER NAMECHANGE")*/
+

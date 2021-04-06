@@ -1,15 +1,18 @@
 {
     "Quiz": [
-        {   "topic_id":1,
-            "title":"First Quiz",
+        {   
+            "topic_id":1,
+            "title":"HTML History Quiz #1",
             "enabled":true
         },
-        {   "topic_id":1,
-            "title":"Second Quiz",
-            "enabled":false
+        {   
+            "topic_id":2,
+            "title":"HTML Tutorial Quiz #1",
+            "enabled":true
         },
-        {   "topic_id":2,
-            "title":"Third Quiz",
+        {
+            "topic_id":3,
+            "title":"HTML Best Practices Quiz #1",
             "enabled":true
         }
     ]
