@@ -8,8 +8,8 @@ var logger = require('morgan');
 const md5 = require('md5');
 const session = require('express-session');
 var app = express();
-var options = {secret: 'Top secret do not enter'}
-app.use(session(options)); //initialize new session
+var options = {secret: 'Top secret do not enter', cookie: { maxAge: 60 * 60}} //1h login timer
+app.use(session(options)); //use session middleware
 var currentSession; 
 const userdb = [];
 
@@ -43,7 +43,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
    // if (querry result == true)
-   
+  //req.session.regenerate(session(options)); //generating a new session id once logged in to reset the timer. 
   req.session.username = req.body.username //store username in the session object.
   currentSession = req.session;
   if(currentSession.id){
