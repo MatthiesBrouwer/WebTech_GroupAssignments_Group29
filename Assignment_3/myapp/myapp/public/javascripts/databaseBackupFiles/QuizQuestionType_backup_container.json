@@ -1,0 +1,10 @@
+{
+    "QuizQuestionType": [
+        {   
+            "type":"FillInTheBlanks"
+        },
+        {   
+            "type":"MultipleChoice"
+        }
+    ]
+}

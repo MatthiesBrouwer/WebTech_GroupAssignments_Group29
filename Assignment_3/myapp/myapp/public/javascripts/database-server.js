@@ -1,263 +1,343 @@
-const sqlite3 = require('sqlite3');
+
+const { raw } = require('express');
+const { resolve } = require('path');
+const sqlite3 = require('sqlite3').verbose();
+var dbFilePath = "test.db";
+const fs = require("fs");
+
+
+const required = name => {
+    throw new Error("Parameter " + name + " is required");
+};
+
+
+class DatabaseTable {
+    constructor(tableName, attributes){
+        this.tableName = tableName;
+        this.attributes = attributes;
+    }
+};
+
+
+DatabaseTable.prototype.createTable = function(attributeStatements = [], constraints = []){
+    var queryString = 'CREATE TABLE IF NOT EXISTS ' + this.tableName + " (";
+
+    var statementCounter = attributeStatements.length;
+    for (statement of attributeStatements){
+        queryString += statement + (!--statementCounter ? "" : "," );
+    }
+
+    var constraintCounter = constraints.length;
+    queryString += (!constraintCounter ? ");" : ",");
+
+    for (constraint of constraints){
+        queryString += constraint + (!--constraintCounter ? ");" : "," );
+    }
+
+    return queryString;
+};
+
+DatabaseTable.prototype.newEntryStatement = function() {
+    var queryString = "INSERT INTO " + this.tableName  + " (" + this.attributes.toString() + ") VALUES (";
+    var statementCounter = this.attributes.length;
+    for (var i = 0; i < this.attributes.length; i++){
+        queryString += "?" + (!--statementCounter ? ");" : "," );
+    }
+    console.log(queryString);
+
+    return queryString;
+};
+
+
+//Returns the tables name, attributenames and the filepath of the backup file
+DatabaseTable.prototype.getTableInfo = function(backupFilePath){
+    return [this.tableName, this.attributes, "./databaseBackupFiles/" + this.tableName + "_backup_container.json"];
+};
+
 
 
 
 class DatabaseServer {
-    constructor(dbFilePath){
-        this.db = new sqlite3.Database(__dirname + "/" + dbFile, (err) => {
-            if (err) {
-                console.log("Could not connect to the database", err);
-            }
-            else {
-                console.log("Succesfully connected to the database");
-            }
-        });
-    }
-};
-
-DatabaseServer.prototype.executeRUNQuery = function(queryString, params = []){
-    return new Promise((resolve, reject) => {
-        this.db.run(queryString, params, (err) => {
-            if (err) {
-                console.log('Error running query: ', queryString, ", with parameters: " + params);
-                console.log(err);
-                reject(err);
-            }
-            else {
-                resolve( {id : this.lastID})
-            }
-        });
-    });
-};
-
-DatabaseServer.prototype.executeGETQuery = function(queryString, params = []) {
-    return new Promise((resolve, reject) => {
-        this.db.get(queryString, params, (err, result) => {
-            if(err){
-                console.log('Error running GET query: ' + queryString + ", with parameters: " + params);
-                console.log(err);
-                reject(err);
-            }
-            else{
-                resolve(result);
-            }
-        });
-    });
-};
-
-DatabaseServer.prototype.executeALLQuery = function(queryString, params = []) {
-    return new Promise((resolve, reject) => {
-        this.db.all(queryString, params, (err, result) => {
-            if (err){
-                console.log('Error running ALL query: ' + queryString + ", with parameters: " + params);
-                console.log(err);
-                reject(err);
-            }
-            else{
-                resolve(result);
-            }
-        });
-    });
-};
+    constructor(dbFilePath) {
+        this.dbFilePath = dbFilePath;
+        var exists = fs.existsSync(dbFilePath);
+        this.databaseTables = {};
+        this.databaseTables["QuizTopic"] = new DatabaseTable("QuizTopic", ["title", "description_link", "enabled"]);
+        this.databaseTables["Quiz"] = new DatabaseTable("Quiz", ["topic_id", "title", "enabled" ]);
+        this.databaseTables["QuizQuestionType"] = new DatabaseTable("QuizQuestionType", ["type"]);
+        this.databaseTables["QuizQuestion"] = new DatabaseTable("QuizQuestion", ["quiz_id", "quiz_question_type_id", "title", "problem_statement", "enabled"]);
+        this.databaseTables["QuizQuestionAnswer"] = new DatabaseTable("QuizQuestionAnswer", ["quiz_question_id", "answer", "correct"]);
+        this.databaseTables["User"] = new DatabaseTable("User", ["firstname", "middlename", "lastname", "username", "password"]);
+        this.databaseTables["UserAttemptStatus"] = new DatabaseTable("UserAttemptStatus", ["status"]);
+        this.databaseTables["UserAttempt"] = new DatabaseTable("UserAttempt", ["user_id", "quiz_id", "user_attempt_status_id", "session_id"]);
+        this.databaseTables["UserAttemptAnswer"] = new DatabaseTable("UserAttemptAnswer", ["user_attempt_id", "quiz_question_answer_id"]);
 
 
+        if(!exists) {
+            fs.openSync(dbFilePath, "w");
+            this.createDatabase();
+        }
 
-
-/*QUIZ TOPIC*/
-class QuizTopic{
-    constructor(db){
-        this.db = db;
-    }
-};
-
-QuizTopic.prototype.createTable = function() {
-    const queryString = `
-        CREATE TABLE IF NOT EXISTS QuizTopic (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title VARCHAR(50) NOT NULL,
-            descriptionLink VARCHAR(255) NOT NULL,
-            enabled BOOLEAN NOT NULL,
-            CONSTRAINT PK_Quiz_topic PRIMARY KEY (id)
-        );`;
-    return this.db.executeRUNQuery(queryString);
-};
-
-QuizTopic.prototype.newEntry = function(title, descriptionLink, enabled) {
-    return this.db.executeRUNQuery(
-        'INSERT INTO QuizTopic (title, descriptionLink, enabled) VALUES ( ?, ?, ?);'
-    , [title, descriptionLink, enabled]
-    );
-};
-
-QuizTopic.prototype.updateEntry = function(updatedQuizTopic) {
-    const {id, title, descriptionLink, enabled} = updatedQuizTopic;
-    return this.db.executeRUNQuery(`
-        UPDATE QuizTopic 
-            SET title = ?,
-                descriptionLink = ?,
-                enabled = ?
-            WHERE id = ?;
-        `, [title, descriptionLink, enabled, id]
-    );
-};
-
-QuizTopic.prototype.deleteEntry = function(entryId) {
-    return this.db.executeRUNQuery(`
-        DELETE FROM QuizTopic 
-            WHERE id = ?;
-        `, [id]
-    );
-};
-
-QuizTopic.prototype.getEntryById = function(id) {
-    return this.db.executeGETQuery(`
-        SELECT * FROM QuizTopic
-            WHERE id = ?;
-        `, [id]
-    );
-};
-
-
-/*QUIZ*/
-class Quiz{
-    constructor(db){
-        this.db = db;
     };
 };
 
-Quiz.prototype.createTable = function() {
-    const queryString =`
-        CREATE TABLE IF NOT EXISTS Quiz (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            topicId INT NOT NULL,
-            title VARCHAR(255) NOT NULL,
-            enabled BOOLEAN NOT NULL,
-            CONSTRAINT PK_Quiz PRIMARY KEY (id),
-            CONSTRAINT FK_Quiz_topic FOREIGN KEY (topicId) REFERENCES QuizTopic(id) ON DELETE NO ACTION ON UPDATE CASCADE
-        );`;
-    return this.db.executeRUNQuery(queryString);
+
+DatabaseServer.prototype.createDatabase = function(){
+    
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+    console.log("running");
+    
+    db.serialize( () => {
+        //Create all tabels
+        db.run(
+            this.databaseTables["QuizTopic"].createTable([
+                "id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT", 
+                "title VARCHAR(50) NOT NULL", 
+                "description_link VARCHAR(255) NOT NULL", 
+                "enabled BOOLEAN NOT NULL"
+            ])
+        ).run(
+            this.databaseTables["Quiz"].createTable([
+                "id INTEGER CONSTRAINT PK_QuizTopic PRIMARY KEY AUTOINCREMENT", 
+                "topic_id INT NOT NULL",
+                "title VARCHAR(50) NOT NULL", 
+                "enabled BOOLEAN NOT NULL",
+                ],[
+                "CONSTRAINT FK_QuizTopic FOREIGN KEY (topic_id) REFERENCES QuizTopic(id) ON DELETE NO ACTION ON UPDATE CASCADE"
+            ])
+        ).run(
+            this.databaseTables["QuizQuestionType"].createTable([
+                "id INTEGER CONSTRAINT PK_QuizQuestionType PRIMARY KEY AUTOINCREMENT", 
+                "type VARCHAR(50) NOT NULL UNIQUE"
+            ])
+        ).run(
+            this.databaseTables["QuizQuestion"].createTable([
+                "id INTEGER CONSTRAINT PK_QuizQuestion PRIMARY KEY AUTOINCREMENT", 
+                "quiz_id INT NOT NULL",
+                "quiz_question_type_id INT NOT NULL",
+                "title VARCHAR(50) NOT NULL",
+                "problem_statement VARCHAR(255) NOT NULL",
+                "enabled BOOLEAN NOT NULL"
+                ],[
+                "CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE CASCADE ON UPDATE CASCADE",
+                "CONSTRAINT FK_QuizQuestionType FOREIGN KEY (quiz_question_type_id) REFERENCES QuizQuestionType(id) ON DELETE NO ACTION ON UPDATE CASCADE"
+            ])
+        ).run(
+            this.databaseTables["QuizQuestionAnswer"].createTable([
+                "id INTEGER CONSTRAINT PK_QuizQuestionAnswer PRIMARY KEY AUTOINCREMENT", 
+                "quiz_question_id INT NOT NULL",
+                "answer VARCHAR(255) NOT NULL",
+                "correct BOOLEAN NOT NULL"
+                ],[
+                "CONSTRAINT FK_QuizQuestion FOREIGN KEY (quiz_question_id) REFERENCES QuizQuestion(id) ON DELETE CASCADE ON UPDATE CASCADE"
+            ])
+        ).run(
+            this.databaseTables["User"].createTable([
+                "id INTEGER CONSTRAINT PK_User PRIMARY KEY AUTOINCREMENT",
+                "firstname VARCHAR(50) NOT NULL",
+                "middlename VARCHAR(50)",
+                "lastname VARCHAR(50) NOT NULL",
+                "username VARCHAR(50) NOT NULL UNIQUE",
+                "password VARCHAR(50) NOT NULL"
+            ])
+        ).run(
+            this.databaseTables["UserAttemptStatus"].createTable([
+                "id INTEGER CONSTRAINT PK_UserAttemptStatus PRIMARY KEY AUTOINCREMENT",
+                "status VARCHAR(50) NOT NULL UNIQUE"
+            ])
+        ).run(
+            this.databaseTables["UserAttempt"].createTable([
+                "id INTEGER CONSTRAINT PK_UserAttempt PRIMARY KEY AUTOINCREMENT",
+                "user_id INT NOT NULL",
+                "quiz_id INT NOT NULL",
+                "user_attempt_status_id INT ONT NULL",
+                "session_id INT NOT NULL",
+                ],[
+                "CONSTRAINT FK_User FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE",
+                "CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE SET NULL ON UPDATE CASCADE",
+                "CONSTRAINT FK_UserAttemptStatus FOREIGN KEY (user_attempt_status_id) REFERENCES UserAttemptStatus(id) ON DELETE NO ACTION ON UPDATE CASCADE"
+            ])
+        ).run(
+            this.databaseTables["UserAttemptAnswer"].createTable([
+                "id INTEGER CONSTRAINT PK_UserAttemptAnswer PRIMARY KEY AUTOINCREMENT",
+                "user_attempt_id INT NOT NULL",
+                "quiz_question_answer_id INT NOT NULL",
+                ],[
+                "CONSTRAINT FK_UserAttempt FOREIGN KEY (user_attempt_id) REFERENCES UserAttempt(id) ON DELETE CASCADE ON UPDATE CASCADE",
+                "CONSTRAINT FK_QuizQuestionAnswer FOREIGN KEY (quiz_question_answer_id) REFERENCES QuizQuestionAnswer(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
+            ])
+        );
+
+        for (tableName in this.databaseTables){
+            var tableInfo = this.databaseTables[tableName].getTableInfo();
+            if(fs.existsSync(tableInfo[2])){
+                var rawJsonData = fs.readFileSync(tableInfo[2]);
+                var backupDataObjects = JSON.parse(rawJsonData)[tableInfo[0]];
+    
+                var entryStmt = db.prepare(this.databaseTables[tableName].newEntryStatement());
+                for (object in backupDataObjects){
+                    var attributeValues = [];
+                    for (attributeName of tableInfo[1]){
+                        attributeValues.push(backupDataObjects[object][attributeName]);
+                    } 
+                    console.log("PUSHING " + attributeValues + " INTO " +  attributeName);
+                    entryStmt.run(attributeValues);
+                }
+                entryStmt.finalize(); 
+            }
+        }
+    }, (err) => {
+        if(err){
+            console.log("ERROR CAUGHT DURING CREATION");
+
+        }
+    });
+
+    db.close((err) => { if (err) {return console.error(err.message);}});
 };
 
-Quiz.prototype.newEntry = function(topicId, title, enabled) {
-    return this.db.executeRUNQuery(`
-        INSERT INTO Quiz ( title, enabled) VALUES (?, ?, ?)
-    `, [topic_id, title, enabled]
-    );
+DatabaseServer.prototype.getUserById = function(userId = required('userId'), callback = required('callback function')){
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    }); 
+    db.serialize( () => {
+        var stmt = db.prepare(`SELECT * FROM User WHERE id = ?;`);
+        user = stmt.get([userId], (err, user) => {
+            if (err){
+                console.log("Could not find user by id: " + userId);
+                throw err;
+            }
+            callback(user);
+        });
+        stmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
 };
 
-Quiz.prototype.updateEntry = function(updatedQuiz) {
-    const {id, topicId, title, enabled} = updatedQuiz;
-    return this.db.executeRUNQuery(`
-        UPDATE Quiz
-            SET topicIdd = ?,
-                title = ?,
-                enabled = ?
-            WHERE id = ?;
-        `, [topic_id, title, enabled, id]
-    );
+DatabaseServer.prototype.getUserByUsername = function(username = required('username'), callback = required('callback function')){
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+    
+    db.serialize( () => {
+        var stmt = db.prepare(`SELECT * FROM User WHERE username = ?;`);
+        stmt.get([username], (err, user) => {
+            if (err){
+                console.log("Could not find user by username: " + username);
+                throw err;
+            }
+            callback(user);
+        });
+        stmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+
 };
 
-Quiz.prototype.deleteEntry = function(entryId) {
-    return this.db.executeRUNQuery(`
-        DELETE FROM Quiz 
-            WHERE id = ?;
-        `, [id]
-    );
+DatabaseServer.prototype.addNewUser = function(
+                                        firstname =  required('firstname'), 
+                                        middlename = null, 
+                                        lastname =   required('lastname'), 
+                                        username =   required('username'), 
+                                        password =   required('password')){
+
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+    db.serialize( () => {
+        var entryStmt = db.prepare(this.databaseTables["User"].newEntryStatement());
+        entryStmt.run([firstname, middlename, lastname, username, password], (err) => {
+            if (err){
+                console.log("Error adding new user: \n\t" + firstname + "\n\t" + middlename + "\n\t" + lastname  + "\n\t" + username  + "\n\t" + password );
+                throw err;
+            }
+        });
+        entryStmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
 };
 
-Quiz.prototype.getEntryById = function(id) {
-    return this.db.executeGETQuery(`
-        SELECT * FROM Quiz
-            WHERE id = ?;
-        `, [id]
-    );
+DatabaseServer.prototype.removeUser = function(userId = required('userId')){
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+    db.serialize( () => {
+        var deleteStmt = db.prepare(`DELETE FROM User WHERE id = ?;`);
+        deleteStmt.run([userId], (err) => {
+            if (err){
+                console.log("Could not find user by id: " + userId);
+                throw err;
+            }
+            console.log("Removed user with id: " + userId);
+        });
+        deleteStmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
 };
 
-Quiz.prototype.getAllEntries = function() {
-    return this.db.executeALLQuery(`
-        SELECT * FROM Quiz;
-        `
-    );
-}
+DatabaseServer.prototype.updateUser = function(updatedUser = required('UpdatedUser')){
+    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
 
+    db.serialize( () => {
+        var updateStmt = db.prepare(`UPDATE User SET firstname=?, middlename=?, lastname=?, username=?, password=? WHERE id = ?;`);
+        console.log("RUNNING");
+        updateStmt.run( [updatedUser.firstname,
+                         updatedUser.middlename,
+                         updatedUser.lastname,
+                         updatedUser.username,
+                         updatedUser.password,
+                         updatedUser.id], (err) => {
+            if (err){
+                console.log("Could not find user: " + updatedUser);
+                throw err;
+            }
+            console.log("updated user: " + updatedUser.firstname);
+        });
+        updateStmt.finalize();
+    });
 
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
 
+const dbServer = new DatabaseServer(dbFilePath);
+/*
+//console.log("DB Created");
+dbServer.getUserById(2, function(user){console.log("Gotten user: " + user["id"]);});
+//console.log("User gitotten");
+dbServer.getUserByUsername("MatthiesBrouwer", function(user){console.log("Gotten user: " + user["id"]);});
+//console.log("User added");
 
+//dbServer.addNewUser(firstname = "Maya", middlename = null, lastname = "Brouwer", username="I_Screm_too_much", password = "AAAAAAAAAAAAAAAAHHH");
 
+//user = dbServer.getUserById(4);
 
+console.log(user);
 
-var fs = require("fs");
-const { resolve } = require('path');
-var dbFile = "test.db";
-var exists = fs.existsSync(dbFile);
-if(!exists) {
-    fs.openSync(dbFile, "w");
-}
-
-const dbServer = new DatabaseServer(dbFile);
-const quiztopic1 = {title : 'html tutorial', descriptionLink : 'Lol, nee', enabled : true};
-const quiztopic2 = {title : 'html best practice', descriptionLink : 'Wat zei ik nou. Nee', enabled : false};
-const quiz1 = {topicId : 1, title : "Basic HTML #1", enabled : true};
-const quiz2 = {topicId : 2, title : "Basic HTML #2", enabled : false};
-
-const quizRepo = new Quiz(dbServer);
-const quizTopicRepo = new QuizTopic(dbServer);
-
-let quizId;
-
-quizTopicRepo.createTable()
-    .then(() => quizRepo.createTable())
-    .then(() => quizTopicRepo.newEntry(quiztopic1.title, quiztopic1.descriptionLink, quiztopic1.enabled))
-
-    .then((data) => {
-        quizId = data.id;
-        const quizez = [
-            {
-                topicId : 1,
-                title : "Basic HTML #1",
-                enabled: true
-            },
-            {
-                topicId : 2,
-                title : "Basic HTML #2",
-                enabled: false
-            },
-        ]
-        return Promise.all(quizes.map((quiz) => {
-            const {topicId, title, enabled} = quiz;
-            return quizRepo.newEntry(topicId, title, enabled);
-        }))
-    })
-    .then(() => {
-        quizTopicRepo.getEntryById(1);
-    })
-    .then((quizTopic) => {
-        console.log(`\nRetrieved quiz topic from database`);
-        console.log(`quiz topic id = ${quizTopic.id}`);
-        console.log(`quiz topic title = ${quizTopic.title}`);
-        console.log(`quiz topic description link = ${quizTopic.descriptionLink}`);
-        console.log(`quiz topic enabled = ${quizTopic.enabled}`);
-        return db.executeALLQuery(`
-            SELECT * FROM quiz WHERE topicId = ${quizTopic.id}
-        `);
-    })
-    .then((quizes) => {
-        console.log(`\nRetrieved quizez from database`);
-        return new Promise((resolve, reject) => {
-            quizes.forEach((quiz) => {
-                console.log(`quiz id = ${quiz.id}`);
-                console.log(`quiz topic id = ${quiz.topicId}`);
-                console.log(`quiz title = ${quiz.title}`);
-                console.log(`quiz enabled = ${quiz.enabled}`);
-            });
-        })
-        resolve('succes');
-    })
-    .catch((err) => {
-        console.log("Error!!!: ");
-        console.log(JSON.stringify(err))
-    })
-
-
-
+dbServer.removeUser(4);
+console.log("AFTER REMOVE");
+var alteredUser;
+dbServer.getUserById(1, function(user){
+    console.log("Before change: " + user.firstname); 
+    user.firstname = "Ties"; 
+    console.log("After change: " + user.firstname);
+    dbServer.updateUser(user);
+    });
+console.log("AFTER ID")
+console.log("AFTER NAMECHANGE")*/
 

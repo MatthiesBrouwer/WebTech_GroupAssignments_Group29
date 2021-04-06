@@ -53,11 +53,11 @@ app.post('/login', (req, res) => {
     res.redirect('/register');
   }
   //need to check and create a session store session id in cookie?
-})
+});
 
 app.get('/register', (req, res) => {
   res.render("register");
-})
+});
 
 app.post('/register', async (req, res) => { //asynchronous because encyrpting a password with a hash funciton can take some time!
   try {
@@ -66,15 +66,15 @@ app.post('/register', async (req, res) => { //asynchronous because encyrpting a 
       username: req.body.username,
       email: req.body.email,
       password: HashPass
-    })
+    });
     res.redirect("/login");
   }                                    //try catch to check if the funciton is not stuck 
-  catch {
+  catch(err) {
     res.redirect("/register");
     alert("Something has gone wrong");
   }
   console.log(userdb)
-})
+});
 
 
 //app.use("/routes", apiRouter)
