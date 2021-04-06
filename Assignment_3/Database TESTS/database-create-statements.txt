@@ -1,0 +1,92 @@
+CREATE DATABASE HTMLTutorialDB;
+
+CREATE TABLE User {
+    id INT NOT NULL AUTO_INCREMENT,
+    firstname VARCHAR(50) NOT NULL,
+    middlename VARCHAR(50),
+    lastname VARCHAR(50) NOT NULL,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT PK_User PRIMARY KEY (id)
+};
+
+CREATE TABLE Quiz_topic {
+    id INT NOT NULL AUTO_INCREMENT,
+    title VARCHAR(50) NOT NULL,
+    description_link VARCHAR(255) NOT NULL,
+    enabled BOOLEAN NOT NULL,
+    CONSTRAINT PK_Quiz_topic PRIMARY KEY (id)
+};
+
+CREATE TABLE Quiz {
+    id INT NOT NULL AUTO_INCREMENT,
+    topic_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    enabled BOOLEAN NOT NULL,
+    CONSTRAINT PK_Quiz PRIMARY KEY (id),
+    CONSTRAINT FK_Quiz_topic FOREIGN KEY (topic_id) REFERENCES Quiz_topic(id) ON DELETE NO ACTION ON UPDATE CASCADE
+};
+
+CREATE TABLE Quiz_question_type {
+    id INT NOT NULL AUTO_INCREMENT,
+    question_type VARCHAR(50) NOT NULL UNIQUE,
+    CONSTRAINT PK_Quiz_question_type PRIMARY KEY (id)
+};
+
+CREATE TABLE Quiz_question {
+    id INT NOT NULL AUTO_INCREMENT,
+    quiz_id INT NOT NULL,
+    quiz_question_type_id INT NOT NULL,
+    title VARCHAR(50) NOT NULL,
+    question_statement VARCHAR(255) NOT NULL,
+    enabled BOOLEAN NOT NULL,
+    CONSTRAINT PK_Quiz_question PRIMARY KEY (id),
+    CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FK_Quiz_question_type FOREIGN KEY (quiz_question_type_id) REFERENCES Quiz_question_type(id) ON DELETE CASCADE ON UPDATE CASCADE
+};
+
+CREATE TABLE Quiz_question_answer {
+    id INT NOT NULL AUTO_INCREMENT,
+    quiz_question_id INT NOT NULL,
+    answer VARCHAR(50) NOT NULL,
+    correct BOOLEAN NOT NULL
+    CONSTRAINT PK_Quiz_question_answer PRIMARY KEY (id),
+    CONSTRAINT FK_Quiz_question FOREIGN KEY (quiz_question_id) REFERENCES Quiz_question(id) ON DELETE CASCADE ON UPDATE CASCADE,
+};
+
+CREATE TABLE User_attempt_status {
+    id INT NOT NULL AUTO_INCREMENT,
+    status VARCHAR(50),
+    CONSTRAINT PK_User_attempt_status PRIMARY KEY (id)
+};
+
+CREATE TABLE User_attempt {
+    id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    quiz_id INT NOT NULL,
+    user_attempt_status_id INT NOT NULL,
+    start_period DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_period DATETIME NULL DEFAULT NULL,
+    finish_period DATETIME NULL DEFAULT NULL,
+    CONSTRAINT PK_User_attempt PRIMARY KEY (id),
+    CONSTRAINT FK_User FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT FK_User_attempt_status FOREIGN KEY (user_attempt_status_id) REFERENCES User_attempt_status(id) ON DELETE NO ACTION ON UPDATE CASCADE
+};
+
+CREATE TABLE User_attempt_answer {
+    id INT NOT NULL AUTO_INCREMENT,
+    user_attempt_id INT NOT NULL,
+    quiz_question_id INT NOT NULL,
+    quiz_question_answer_id INT NOT NULL,
+    answer_period DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT PK_User_attempt_answer PRIMARY KEY (id),
+    CONSTRAINT FK_User_attempt FOREIGN KEY (user_attempt_id) REFERENCES User_attempt(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FK_Quiz_question FOREIGN KEY (quiz_question_id) REFERENCES quiz_question(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FK_Quiz_question_answer FOREIGN KEY (quiz_question_answer_id) REFERENCES Quiz_question_answer(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+};
+
+
+
+
