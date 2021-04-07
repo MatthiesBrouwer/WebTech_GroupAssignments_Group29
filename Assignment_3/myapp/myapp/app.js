@@ -1,6 +1,11 @@
 var express = require('express');
 var path = require("path");
 var logger = require('morgan');
+
+//A database server class that handles the queries with function abstractions
+var DatabaseServer = require("./lib/database-server");
+var databaseServer = new DatabaseServer("./test.db");
+
 //var bodyParser = require("body-parser");
 //var apiRouter = require ("./routes/api_router.js");
 //app.use(logger('dev'));
@@ -77,9 +82,38 @@ app.post('/register', async (req, res) => { //asynchronous because encyrpting a 
 });
 
 
+var quizes = {
+  "Quiz" : [
+    {   
+      "quiz_id":1,
+      "quiz_question_type_id":1,
+      "title":"History question",
+      "problem_statement":"Tim-Berners-Lee invented HTML in",
+      "enabled":true
+    },
+    {   
+      "quiz_id":2,
+      "quiz_question_type_id":2,
+      "title":"Syntax question",
+      "problem_statement":"What should be the first element of a HTML5 document?",
+      "enabled":true
+    },
+  ]
+};
+
+app.get("/quiz/overview", (req, res) => {
+  
+  
+  console.log("table: " + req.params.table);
+  console.log("attributename: " + req.params.attributename);
+  res.send(quizes);
+});
+
+
 //app.use("/routes", apiRouter)
-
-
+//console.log("Getting database server");
+//console.log("Gotten database server: " + database_server);
+//database_server.testfunction();
 
 module.exports = app;
 

@@ -315,7 +315,14 @@ DatabaseServer.prototype.updateUser = function(updatedUser = required('UpdatedUs
     db.close((err) => { if (err) {return console.error(err.message);}});
 };
 
-const dbServer = new DatabaseServer(dbFilePath);
+DatabaseServer.prototype.testfunction = function() {
+    console.log("WERKT");
+};
+
+module.exports = DatabaseServer;
+
+
+//const dbServer = new DatabaseServer(dbFilePath);
 /*
 //console.log("DB Created");
 dbServer.getUserById(2, function(user){console.log("Gotten user: " + user["id"]);});
