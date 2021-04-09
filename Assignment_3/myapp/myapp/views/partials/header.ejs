@@ -43,20 +43,31 @@
 
       
       </form>
-  </section>
-
-  <section class="user-authentication__enclosure">
-      <form method="POST" action="http://localhost:8029/routes/loginForm">
-          <button id="user-authentication__dropdown-button" type="button" class="col-s__6 col-e__7"><img src="images/user-authentication-icon.png" alt="The icon for the login menu, displaying a human silhouete"></button>
-          <article id="user-authentication__menu" class="user-authentication__menu user-authentication__menu--dropdown-inactive">
-              <h1>User Login</h1>
-              <fieldset class="user-authentication__credential-input">
-                  <input type="text" placeholder="Username" name="authentication__username" required>
-                  <input type="password" placeholder="Password" name="authentication__password" required>
-                  <button type="submit">Login</button>
-              </fieldset>
-
-          </article>
-      </form> 
-  </section>
+    </section>
+    <% if (isLoggedIn) {%>
+        <section class="user-authentication__enclosure">
+            <form method="GET" action="/logout">
+                <button id="user-authentication__dropdown-button" type="button" class="col-s__6 col-e__7"><img src="images/user-authentication-icon.png" alt="The icon for the login menu, displaying a human silhouete"></button>
+                <article id="user-authentication__menu" class="user-authentication__menu user-authentication__menu--dropdown-inactive">
+                    <h1>Hey, <%=name%></h1>             
+                    <button type="submit">Logout</button>
+                </article>
+            </form> 
+        </section> 
+    <% } else { %>
+        <section class="user-authentication__enclosure">
+            <form method="POST" action="/login">
+                <button id="user-authentication__dropdown-button" type="button" class="col-s__6 col-e__7"><img src="images/user-authentication-icon.png" alt="The icon for the login menu, displaying a human silhouete"></button>
+                <article id="user-authentication__menu" class="user-authentication__menu user-authentication__menu--dropdown-inactive">
+                    <h1>User Login</h1>
+                    <fieldset class="user-authentication__credential-input">
+                        <input type="text" placeholder="Username" name="authUsername" required>
+                        <input type="password" placeholder="Password" name="authPassword" required>
+                        <button type="submit">Login</button>
+                        <a href= "/register">Register</a>
+                    </fieldset>    
+                </article>
+            </form> 
+        </section>
+    <% } %>
 

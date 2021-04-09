@@ -4,8 +4,7 @@ var logger = require('morgan');
 
 //A database server class that handles the queries with function abstractions
 var DatabaseServer = require("./lib/database-server");
-var databaseServer = new DatabaseServer("database.db");
-databaseServer.testfunction();
+var dbInstance = new DatabaseServer("database.db");
 
 //var bodyParser = require("body-parser");
 //var apiRouter = require ("./routes/api_router.js");
@@ -17,7 +16,7 @@ const { Database } = require('sqlite3');
 var app = express();
 var options = {secret: 'Top secret do not enter', cookie: { maxAge: 60 * 60 * 1000}} //1h login timer
 app.use(session(options)); //use session middleware
-var currentSession; 
+//var currentSession; 
 
 //var staticPath = path.resolve(__dirname, "static");
 //app.use(express.static(staticPath));
@@ -32,11 +31,92 @@ app.use(express.static(routesPath));
 //app.set("views", path.resolve(__dirname, "views"));
 app.use(express.urlencoded({extended: false})); //Bodyparser now uses express.urlencoded()https://stackoverflow.com/questions/24330014/bodyparser-is-deprecated-express-4
 
-/* TEST FUNCTIES VOOR EJS */
+/* TEST FUNCTIES VOOR EJS */ // Can be placed in api router if done prperly
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
-  res.render('pages/index');
+  res.render('pages/index', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
+  console.log(req.session.username);
+});
+
+app.get('/history', (req,res) =>{
+  res.render('pages/history', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
+});
+
+app.get('/tutorial', (req,res) =>{
+  res.render('pages/tutorial', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
+});
+
+app.get('/contact', (req,res) =>{
+  res.render('pages/contact', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
+});
+
+app.get('/best-practices', (req,res) =>{
+  res.render('pages/best-practices', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
+});
+
+app.get('/register', (req, res) => {
+  if (req.session.isAuthenticated == true){
+    res.redirect("/"); //logged in people cannot register
+  }
+  else {
+    res.render('pages/register', {isLoggedIn: req.session.isAuthenticated, registerFault: false} )
+  }
+});
+
+app.post('/register', (req, res) =>{
+  const HashPass = md5(req.body.regPassword);
+  dbInstance.getUserByUsername(req.body.regUsername, (user) => {
+    if (!user){
+      console.log("user is not found in the db");
+      dbInstance.addNewUser(req.body.regFirstname, req.body.regMiddlename, req.body.regLastname,req.body.regUsername, HashPass);
+      res.redirect("/login");
+    }
+    else{
+    console.log("This user already exists");
+    res.render("pages/register", {isLoggedIn: req.session.isAuthenticated, registerFault: true});
+    }
+  });         
+});
+
+app.get('/login', (req, res) => {
+  if (req.session.isAuthenticated == true){
+  res.redirect("/"); //{name: req.session.name, username: req.session.username, isLoggedIn: req.session.isAuthenticated}
+  }
+  else{    
+  res.render('pages/login', {isLoggedIn: req.session.isAuthenticated, loginFault: false}); //
+  }
+});
+
+app.post('/login', (req, res) => {
+ let HashPass = md5(req.body.authPassword);
+  dbInstance.getUserByUsername(req.body.authUsername, (user) => {
+    if (user) { //check if user existst by username
+      if(HashPass === user["password"]){ //easy to hack but simple implementation
+        console.log("You are now logged in");
+        req.session.isAuthenticated = true; 
+        req.session.username = user["username"];
+        req.session.name = user["firstname"];
+        res.redirect('/');
+        //res.render("pages/index", {name: user["firstname"], username: user["username"], isLoggedIn: req.session.isAuthenticated});
+        console.log(req.session.username);
+        console.log(user["firstname"]);
+      }
+      else{
+        console.log("Wrong username or password");
+        res.render("pages/login", {isLoggedIn: req.session.isAuthenticated, loginFault: true }) //communicates that there has been a false attempt 
+      }
+     }
+     else{
+      console.log("Wrong username or password");
+      res.render("pages/login", {isLoggedIn: req.session.isAuthenticated, loginFault: true }) //communicates that there has been a false attempt 
+     }
+   })
+});
+
+app.get('/logout', (req,res) => {
+  req.session.destroy();
+  res.redirect("/")
 });
 
 app.get('/assessment', function(req, res) {
@@ -48,6 +128,12 @@ app.get('/assessment', function(req, res) {
     });
   });
 });
+
+/* //lifehack om even snel een test user te registreren al dit nog niet gebeurd is
+app.get('/register', function(req,res){
+  dbInstance.addNewUser("Test","Test","Test","Test", md5("Test")); 
+})
+/*
 
 /* EINDE TEST FUNCTIES VOOR EJS */
 /*
@@ -177,7 +263,7 @@ app.get("/quiz/overview", (req, res) => {
 //console.log("Gotten database server: " + database_server);
 //database_server.testfunction();
 
-module.exports = app;
+
 
 /*const apiRouter = require("./routes/api_router");
 
@@ -222,6 +308,6 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
-});
+}); */
 
-module.exports = app;*/
+module.exports = app; 
