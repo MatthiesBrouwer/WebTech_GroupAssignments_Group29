@@ -2,7 +2,6 @@
 const { raw } = require('express');
 const { resolve } = require('path');
 const sqlite3 = require('sqlite3').verbose();
-var dbFilePath = "test.db";
 const fs = require("fs");
 
 
@@ -51,16 +50,16 @@ DatabaseTable.prototype.newEntryStatement = function() {
 
 //Returns the tables name, attributenames and the filepath of the backup file
 DatabaseTable.prototype.getTableInfo = function(backupFilePath){
-    return [this.tableName, this.attributes, "./databaseBackupFiles/" + this.tableName + "_backup_container.json"];
+    return [this.tableName, this.attributes, __dirname + "/databaseBackupFiles/" + this.tableName + "_backup_container.json"];
 };
 
 
 
 
 class DatabaseServer {
-    constructor(dbFilePath) {
-        this.dbFilePath = dbFilePath;
-        var exists = fs.existsSync(dbFilePath);
+    constructor(dbFile) {
+        this.dbFile = __dirname + "/" + dbFile;
+        var exists = fs.existsSync(this.dbFile);
         this.databaseTables = {};
         this.databaseTables["QuizTopic"] = new DatabaseTable("QuizTopic", ["title", "description_link", "enabled"]);
         this.databaseTables["Quiz"] = new DatabaseTable("Quiz", ["topic_id", "title", "enabled" ]);
@@ -71,10 +70,10 @@ class DatabaseServer {
         this.databaseTables["UserAttemptStatus"] = new DatabaseTable("UserAttemptStatus", ["status"]);
         this.databaseTables["UserAttempt"] = new DatabaseTable("UserAttempt", ["user_id", "quiz_id", "user_attempt_status_id", "session_id"]);
         this.databaseTables["UserAttemptAnswer"] = new DatabaseTable("UserAttemptAnswer", ["user_attempt_id", "quiz_question_answer_id"]);
-
+        console.log("DIRNAME: " + __dirname);
 
         if(!exists) {
-            fs.openSync(dbFilePath, "w");
+            fs.openSync(this.dbFile, "w");
             this.createDatabase();
         }
 
@@ -84,11 +83,12 @@ class DatabaseServer {
 
 DatabaseServer.prototype.createDatabase = function(){
     
-    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+    const db = new sqlite3.Database(this.dbFile, (err) => {
         if (err) {
             console.log("Could not connect to the database", err);
         }
     });
+
     console.log("running");
     
     db.serialize( () => {
@@ -171,13 +171,14 @@ DatabaseServer.prototype.createDatabase = function(){
                 "CONSTRAINT FK_QuizQuestionAnswer FOREIGN KEY (quiz_question_answer_id) REFERENCES QuizQuestionAnswer(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
             ])
         );
-
+        console.log("FILLING DATA INTO TABLES");
         for (tableName in this.databaseTables){
+            console.log(tableName);
             var tableInfo = this.databaseTables[tableName].getTableInfo();
             if(fs.existsSync(tableInfo[2])){
                 var rawJsonData = fs.readFileSync(tableInfo[2]);
                 var backupDataObjects = JSON.parse(rawJsonData)[tableInfo[0]];
-    
+                console.log(backupDataObjects);
                 var entryStmt = db.prepare(this.databaseTables[tableName].newEntryStatement());
                 for (object in backupDataObjects){
                     var attributeValues = [];
@@ -201,7 +202,7 @@ DatabaseServer.prototype.createDatabase = function(){
 };
 
 DatabaseServer.prototype.getUserById = function(userId = required('userId'), callback = required('callback function')){
-    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+    const db = new sqlite3.Database(this.dbFile, (err) => {
         if (err) {
             console.log("Could not connect to the database", err);
         }
@@ -221,7 +222,7 @@ DatabaseServer.prototype.getUserById = function(userId = required('userId'), cal
 };
 
 DatabaseServer.prototype.getUserByUsername = function(username = required('username'), callback = required('callback function')){
-    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+    const db = new sqlite3.Database(this.dbFile, (err) => {
         if (err) {
             console.log("Could not connect to the database", err);
         }
@@ -249,7 +250,7 @@ DatabaseServer.prototype.addNewUser = function(
                                         username =   required('username'), 
                                         password =   required('password')){
 
-    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+    const db = new sqlite3.Database(this.dbFile, (err) => {
         if (err) {
             console.log("Could not connect to the database", err);
         }
@@ -268,7 +269,7 @@ DatabaseServer.prototype.addNewUser = function(
 };
 
 DatabaseServer.prototype.removeUser = function(userId = required('userId')){
-    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+    const db = new sqlite3.Database(this.dbFile, (err) => {
         if (err) {
             console.log("Could not connect to the database", err);
         }
@@ -288,7 +289,7 @@ DatabaseServer.prototype.removeUser = function(userId = required('userId')){
 };
 
 DatabaseServer.prototype.updateUser = function(updatedUser = required('UpdatedUser')){
-    const db = new sqlite3.Database(__dirname + "/" + this.dbFilePath, (err) => {
+    const db = new sqlite3.Database(this.dbFile, (err) => {
         if (err) {
             console.log("Could not connect to the database", err);
         }
@@ -314,6 +315,29 @@ DatabaseServer.prototype.updateUser = function(updatedUser = required('UpdatedUs
 
     db.close((err) => { if (err) {return console.error(err.message);}});
 };
+
+DatabaseServer.prototype.getTopics = function(callback = required('callback function')){
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+    
+    db.serialize( () => {
+        var stmt = db.prepare(`SELECT * FROM QuizTopic;`);
+        stmt.all((err, quizTopics) => {
+            if (err){
+                console.log("Could not find any topics ");
+                throw err;
+            }
+            console.log(quizTopics)
+            callback(quizTopics);
+        });
+        stmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+}
+
 
 DatabaseServer.prototype.testfunction = function() {
     console.log("WERKT");

@@ -4,7 +4,8 @@ var logger = require('morgan');
 
 //A database server class that handles the queries with function abstractions
 var DatabaseServer = require("./lib/database-server");
-var databaseServer = new DatabaseServer("./test.db");
+var databaseServer = new DatabaseServer("database.db");
+databaseServer.testfunction();
 
 //var bodyParser = require("body-parser");
 //var apiRouter = require ("./routes/api_router.js");
@@ -12,14 +13,14 @@ var databaseServer = new DatabaseServer("./test.db");
 //console.log("LOADED");
 const md5 = require('md5');
 const session = require('express-session');
+const { Database } = require('sqlite3');
 var app = express();
 var options = {secret: 'Top secret do not enter', cookie: { maxAge: 60 * 60}} //1h login timer
 app.use(session(options)); //use session middleware
 var currentSession; 
-const userdb = [];
 
-var staticPath = path.resolve(__dirname, "static");
-app.use(express.static(staticPath));
+//var staticPath = path.resolve(__dirname, "static");
+//app.use(express.static(staticPath));
 var publicPath = path.resolve(__dirname, 'public');
 app.use(express.static(publicPath));
 
@@ -28,10 +29,29 @@ app.use(express.static(routesPath));
 
 
 //to add views to the webpage
-app.set("views", path.resolve(__dirname, "views"));
-app.set('view engine', 'jade');
+//app.set("views", path.resolve(__dirname, "views"));
 app.use(express.urlencoded({extended: false})); //Bodyparser now uses express.urlencoded()https://stackoverflow.com/questions/24330014/bodyparser-is-deprecated-express-4
- //voor testfunctie 
+
+/* TEST FUNCTIES VOOR EJS */
+app.set('view engine', 'ejs');
+
+app.get('/', function(req, res) {
+  res.render('pages/index');
+});
+
+app.get('/assessment', function(req, res) {
+
+  databaseServer.getTopics( (quizTopics) => {
+    console.log(quizTopics);
+    res.render('pages/assessment', {
+      quizTopics : quizTopics
+    });
+  });
+});
+
+/* EINDE TEST FUNCTIES VOOR EJS */
+/*
+//voor testfunctie 
 
 app.get("/testindex", (req, res) => {
   if (req.session.username == undefined){
@@ -108,7 +128,7 @@ app.get("/quiz/overview", (req, res) => {
   console.log("attributename: " + req.params.attributename);
   res.send(quizes);
 });
-
+*/
 
 //app.use("/routes", apiRouter)
 //console.log("Getting database server");

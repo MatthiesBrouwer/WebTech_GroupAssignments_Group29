@@ -1,0 +1,40 @@
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header class="grid-container header__grid-container">
+        <%- include('../partials/header'); %>
+</header>
+
+<main class="main-content-enclosure">
+    <h1 class="page__title--base col-s__1 col-e__11 row-s__1 row-e__2">Home
+    </h1>
+    <section class="grid-container main-content__grid-container--base">
+
+        <h2 class="main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2">HTML Education -
+            Assessment 
+        </h2>
+
+        <ul>
+            <% quizTopics.forEach(function(topic) { %>
+                <li>
+                    <strong><%= topic.id %></strong>
+                    <%= topic.title %>
+                    <%= topic.description_link %>
+                    <%= topic.enabled %>
+
+                </li>
+            <% }); %>
+        </ul>
+        
+
+    </section>
+</main>
+
+<footer class="grid-container">
+    <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>

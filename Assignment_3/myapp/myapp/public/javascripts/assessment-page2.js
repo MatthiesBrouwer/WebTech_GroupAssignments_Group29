@@ -1,5 +1,19 @@
+let ejs = require('ejs');
+let people = ['geddy', 'neil', 'alex'];
+let html = ejs.render('<%= people.join(", "); %>', {people: people});
 
 
+
+
+
+
+
+
+
+
+
+
+/*
 var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200){
@@ -11,7 +25,7 @@ xhttp.onreadystatechange = function() {
 }
 xhttp.open("GET", "quiz/overview", true);
 xhttp.send();
-
+*/
 
 
 
