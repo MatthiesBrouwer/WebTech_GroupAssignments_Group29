@@ -4,7 +4,7 @@ var logger = require('morgan');
 
 //A database server class that handles the queries with function abstractions
 var DatabaseServer = require("./lib/database-server");
-var databaseServer = new DatabaseServer("./test.db");
+var dbInstance = new DatabaseServer("./test.db");
 
 //var bodyParser = require("body-parser");
 //var apiRouter = require ("./routes/api_router.js");
@@ -13,10 +13,12 @@ var databaseServer = new DatabaseServer("./test.db");
 const md5 = require('md5');
 const session = require('express-session');
 var app = express();
-var options = {secret: 'Top secret do not enter', cookie: { maxAge: 60 * 60}} //1h login timer
+var options = {secret: 'Top secret do not enter', cookie: { maxAge: 60 * 60 * 1000}} //1h login timer
 app.use(session(options)); //use session middleware
 var currentSession; 
 const userdb = [];
+
+//function isAuthenticated
 
 var staticPath = path.resolve(__dirname, "static");
 app.use(express.static(staticPath));
@@ -34,29 +36,55 @@ app.use(express.urlencoded({extended: false})); //Bodyparser now uses express.ur
  //voor testfunctie 
 
 app.get("/testindex", (req, res) => {
+  console.log(req.session.username)
   if (req.session.username == undefined){
-    res.render("index", {name: 'not a user'})
+    res.render("index", {name: req.session.name, username: req.session.username})
+    
   }
   else{
-  res.render("index", {name: req.session.username});
+  res.render("index", );
   }
 })
 
 app.get('/login', (req, res) => {
-  res.render("login");
+  if (req.session.isAuthenticated == true)
+  res.render("index", {name: req.session.name, username: req.session.username});
+  else{
+  res.render('login');
+  }
 })
 
 app.post('/login', (req, res) => {
    // if (querry result == true)
   //req.session.regenerate(session(options)); //generating a new session id once logged in to reset the timer. 
-  req.session.username = req.body.username //store username in the session object.
-  currentSession = req.session;
-  if(currentSession.id){
-    res.redirect('/testindex');
-  }
-  else{
-    res.redirect('/register');
-  }
+  //store username in the session object.
+  let HashPass = md5(req.body.password);
+  //currentSession = req.session;
+  //if(currentSession.id){
+  //  res.redirect('/testindex');
+  //}
+  //else{
+    dbInstance.getUserByUsername(req.body.username, (user) => {
+      if (user) { //check if user existst by username
+        if(HashPass === user["password"]){ //easy to hack but simple implementation
+          console.log("You are now logged in");
+          req.session.isAuthenticated = true; 
+          req.session.username = user["username"];
+          req.session.name = user["firstname"];
+          res.render("index", {name: user["firstname"], username: user["username"]});
+          console.log(user["firstname"]);
+        }
+        else{
+          console.log("Wrong username or password");
+        }
+      }
+      else{
+        console.log("this user doesn't exists");
+        res.redirect("login")
+      }
+    })
+    //res.redirect('/register');
+  //}
   //need to check and create a session store session id in cookie?
 });
 
@@ -65,20 +93,36 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', async (req, res) => { //asynchronous because encyrpting a password with a hash funciton can take some time!
-  try {
+ // try {
     const HashPass = md5(req.body.password)
-    userdb.push({
+    dbInstance.getUserByUsername(req.body.username, (user) => {
+    if (!user){
+      console.log("user is not found in the db");
+      dbInstance.addNewUser(req.body.firstName, req.body.middleName, req.body.lastName,req.body.username, HashPass);
+      res.redirect("/login");
+    }
+    else{
+      console.log("This user already exists");
+      res.redirect("/login");
+    }  
+      
+    //console.log(user)//assynchroom
+    
+    
+    })  
+    /*userdb.push({
       username: req.body.username,
       email: req.body.email,
       password: HashPass
-    });
-    res.redirect("/login");
-  }                                    //try catch to check if the funciton is not stuck 
-  catch(err) {
-    res.redirect("/register");
-    alert("Something has gone wrong");
-  }
-  console.log(userdb)
+    }); */
+    
+//  }                                    //try catch to check if the funciton is not stuck 
+  //catch(err) {
+  //  res.redirect("/register");
+ //   console.log("Something has gone wrong");
+ // }
+  //console.log(userdb)
+    
 });
 
 
