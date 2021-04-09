@@ -336,7 +336,63 @@ DatabaseServer.prototype.getTopics = function(callback = required('callback func
         stmt.finalize();
     });
     db.close((err) => { if (err) {return console.error(err.message);}});
-}
+};
+
+DatabaseServer.prototype.getTopicQuizes = function(callback = required('callback function')){
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+    
+    db.serialize( () => {
+        var stmt = db.prepare(`SELECT QuizTopic.id AS topicId, QuizTopic.title AS topicTitle, Quiz.id AS quizId, Quiz.title as quizTitle FROM QuizTopic JOIN Quiz ON QuizTopic.id = Quiz.topic_id;`);
+
+        stmt.all((err, topicQuizes) => {
+            if (err){
+                console.log("Could not find any topics ");
+                throw err;
+            }
+            topics = [];
+            for (quiz of topicQuizes) {
+                if(!topics[quiz.topicId]){
+                    topics[quiz.topicId] = {
+                        topicId : quiz.topicId,
+                        topicTitle : quiz.topicTitle,
+                        quizes : []
+                    };
+                }
+
+                topics[quiz.topicId].quizes.push({quizId : quiz.quizId, quizTitle : quiz.quizTitle});
+                
+            }
+            callback(topics);
+        });
+        stmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
+
+DatabaseServer.prototype.getQuizById = function(quizId = required('quizId'), callback = required('callback function')){
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    }); 
+    db.serialize( () => {
+        var stmt = db.prepare(`SELECT * FROM Quiz WHERE id = ?;`);
+        user = stmt.get([quizId], (err, quiz) => {
+            if (err){
+                console.log("Could not find quiz by id: " + quizId);
+                throw err;
+            }
+            callback(quiz);
+        });
+        stmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
 
 
 DatabaseServer.prototype.testfunction = function() {

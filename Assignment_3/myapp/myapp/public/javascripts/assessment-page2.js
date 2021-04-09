@@ -1,11 +1,37 @@
-let ejs = require('ejs');
-let people = ['geddy', 'neil', 'alex'];
-let html = ejs.render('<%= people.join(", "); %>', {people: people});
+var quizList 
+
+function getQuizById(quizId){
+    var req = new XMLHttpRequest();
+
+    req.open("GET", "/assessment/quiz?quizId=" + quizId, true);
+
+    req.onreadystatechange = function() {
+        if (req.readyState == 4 && req.status == 200) {
+            console.log(req.responseText);
+        }
+    }
+    req.send();
+    
+}
+
+// Function to register all events
+function registerEvents() {
+
+    var quizArray = document.getElementsByClassName("quiz-topic-overview__quiz-question");
+
+    console.log(quizArray);
 
 
+    for(let i = 0; i < quizArray.length; i++) {
+        quizArray[i].addEventListener("click", function() {getQuizById(i + 1)});
+    }
+}
 
 
+registerEvents()
 
+var quizes = '<%= topicQuizes  %>';
+console.log(quizes);
 
 
 

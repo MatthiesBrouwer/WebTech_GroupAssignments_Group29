@@ -41,12 +41,34 @@ app.get('/', function(req, res) {
 
 app.get('/assessment', function(req, res) {
 
+  databaseServer.getTopicQuizes( (topicQuizes) => {
+    
+    res.render('pages/assessment', {
+      topicQuizes : topicQuizes
+    });
+  });
+  /*
   databaseServer.getTopics( (quizTopics) => {
+
+    for (topic in quizTopics){
+      databaseServer.getQuestionsByTopicId(topic.id, (quizes) => {
+        topic.quizes = quizes;
+      });
+    }
     console.log(quizTopics);
     res.render('pages/assessment', {
       quizTopics : quizTopics
     });
+  });*/
+});
+
+app.get('/assessment/quiz',  function (req, res) {
+  console.log("GETTING QUIZ WITH ID: " + req.query.quizId);
+  databaseServer.getQuizById(req.query.quizId, (quiz) => {
+    console.log("GOTTEN: " + quiz);
+    res.send(quiz);
   });
+
 });
 
 /* EINDE TEST FUNCTIES VOOR EJS */
