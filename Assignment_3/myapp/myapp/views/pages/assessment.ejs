@@ -7,24 +7,7 @@
         <%- include('../partials/header'); %>
 </header>
 
-<main class="main-content-enclosure">
-    <h1 class="page__title--base col-s__1 col-e__11 row-s__1 row-e__2">Assessment
-    </h1>
-
-
-    <% topicQuizes.forEach(function(topic) { %>
-        <h2 class="quiz-topic-overview__title col-s__1 col-e__11 row-s__1 row-e__2"><%= topic.topicTitle %></h2>    
-        <section class="grid-container quiz-topic-overview__grid-container">
-            <!--<section class="quiz-topic-overview__enclosure grid-container col-s__1 col-e__11">-->
-                    <% topic.quizes.forEach(function(quiz) { %>
-                        <article class="quiz-topic-overview__quiz-question ">
-                            <h2><%= quiz.quizTitle %></h2>
-                        </article>
-                    <% }); %>
-            <!--</section>-->
-        </section>
-    <% }); %>
-        
+<main class="main-content-enclosure" id="main-content-enclosure">   
 
 </main>
 

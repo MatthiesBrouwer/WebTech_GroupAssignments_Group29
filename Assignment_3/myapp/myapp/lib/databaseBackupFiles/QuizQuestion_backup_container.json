@@ -3,8 +3,22 @@
         {   
             "quiz_id":1,
             "quiz_question_type_id":1,
-            "title":"History question",
+            "title":"HTML Inventor",
             "problem_statement":"Tim-Berners-Lee invented HTML in",
+            "enabled":true
+        },
+        {   
+            "quiz_id":1,
+            "quiz_question_type_id":2,
+            "title":"HTML Timeline",
+            "problem_statement":"HTML 3.0  was released in April 1995",
+            "enabled":true
+        },
+        {   
+            "quiz_id":1,
+            "quiz_question_type_id":1,
+            "title":"Current HTML",
+            "problem_statement":"What is the name of the current HTML 5 specifications?",
             "enabled":true
         },
         {   
@@ -22,6 +36,13 @@
             "enabled":true
         },
         {   
+            "quiz_id":2,
+            "quiz_question_type_id":2,
+            "title":"HTML Title question",
+            "problem_statement":"The <title> tag should be placed in what HTML element?",
+            "enabled":true
+        },
+        {   
             "quiz_id":3,
             "quiz_question_type_id":2,
             "title":"HTML styling question",
@@ -33,6 +54,13 @@
             "quiz_question_type_id":2,
             "title":"Attribute question",
             "problem_statement":"Which attribute is used to give a alternative text for when an image which doesn't load?",
+            "enabled":true
+        },
+        {   
+            "quiz_id":3,
+            "quiz_question_type_id":1,
+            "title":"Meta question",
+            "problem_statement":"The 'description' meta tag can help improve SEO. What other meta tag can accomplish this?",
             "enabled":true
         }
     ]

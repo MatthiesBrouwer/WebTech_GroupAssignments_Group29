@@ -355,15 +355,15 @@ DatabaseServer.prototype.getTopicQuizes = function(callback = required('callback
             }
             topics = [];
             for (quiz of topicQuizes) {
-                if(!topics[quiz.topicId]){
-                    topics[quiz.topicId] = {
+                if(!topics[quiz.topicId - 1]){
+                    topics[quiz.topicId - 1] = {
                         topicId : quiz.topicId,
                         topicTitle : quiz.topicTitle,
                         quizes : []
                     };
                 }
 
-                topics[quiz.topicId].quizes.push({quizId : quiz.quizId, quizTitle : quiz.quizTitle});
+                topics[quiz.topicId - 1].quizes.push({quizId : quiz.quizId, quizTitle : quiz.quizTitle});
                 
             }
             callback(topics);
@@ -381,6 +381,7 @@ DatabaseServer.prototype.getQuizById = function(quizId = required('quizId'), cal
         }
     }); 
     db.serialize( () => {
+        //var stmt = db.prepare(`SELECT Quiz.id, Quiz.title, QuizQuestion.title FROM (SELECT * FROM Quiz WHERE Quiz.id = ?) AS Quiz JOIN QuizQuestion ON Quiz.id = QuizQuestion.quiz_id;`);
         var stmt = db.prepare(`SELECT * FROM Quiz WHERE id = ?;`);
         user = stmt.get([quizId], (err, quiz) => {
             if (err){
@@ -393,6 +394,28 @@ DatabaseServer.prototype.getQuizById = function(quizId = required('quizId'), cal
     });
     db.close((err) => { if (err) {return console.error(err.message);}});
 };
+
+DatabaseServer.prototype.getAllQuestionsByQuizId = function(quizId = required('quizId'), callback = required('callback function')){
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    }); 
+    db.serialize( () => {
+        //var stmt = db.prepare(`SELECT Quiz.id, Quiz.title, QuizQuestion.title FROM (SELECT * FROM Quiz WHERE Quiz.id = ?) AS Quiz JOIN QuizQuestion ON Quiz.id = QuizQuestion.quiz_id;`);
+        var stmt = db.prepare(`SELECT QuizQuestion.id, QuizQuestion.title, QuizQuestion.problem_statement FROM QuizQuestion WHERE quiz_id = ?;`);
+        user = stmt.all([quizId], (err, questions) => {
+            if (err){
+                console.log("Could not find questions by quiz id: " + quizId);
+                throw err;
+            }
+            callback(questions);
+        });
+        stmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
 
 
 DatabaseServer.prototype.testfunction = function() {

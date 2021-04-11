@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header class="grid-container header__grid-container">
+        <%- include('../partials/header'); %>
+</header>
+
+<article class="main-content-enclosure">
+    <h1 class="page__title--base col-s__1 col-e__11 row-s__1 row-e__2">Best Practices
+    </h2>
+    <section class="grid-container main-content__grid-container--base">
+
+        <h2 class="main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2">Best Practices for Beginners
+        </h2>
+
+        <p class="main-content__text--base col-s__2 col-e__8 row-s__2 row-e__3">
+            Listed below are some of the best practices to keep in mind while working with HTML.
+        </p>
+
+        <ol class="main-content__text--base col-s__2 col-e__9 row-s__3 row-e__4">
+            <li ><h4>Be consistent with a proper document structure</h4></li>
+            
+                It is important to be consistent using the proper decument structure.
+                HTML documents will still work without elements such as html, head, and body, 
+                however some browsers will not render the page correctly.
+                
+
+            </p>
+            <li ><h4>Declare the correct doctype</h4></li>
+            <p >
+                The doctype declaration should be the first thing in your HTML documents. 
+                The doctype declaration tells the browser about the XHTML standards you will be using and helps it read and render your markup correctly.
+            </p>
+
+            <li ><h4> Keep your styles separate from your HTML mark-up.</h4></li>
+            <p >
+                It may seem easier to place your styling in line with the code instead of creating an external style sheet in CSS. However, 
+                inline styles are not a good coding practice because it makes it harder to update and maintain your website.
+            </p>
+            <li ><h4 >Use alt attribute with images and take care of accecibility</h4></li>
+            <p>
+                It is important to have a meaningful alt attribute for validation and accessibility reasons. 
+                The required alt attribute specifies an alternate text for an image, if the image cannot be displayed. 
+                The alt attribute provides context to screen readers so it should be descriptive as to what the image contains when a user for some reason cannot view it (because of slow connection, an error in the src attribute, 
+                or if the user uses a screen reader).
+            </p>
+            <li ><h4 >Validate frequently</h4></li>
+            <p >
+                Do not valdidate your code for the first time after writing it when you are done. Just because your work validates doesn’t automatically mean it’s good code.
+                So while writing HTML, make it a habit to validate frequently to avoid issues that harder to redo later on when the work in completed or lengthier.
+            </p>
+            <li><h4 >Use meaningful tags</h4></li>
+            <p >
+                Make your webpage search-engine friendly with the correct usage of tags. 
+                For example the text inside the title tag will appear in the result page of the search-engine. 
+                Another important tag to make good use of is the description meta tag. 
+                This tag describes the basic purpose of your web page. So you have to put a consise and relevant summary in the tag.
+                This will also show up in the search-engine result page. 
+                And last but not least, use "keywords" that relate to your webpage. These keywords will add even more meaning to the web page. 
+            </p>
+            <li><h4 >Close Your Tags</h4></li>
+            <p>
+                Some browsers may still render your pages correctly when you do not close your tags, 
+                however not closing your tags is invalid under standards.
+                So close your tags to avoid validation errors.
+            </p>
+        </ol>
+    </section>
+</article>
+
+<footer class="grid-container">
+    <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>
