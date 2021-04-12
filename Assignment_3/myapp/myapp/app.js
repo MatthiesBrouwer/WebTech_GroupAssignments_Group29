@@ -14,6 +14,7 @@ const md5 = require('md5');
 const session = require('express-session');
 const { Database } = require('sqlite3');
 const { nextTick } = require('process');
+const e = require('express');
 var app = express();
 var options = {secret: 'Top secret do not enter', cookie: { maxAge: 60 * 60 * 1000}} //1h login timer
 app.use(session(options)); //use session middleware
@@ -57,26 +58,136 @@ app.get('/best-practices', (req,res) =>{
 });
 
 app.get('/assessment', function(req, res) {
-  
   res.render('pages/assessment', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
+});
 
-  /*dbInstance.getTopicQuizes( (topicQuizes) => {
-    console.log("SENDING: " + topicQuizes);
-    res.render('pages/assessment', {
-      name: req.session.name,
-      isLoggedIn: req.session.isAuthenticated,
-      topicQuizes : topicQuizes
+app.get('/assessment/quiz/:quizId/question/:questionId', function(req, res) {
+  if(req.session.isAuthenticated && req.session.activeAttempt){
+    dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
+      if(!attempt){
+        //verstuur een error
+      }
+      dbInstance.getQuizById(attempt.quiz_id, (quiz) => {
+        if(!quiz){
+          //verstuur een error
+        }
+        dbInstance.getQuestionById((req.body.questionId != 0) ? req.body.questionId : req.session.quizAttemptQuestion, (question) => {
+          if(!question || question.quiz_id != attempt.quiz_id){
+            //verstuur een error
+          }
+          dbInstance.getUserAttemptAnswer(req.session.activeAttempt, req.session.activeAttemptQuestion, (userAttemptAnswer) => {
+            if(userAttemptAnswer){
+              res.send({activeAttempt: 1, quiz: quiz, question: question, userAttemptAnswer: userAttemptAnswer, isLoggedIn: req.session.isAuthenticated});
+            }
+            else{
+              res.send({activeAttempt: 1, quiz: quiz, question: question, isLoggedIn: req.session.isAuthenticated}); 
+            }
+          })
+        })
+      })
+    })
+  }
+  else if(req.body.quizId != 0 && req.session.questionId == 0){
+    console.log("GETTING QUIZ WITH ID: " + req.query.quizId);
+    dbInstance.getQuizById(req.query.quizId, (quiz) => {
+      if(!quiz){
+        //send an error
+      }
+      dbInstance.getAllQuestionsByQuizId(req.query.quizId, (questions) => {
+        if(!questions){
+          //send an error
+        }
+        console.log("GOTTEN: " + quiz);
+        console.log("AND QUESTIONS: " + questions);
+        res.send({activeAttempt: 0, quiz: quiz, questions: questions, isLoggedIn: req.session.isAuthenticated});
+      })
     });
-  });*/
+  }
+  else{
+    //USER IS NOG NIET BEZIG MET DEZE QUIZ
+    //  TODO: Laad de topic overview
+    // Verstuur: attemptStatus
+    dbInstance.getTopicQuizes( (topicQuizes) => {
+      console.log("SENDING: " + topicQuizes);
+      res.send({activeAttempt: 0, topicQuizes: topicQuizes, isLoggedIn: req.session.isAuthenticated}); 
+    });
+  }
 });
 
-app.get('/assessment/overview', function(req, res) {
-  dbInstance.getTopicQuizes( (topicQuizes) => {
-    console.log("SENDING: " + topicQuizes);
-    res.send(topicQuizes);
-  });
+
+app.post('/assessment/quiz/:quizId/question/:questionId/answer/:answerId', function(req, res){
+  if(req.session.isAuthenticated && req.session.activeAttempt){
+    
+    dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
+      if(req.body.quizId != attempt.quiz_id || req.body.questionId != req.session.activeAttemptQuestion){
+        //stuur een error
+      }
+      dbInstance.addUserAttemptAnswer(req.session.activeAttempt, req.body.answerId, (exists) => {
+        if(exists){
+          //Send an error, the user has already answered this question before
+        }
+        dbInstance.getQuestionByid(req.body.questionId, (question) => {
+          correctAnswer = question.answerList.find( (answer) => {return answer.id == req.body.answerId});
+          if(!correctAnswer){
+            //send an error, no correct answers exist
+          }
+          res.send({correctAnswer: correctAnswer});
+        })
+      })
+    });
+  }
+  else{
+    req.redirect('/assessment');
+  }
 });
 
+app.post('/assessment/quiz/:quizid/newAttempt', function(req, res) {
+  if(req.session.isAuthenticated && !req.session.activeAttempt){
+    //User is logged in and does not have a session active
+    dbInstance.addUserAttempt(req.session.username, req.body.quizId, (quiz, firstQuestion)=>{
+      if(!quiz || !firstQuestion){
+        //send an error
+      }
+      res.send({activeAttempt: 1, quiz: quiz, question: firstQuestion, isLoggedIn: req.session.isAuthenticated});
+    })
+  }
+  else{
+    //Something has gone wrong, redirect to the home assessment page for new referal
+    req.redirect('/assessment');
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 app.get('/assessment/quizOverview',  function (req, res) {
   console.log("GETTING QUIZ WITH ID: " + req.query.quizId);
   dbInstance.getQuizById(req.query.quizId, (quiz) => {
@@ -89,17 +200,114 @@ app.get('/assessment/quizOverview',  function (req, res) {
 
 });
 
-app.get('/assessment/quizAttempt',  function (req, res) {
-  console.log("GETTING QUIZ WITH ID: " + req.query.quizId);
-  dbInstance.getQuizById(req.query.quizId, (quiz) => {
-    dbInstance.getAllQuestionsByQuizId(req.query.quizId, (questions) => {
-      console.log("GOTTEN: " + quiz);
-      console.log("AND QUESTIONS: " + questions);
-      res.send({quiz: quiz, questions: questions, isLoggedIn: req.session.isAuthenticated});
+
+app.get('/assessment/quiz/:quizId/question/:questionId', function(req, res){
+  if(req.session.isAuthenticated && req.session.activeAttempt){
+    dbInstance.getQuestionById(questionId, (question) => {
+      if(!question){
+        //throw an error
+      }
+      dbInstance.getQuestionAnswers(questionId, (answerList) => {
+        if(!answerList){
+          //throw an error
+        }
+        res.send({question: question, answerList: answerList});
+      })
     })
-  });
+  }
+  else{
+    //USER IS NOG NIET BEZIG MET DEZE QUIZ
+    //  TODO: Laad de topic overview
+    // Verstuur: attemptStatus
+    dbInstance.getTopicQuizes( (topicQuizes) => {
+      console.log("SENDING: " + topicQuizes);
+      res.send({activeAttempt: 0, topicQuizes: topicQuizes, isLoggedIn: req.session.isAuthenticated}); 
+    });
+  }
 
 });
+
+
+
+
+
+//session.activeAttemptId (0 = no active attempt, >0 = attempt id)
+//session.quizAttemptQuestion
+app.get('/assessment/attemptStatus',  function (req, res) {
+  if (req.session.isAuthenticated && req.session.activeAttempt){
+    //USER IS BEZIG MET QUIZ ATTEMPT
+    //  TODO: Laad de huidige question voor de actieve user attempt en stuur die naar de quiz
+    //  Verstuur: attemptStatus, active quiz, active question, question attempt
+    dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
+      if(!attempt){
+        //verstuur een error
+      }
+      dbInstance.getQuizById(attempt.quiz_id, (quiz) => {
+        if(!quiz){
+          //verstuur een error
+        }
+        dbInstance.getQuestionById(req.session.quizAttemptQuestion, (currentQuestion) => {
+          if(!currentQuestion){
+            //verstuur een error
+          }
+          dbInstance.getQuestionAnswers(req.session.quizAttemptQuestion, (answerList) => {
+            if(!answerList){
+              //verstuur een error
+            }
+            dbInstance.getUserAttemptAnswer(req.session.activeAttempt, req.session.activeAttemptQuestion, (userAttemptAswer) => {
+              if(userAttemptAnswer){
+                res.send({activeAttempt: 1, quiz: quiz, currentQuestion: question, questionAnswers: answerList, userAttemptAnswer: userAttemptAnswer, isLoggedIn: req.session.isAuthenticated});
+              }
+              else{
+                res.send({activeAttempt: 1, quiz: quiz, currentQuestion: question, questionAnswers: answerList, isLoggedIn: req.session.isAuthenticated}); 
+              }
+            })
+          })
+        })
+      })
+    })
+  }
+  else {
+    //USER IS NOG NIET BEZIG MET DEZE QUIZ
+    //  TODO: Laad de topic overview
+    // Verstuur: attemptStatus
+    dbInstance.getTopicQuizes( (topicQuizes) => {
+      console.log("SENDING: " + topicQuizes);
+      res.send({activeAttempt: 0, topicQuizes: topicQuizes, isLoggedIn: req.session.isAuthenticated}); 
+    });
+  }
+});
+
+
+app.post('/assessment/quiz/:quizId/question/:questionId/answer/:answerId', function(req, res){
+  if(req.session.isAuthenticated && req.session.activeAttempt){
+    dbInstance.newUserAttemptAnswer(req.session.activeAttempt, req.body.questionId, req.body.answerId, (userAnswer) =>{
+      if(userAnswer.correct){
+        res.send({correctAnswer: userAnswer.id});
+      }
+      else{
+        dbInstance.getQuestionAnswer(req.body.questionId, (answerList) => {
+          for(answer in answerList){
+            if(answerList[answer].correct){
+              res.send({correctAnswer: answerList[answer].id});
+            }
+          }
+          //No correct answer found
+          //Send an error
+        })
+      }
+    });
+  }else{
+    //USER IS NOG NIET BEZIG MET DEZE QUIZ
+    //  TODO: Laad de topic overview
+    // Verstuur: attemptStatus
+    dbInstance.getTopicQuizes( (topicQuizes) => {
+      console.log("SENDING: " + topicQuizes);
+      res.send({activeAttempt: 0, topicQuizes: topicQuizes, isLoggedIn: req.session.isAuthenticated}); 
+    });
+  }
+});
+*/
 
 
 

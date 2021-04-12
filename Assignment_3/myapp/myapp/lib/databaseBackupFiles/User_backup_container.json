@@ -20,6 +20,13 @@
             "lastname": "de Boer",
             "username": "KathleendeBoer",
             "password": "ItAintMuchButItsHonestWork"
+        },
+        {   
+            "firstname": "Admin",
+            "middlename": null,
+            "lastname": "Admin",
+            "username": "Admin",
+            "password": "Admin"
         }
     ]
 }

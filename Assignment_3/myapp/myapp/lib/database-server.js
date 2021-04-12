@@ -3,6 +3,7 @@ const { raw } = require('express');
 const { resolve } = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const fs = require("fs");
+const { RequestHeaderFieldsTooLarge } = require('http-errors');
 
 
 const required = name => {
@@ -316,6 +317,200 @@ DatabaseServer.prototype.updateUser = function(updatedUser = required('UpdatedUs
     db.close((err) => { if (err) {return console.error(err.message);}});
 };
 
+DatabaseServer.prototype.getQuizById = function(quizId = required('quizId'), callback = required('callback function')){
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    }); 
+    db.serialize( () => {
+        var stmt = db.prepare(`SELECT * FROM Quiz WHERE id = ?;`);
+
+        stmt.get([quizId], (err, quiz) => {
+            if (err){
+                console.log("Could not find quiz by id: " + quizId);
+                throw err;
+            }
+            callback(quiz);
+        });
+        stmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
+
+DatabaseServer.prototype.getQuestionById = function(questionId = required('questionId'), callback = required('callback function')){
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    }); 
+    db.serialize( () => {
+        var questionStmt = db.prepare(`SELECT * FROM QuizQuestion WHERE id = ?;`);
+
+        var question;
+
+        questionStmt.get([questionId], (err, result) => {
+            if (err){
+                console.log("Could not find question by id: " + questionId);
+                throw err;
+            }
+            question = result;
+        });
+        questionStmt.finalize();
+
+        var answerStmt = db.prepare(`SELECT * FROM QuizQuestionAnswer WHERE quiz_question_id = ?;`);
+
+        answerStmt.each([questionId], (err, result) => {
+            if (err){
+                console.log("Could not find answers for question by id: " + questionId);
+                throw err;
+            }
+            question.answerList = result;
+            callback(question);
+        });
+        answerStmt.finalize();
+
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
+DatabaseServer.prototype.addUserAttemptAnswer = function(userAttemptId =  required('userAttemptId'), 
+                                                         userAnswerId = required('userAnswerId'),
+                                                         callback = required('callback')){
+
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+    db.serialize( () => {
+
+        exists = db.run("SELECT * FROM UserAttemptAnswer WHERE user_attempt_id =? AND answer_id=?;", [userAttemptId, userAnswerId]);
+        if(exists){
+            console.log("THIS ALREADY EXISTS");
+            callback(true);
+        }
+        else{
+            var entryStmt = db.prepare(this.databaseTables["UserAttemptAnswer"].newEntryStatement());
+            entryStmt.run([userAttemptId, userAnswerId], (err) => {
+                if (err){
+                    console.log("Error adding new user attempt answer: userAttemptId : " + userAttemptId  + "\n\t" + "userAnswerId : " + userAnswerId );
+                    throw err;
+                }
+                callback(false);
+            });
+            entryStmt.finalize();
+        }   
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
+DatabaseServer.prototype.addUserAttempt = function(username =  required('username'), 
+                                                   quizId = required('quizId'),
+                                                   callback = required('callback')){
+
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+    db.serialize( () => {
+
+        var userStmt = db.prepare("SELECT id FROM User WHERE username=?;");
+
+        var userId
+
+        userStmt.run([username], (err, selectedUserId) => {
+            if (err){
+                console.log("Error finding user: \n\tusername : " + username);
+                throw err;
+            }
+            else if(!selectedUserId){
+                console.log("USER DOES NOT EXIST");
+                throw err;
+            }
+            userId = selectedUserId;
+        });
+        userStmt.finalize();
+
+        var entryStmt = db.prepare(this.databaseTables["UserAttempt"].newEntryStatement());
+        entryStmt.run([userId, quizId], (err) => {
+            if (err){
+                console.log("Error adding new user attempt: \n\tusername : " + username  + "\n\t" + "quizId : " + quizId );
+                throw err;
+            }
+        });
+        entryStmt.finalize();
+
+
+        var quizStmt = db.prepare("SELECT * FROM Quiz WHERE id=?;");
+        var quiz;
+        quizStmt.run([quizId], (err, selectedQuiz) => {
+            if (err){
+                console.log("Error finding quiz: \n\tquizId : " + quizId);
+                throw err;
+            }
+            else if(!selectedQuiz){
+                console.log("QUIZ DOES NOT EXIST");
+                throw err;
+            }
+            quiz = selectedQuiz;
+        })
+        quizStmt.finalize();
+
+        var questionStmt = db.prepare("SELECT * FROM QuizQuestion WHERE quiz_id=?;");
+        var firstQuestion;
+        questionStmt.each([quizId], (err, selectedQuestions) => {
+            if (err){
+                console.log("Error finding questions for quiz: \n\tquizId : " + quizId);
+                throw err;
+            }
+            else if(!selectedQuestions){
+                console.log("QUESTIONS DO NOT EXIST");
+                throw err;
+            }
+            firstQuestion = selectedQuestions[0];
+        })
+        questionStmt.finalize();
+
+
+        var answerStmt = db.prepare(`SELECT * FROM QuizQuestionAnswer WHERE quiz_question_id = ?;`);
+
+        answerStmt.each([firstQuestion.id], (err, selectedAnswers) => {
+            if (err){
+                console.log("Could not find answers for question by id: " + firstQuestion.id);
+                throw err;
+            }
+            firstQuestion.answerList = selectedAnswers;
+            callback(quiz, firstQuestion);
+        });
+        answerStmt.finalize();
+
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 DatabaseServer.prototype.getTopics = function(callback = required('callback function')){
     const db = new sqlite3.Database(this.dbFile, (err) => {
         if (err) {
@@ -383,6 +578,7 @@ DatabaseServer.prototype.getQuizById = function(quizId = required('quizId'), cal
     db.serialize( () => {
         //var stmt = db.prepare(`SELECT Quiz.id, Quiz.title, QuizQuestion.title FROM (SELECT * FROM Quiz WHERE Quiz.id = ?) AS Quiz JOIN QuizQuestion ON Quiz.id = QuizQuestion.quiz_id;`);
         var stmt = db.prepare(`SELECT * FROM Quiz WHERE id = ?;`);
+
         user = stmt.get([quizId], (err, quiz) => {
             if (err){
                 console.log("Could not find quiz by id: " + quizId);
@@ -410,6 +606,48 @@ DatabaseServer.prototype.getAllQuestionsByQuizId = function(quizId = required('q
                 throw err;
             }
             callback(questions);
+        });
+        stmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
+
+
+DatabaseServer.prototype.getUserAttempt = function(attemptId = required('attemptId'), callback = required('callback function')){
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    }); 
+    db.serialize( () => {
+        //var stmt = db.prepare(`SELECT Quiz.id, Quiz.title, QuizQuestion.title FROM (SELECT * FROM Quiz WHERE Quiz.id = ?) AS Quiz JOIN QuizQuestion ON Quiz.id = QuizQuestion.quiz_id;`);
+        var stmt = db.prepare(`SELECT * FROM UserAttempt WHERE id = ?;`);
+        user = stmt.all([attemptId], (err, attempt) => {
+            if (err){
+                throw err;
+            }
+            callback(attempt);
+        });
+        stmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
+DatabaseServer.prototype.getUserAttemptAnswer = function(attemptAnswerId = required('attemptAnswerId'), callback = required('callback function')){
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    }); 
+    db.serialize( () => {
+        //var stmt = db.prepare(`SELECT Quiz.id, Quiz.title, QuizQuestion.title FROM (SELECT * FROM Quiz WHERE Quiz.id = ?) AS Quiz JOIN QuizQuestion ON Quiz.id = QuizQuestion.quiz_id;`);
+        var stmt = db.prepare(`SELECT * FROM UserAttemptAnswer WHERE id = ?;`);
+        user = stmt.all([attemptId], (err, attempt) => {
+            if (err){
+                throw err;
+            }
+            callback(attempt);
         });
         stmt.finalize();
     });

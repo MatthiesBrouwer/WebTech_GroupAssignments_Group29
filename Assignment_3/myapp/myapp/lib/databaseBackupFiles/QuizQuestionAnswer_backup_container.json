@@ -21,11 +21,6 @@
             "correct":true
         },
         {   
-            "quiz_question_id":3,
-            "answer":"the living standard",
-            "correct":true
-        },
-        {   
             "quiz_question_id":4,
             "answer":"<header>",
             "correct":false
@@ -124,11 +119,6 @@
             "quiz_question_id":8,
             "answer":"link",
             "correct":false
-        },
-        {   
-            "quiz_question_id":9,
-            "answer":"keywords",
-            "correct":true
         },
         {   
             "quiz_question_id":9,

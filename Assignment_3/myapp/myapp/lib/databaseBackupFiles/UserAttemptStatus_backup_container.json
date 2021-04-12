@@ -1,0 +1,13 @@
+{
+    "UserAttemptStatus": [
+        {   
+            "status":"started"
+        },
+        {   
+            "title":"terminated"
+        },
+        {   
+            "title":"finished"
+        }
+    ]
+}

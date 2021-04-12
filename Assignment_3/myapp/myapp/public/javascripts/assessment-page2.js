@@ -74,34 +74,6 @@ class fillInBlanks extends question {
     }
 };
 
-class QuizHandler {
-    constructor(quizId, quizTitle){
-        this.quizId = quizId;
-        this.quizTitle = quizTitle;
-        this.userAttempt = userAttempt;
-    };
-};
-
-QuizHandler.prototype.startQuiz = function() {
-    var req = new XMLHttpRequest();
-    req.open("GET", "/assessment/quizAttempt?quizId=" + this.quizId, true);
-
-    req.onreadystatechange = function() {
-        if (req.readyState == 4 && req.status == 200) {
-            serverData = JSON.parse(req.responseText);
-
-        }
-    }
-    req.send();
-}
-
-
-
-
-
-
-
-
 
 
 
