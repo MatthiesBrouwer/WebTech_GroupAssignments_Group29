@@ -4,10 +4,10 @@
             "status":"started"
         },
         {   
-            "title":"terminated"
+            "status":"terminated"
         },
         {   
-            "title":"finished"
+            "status":"finished"
         }
     ]
 }

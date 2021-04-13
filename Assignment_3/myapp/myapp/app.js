@@ -62,7 +62,17 @@ app.get('/assessment', function(req, res) {
 });
 
 app.get('/assessment/quiz/:quizId/question/:questionId', function(req, res) {
+  console.log("\nASSESSMENT PAGE ROUTER CALLED: ");
+  console.log("\tQUIZID: " + req.params.quizId);
+  console.log("\tQUESTIONID: " + req.params.questionId);
+
   if(req.session.isAuthenticated && req.session.activeAttempt){
+    console.log("\tUSER IS AUTHENTICATED AND HAS AN ACTIVE ATTEMPT");
+
+    console.log("\n\tASSESSMENT PAGE LOGGING:\n\t");
+    console.log("\t\tAUTHENTICATED: " + req.session.isAuthenticated);
+    console.log("\t\tUSER ATTEMPT: " + req.session.activeAttempt);
+
     dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
       if(!attempt){
         //verstuur een error
@@ -71,7 +81,7 @@ app.get('/assessment/quiz/:quizId/question/:questionId', function(req, res) {
         if(!quiz){
           //verstuur een error
         }
-        dbInstance.getQuestionById((req.body.questionId != 0) ? req.body.questionId : req.session.quizAttemptQuestion, (question) => {
+        dbInstance.getQuestionById((req.params.questionId != 0) ? req.params.questionId : req.session.quizAttemptQuestion, (question) => {
           if(!question || question.quiz_id != attempt.quiz_id){
             //verstuur een error
           }
@@ -87,13 +97,17 @@ app.get('/assessment/quiz/:quizId/question/:questionId', function(req, res) {
       })
     })
   }
-  else if(req.body.quizId != 0 && req.session.questionId == 0){
-    console.log("GETTING QUIZ WITH ID: " + req.query.quizId);
-    dbInstance.getQuizById(req.query.quizId, (quiz) => {
+  else if(req.params.quizId > 0 && req.params.questionId == 0){
+    console.log("\n\tASSESSMENT PAGE LOGGING:\n\t");
+    console.log("\t\tAUTHENTICATED: " + req.session.isAuthenticated);
+    console.log("\t\tUSER ATTEMPT: " + req.session.activeAttempt);
+    console.log("\t\tVIEWING QUIZ: " + req.params.quizId);
+    
+    dbInstance.getQuizById(req.params.quizId, (quiz) => {
       if(!quiz){
         //send an error
       }
-      dbInstance.getAllQuestionsByQuizId(req.query.quizId, (questions) => {
+      dbInstance.getAllQuestionsByQuizId(req.params.quizId, (questions) => {
         if(!questions){
           //send an error
         }
@@ -107,7 +121,11 @@ app.get('/assessment/quiz/:quizId/question/:questionId', function(req, res) {
     //USER IS NOG NIET BEZIG MET DEZE QUIZ
     //  TODO: Laad de topic overview
     // Verstuur: attemptStatus
+    console.log("\n\tASSESSMENT PAGE LOGGING:");
+    console.log("\t\tAUTHENTICATED: " + req.session.isAuthenticated);
+    console.log("\t\tUSER ATTEMPT: " + req.session.activeAttempt);
     dbInstance.getTopicQuizes( (topicQuizes) => {
+      
       console.log("SENDING: " + topicQuizes);
       res.send({activeAttempt: 0, topicQuizes: topicQuizes, isLoggedIn: req.session.isAuthenticated}); 
     });
@@ -119,15 +137,15 @@ app.post('/assessment/quiz/:quizId/question/:questionId/answer/:answerId', funct
   if(req.session.isAuthenticated && req.session.activeAttempt){
     
     dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
-      if(req.body.quizId != attempt.quiz_id || req.body.questionId != req.session.activeAttemptQuestion){
+      if(req.query.quizId != attempt.quiz_id || req.query.questionId != req.session.activeAttemptQuestion){
         //stuur een error
       }
-      dbInstance.addUserAttemptAnswer(req.session.activeAttempt, req.body.answerId, (exists) => {
+      dbInstance.addUserAttemptAnswer(req.session.activeAttempt, req.query.answerId, (exists) => {
         if(exists){
           //Send an error, the user has already answered this question before
         }
-        dbInstance.getQuestionByid(req.body.questionId, (question) => {
-          correctAnswer = question.answerList.find( (answer) => {return answer.id == req.body.answerId});
+        dbInstance.getQuestionByid(req.query.questionId, (question) => {
+          correctAnswer = question.answerList.find( (answer) => {return answer.id == req.query.answerId});
           if(!correctAnswer){
             //send an error, no correct answers exist
           }
@@ -141,10 +159,13 @@ app.post('/assessment/quiz/:quizId/question/:questionId/answer/:answerId', funct
   }
 });
 
-app.post('/assessment/quiz/:quizid/newAttempt', function(req, res) {
+app.get('/assessment/quiz/:quizId/newAttempt', function(req, res) {
+  console.log("NEW ATTEMPT REQUEST");
   if(req.session.isAuthenticated && !req.session.activeAttempt){
+    console.log("USER IS LOGGED IN AND HAS NO ATTEMPT ACTIVE")
     //User is logged in and does not have a session active
-    dbInstance.addUserAttempt(req.session.username, req.body.quizId, (quiz, firstQuestion)=>{
+
+    dbInstance.addUserAttempt(req.session.username, req.params.quizId, req.sessionID, (quiz, firstQuestion)=>{
       if(!quiz || !firstQuestion){
         //send an error
       }
@@ -152,6 +173,7 @@ app.post('/assessment/quiz/:quizid/newAttempt', function(req, res) {
     })
   }
   else{
+    console.log("USER IS EITHER NOT LOGGED IN OR HAS AN ACTIVE ATTEMPT. REDIRECT TO MAIN PAGE");
     //Something has gone wrong, redirect to the home assessment page for new referal
     req.redirect('/assessment');
   }
@@ -348,7 +370,7 @@ app.post('/login', (req, res) => {
  let HashPass = md5(req.body.authPassword);
   dbInstance.getUserByUsername(req.body.authUsername, (user) => {
     if (user) { //check if user existst by username
-      if(HashPass === user["password"]){ //easy to hack but simple implementation
+      if(HashPass === md5(user["password"])){ //easy to hack but simple implementation
         console.log("You are now logged in");
         req.session.isAuthenticated = true; 
         req.session.username = user["username"];

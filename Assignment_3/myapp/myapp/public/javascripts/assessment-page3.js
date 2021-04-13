@@ -1,8 +1,106 @@
+const assessmentPageState = {
+    1 : "topicOverview",
+    2 : "questionOverview",
+    3 : "attemptQuestionupdate"
+}
 
 class PageContentHandler {
     constructor(){
+        this.state = 1;
     };
 };
+
+
+/*
+    Deze functie word aangeroepen bij iedere ajax call om de state te controleren.
+    Als er iets niet klopt moet dit worden gecorrigeerd, en moet worden aangegeven
+    dat de orginele functie niet door mag.
+*/
+PageContentHandler.prototype.checkServerData = function(serverData){
+    if(serverData.activeAttempt){
+        switch(this.state){
+            case(1):{
+                //De state is verkeerd, laad de huidige question in de data
+                //RETURN: false
+                break;
+            }
+            case(2):{
+                //De state is verkeerd, laad de huidige question in de data
+                //RETURN: false
+                break;
+            }
+            case(3):{
+                //De state is correct, functie mag door
+                //RETURN: true
+                break;
+            }
+        }
+    }
+    else{
+        switch(this.state){
+            case(1):{
+                //De state is correct, functie mag door
+                //RETURN: true
+            }
+            case(2):{
+                //De state is correct, functie mag door
+                //RETURN: true
+            }
+            case(3):{
+                //De state is verkeerd, laad de topic overview
+                //RETURN: false
+            }
+        }
+    }
+}
+
+
+
+contentHandler = new PageContentHandler;
+
+var req = new XMLHttpRequest();
+req.open("GET", "/assessment/quiz/0/question/0", true);
+
+req.onreadystatechange = function() {
+    if (req.readyState == 4 && req.status == 200) {
+        serverData = JSON.parse(req.responseText);
+        console.log(serverData);
+
+        for(key in serverData){
+            console.log(serverData[key]);
+        }
+
+        if(serverData.activeAttempt){
+            //load the question
+        }
+        else{
+            contentHandler.displayTopicOverview(serverData.topicQuizes);
+        }
+    }
+}
+req.send();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
 
 PageContentHandler.prototype.displayTopicOverview = function(topicQuizes){
    
@@ -36,6 +134,9 @@ PageContentHandler.prototype.displayTopicOverview = function(topicQuizes){
     }   
 
 };
+
+
+
 
 PageContentHandler.prototype.displayQuizById = function(quizId) {
     var req = new XMLHttpRequest();
@@ -77,11 +178,13 @@ PageContentHandler.prototype.displayQuizById = function(quizId) {
 
             questionTable.appendChild(questionTableBody);
             contentEnclosure.appendChild(questionTable);
+            var quizSection = document.createElement('section');
 
             var takeQuizButton = document.createElement('button');
             takeQuizButton.appendChild(document.createTextNode('Take Quiz'));
-            quizSection.setAttribute('data-id', quizId);
-            quizSection.addEventListener("click", takeQuiz)
+            takeQuizButton.setAttribute('data-id', quizId);
+            takeQuizButton.addEventListener("click", takeQuiz);
+
 
             if(!serverData.isLoggedIn){
                 takeQuizButton.disabled = true;
@@ -94,9 +197,34 @@ PageContentHandler.prototype.displayQuizById = function(quizId) {
     req.send();
 }
 
+PageContentHandler.prototype.displayQuizAttempt = function(quizId) {
+    console.log("DISPLAYING QUIZ ATTEMPT: " + quizId);
+    var req = new XMLHttpRequest();
+    req.open("GET", "/assessment/quiz/" + quizId + "/newAttempt", true);
+
+    req.onreadystatechange = function() {
+        if (req.readyState == 4 && req.status == 200) {
+            serverData = JSON.parse(req.responseText);
+            console.log(serverData);
+            for (key in serverData){
+                console.log(serverData[key]);
+            }
+        }
+    }
+    req.send();
+}
+
 function displayQuiz(event){
     contentHandler.displayQuizById(this.getAttribute('data-id'));
 }
+
+function takeQuiz(event){
+    contentHandler.displayQuizAttempt(this.getAttribute('data-id'));
+}
+
+
+
+
 
 contentHandler = new PageContentHandler;
 
@@ -108,6 +236,10 @@ req.onreadystatechange = function() {
         serverData = JSON.parse(req.responseText);
         console.log(serverData);
 
+        for(key in serverData){
+            console.log(serverData[key]);
+        }
+
         if(serverData.activeAttempt){
             //load the question
         }
@@ -116,4 +248,4 @@ req.onreadystatechange = function() {
         }
     }
 }
-req.send();
+req.send();*/
