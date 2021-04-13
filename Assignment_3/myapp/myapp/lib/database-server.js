@@ -476,10 +476,29 @@ DatabaseServer.prototype.addUserAttempt = function(username =  required('usernam
             }
             firstQuestion = selectedQuestions[0]; 
             firstQuestion.answerList = answerList;
-            callback(quiz, firstQuestion);
 
         })
         questionStmt.finalize();
+
+        var attemptStmt = db.prepare("SELECT id FROM UserAttempt WHERE user_id=? ORDER BY id DESC LIMIT 1;");
+        attemptStmt.all([quizId], (err, userAttemptId) => {
+            console.log("\tDATABASE LOG: RUNNING QUESTION STATEMENT");
+            if (err){
+                console.log("Error finding userAttempt: \n\tuserAttemptId : " + userAttemptId);
+                throw err;
+            }
+            else if(!userAttemptId){
+                console.log("User has no active attempts");
+                throw err;
+            }
+            callback(quiz, firstQuestion, userAttemptId);
+
+
+        })
+        attemptStmt.finalize();
+
+
+
 
     });
     db.close((err) => { if (err) {return console.error(err.message);}});

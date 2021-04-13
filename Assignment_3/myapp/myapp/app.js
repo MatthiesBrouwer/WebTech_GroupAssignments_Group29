@@ -165,10 +165,12 @@ app.get('/assessment/quiz/:quizId/newAttempt', function(req, res) {
     console.log("USER IS LOGGED IN AND HAS NO ATTEMPT ACTIVE")
     //User is logged in and does not have a session active
 
-    dbInstance.addUserAttempt(req.session.username, req.params.quizId, req.sessionID, (quiz, firstQuestion)=>{
+    dbInstance.addUserAttempt(req.session.username, req.params.quizId, req.sessionID, (quiz, firstQuestion, userAttemptId)=>{
       if(!quiz || !firstQuestion){
         //send an error
       }
+      req.session.activeAttempt = userAttemptId;
+      req.session.activeAttemptQuestion = firstQuestion.id;
       res.send({activeAttempt: 1, quiz: quiz, question: firstQuestion, isLoggedIn: req.session.isAuthenticated});
     })
   }
