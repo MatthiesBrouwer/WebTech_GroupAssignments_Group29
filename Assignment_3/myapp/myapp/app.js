@@ -61,40 +61,231 @@ app.get('/assessment', function(req, res) {
   res.render('pages/assessment', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
 });
 
-app.get('/assessment/quiz/:quizId/question/:questionId', function(req, res) {
+
+app.get('/assessment/topicOverview', function(req, res){
+  console.log("PAGE ASKED FOR TOPIC OVERVIEW");
+  if(req.session.isAuthenticated && req.session.activeAttempt){
+    console.log("USER IS AUTHENTICATED AND HAS AN ACTIVE ATTEMPT")
+    dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
+      if(attempt == undefined){
+        //something went wrong, redirect to main page
+        console.log("NO ATTEMPT FOUND ON: " + req.session.activeAttempt);
+      }
+      else{
+        console.log("SENDING ANSWER")
+        console.log(attempt);
+        for(key in attempt){
+          console.log(key + " : " + attempt[key]);
+          }console.log("REDIRECTING TO : " + 'assessment/quiz/' + attempt.quiz_id + '/question/' + req.session.prevQuestionIndex)
+        res.redirect('/assessment/quiz/:quizId/question/:questionIndex');
+      }
+    });
+  }else{
+    //USER IS NOG NIET BEZIG MET DEZE QUIZ
+    //  TODO: Laad de topic overview
+    // Verstuur: attemptStatus
+    console.log("\n\tASSESSMENT PAGE LOGGING:");
+    console.log("\t\tAUTHENTICATED: " + req.session.isAuthenticated);
+    console.log("\t\tUSER ATTEMPT: " + req.session.activeAttempt);
+    dbInstance.getTopicQuizes( (topicQuizes) => {
+      
+      console.log("SENDING: " + topicQuizes);
+      res.send({activeAttempt: 0, topicQuizes: topicQuizes, isLoggedIn: req.session.isAuthenticated}); 
+    });
+  }
+});
+
+
+app.get('/assessment/quizOverview/:quizId', function(req, res){
+  if(req.session.isAuthenticated && req.session.activeAttempt){
+    dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
+      if(!attempt){
+        //something went wrong, redirect to main page
+      }
+      else{
+        res.redirect('/assessment/quiz/' + attempt.quiz_id + 'question/' + req.session.prevQuestionIndex);
+      }
+    });
+  }else if(req.params.quizId){
+    //USER IS NOG NIET BEZIG MET DEZE QUIZ
+    //  TODO: Laad de topic overview
+    // Verstuur: attemptStatus
+    
+    dbInstance.getQuizById(req.params.quizId, (quiz) => {
+      if(!quiz){
+        //send an error
+      }
+      else{
+        dbInstance.getQuizQuestions(req.params.quizId, (questions) => {
+          if(!questions){
+            //send an error
+            console.log("NO QUESTIONS FOUND!!!");
+          }
+          else{
+            
+            res.send({activeAttempt: 0, quiz: quiz, questions: questions, isLoggedIn: req.session.isAuthenticated});            
+          }
+        })
+      }
+    });
+  }
+});
+
+
+app.get('/assessment/quiz/:quizId/newAttempt', function(req, res) {
+  console.log("NEW ATTEMPT REQUEST");
+  if(req.session.isAuthenticated){
+    if(!req.session.activeAttempt){
+      //USER IS NOG NIET BEZIG MET EEN ATTEMPT EN IS INGELOGD
+      dbInstance.addUserAttempt(req.session.username, req.params.quizId, req.sessionID, (quiz, firstQuestion, userAttemptId)=>{
+        if(!quiz || !firstQuestion){
+          //send an error
+        }
+        else{
+          console.log("STARTING ACTIVE ATTEMPT");
+          req.session.activeAttempt = userAttemptId;
+          req.session.prevQuestionIndex = 1;
+          console.log("ACTIVE ATTEMPT ID: " + req.session.activeAttempt);
+          console.log("ACTIVE ATTEMPT ID: " + userAttemptId);
+          console.log("PREVQUESITION INDEX: " + req.session.prevQuestionIndex);
+          res.send({activeAttempt: 1, quiz: quiz, question: firstQuestion, questionIndex: 1, isLoggedIn: req.session.isAuthenticated});
+        }
+      })
+    }
+    else{
+      dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
+        if(!attempt){
+          //something went wrong, redirect to main page
+          res.redirect('/assessment');
+        }
+        else{
+          //USER IS AL BEZIG MET EEN ATTEMPT. REDIRECT
+          res.redirect('/assessment/quiz/:quizId/question/:questionIndex');
+        }
+      });    
+    }
+  }
+  else{
+    //USER IS NOG NIET INGELOGD MAAR WIL WEL EEN ATTEMPT STARTEN. IETS GING FOUT
+    console.log("SOMETHING HAS GONE WRONG")
+    res.redirect('/assessment');
+  }
+});
+
+
+app.get('/assessment/quiz/:quizId/question/:questionIndex', function(req, res) { 
+  console.log("NEW LOAD QUESTION REQUEST OBTAINED");
+  console.log("PARAMS: " + req.params.quizId + " : " + req.params.questionIndex);
+  if(req.session.isAuthenticated && req.session.activeAttempt){
+    dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
+      if(!attempt){
+        //verstuur een error
+        console.log("NO ATTEMPT FOUND");
+      }
+      else{
+        dbInstance.getQuizById((req.params.quizId == attempt.quiz_id) ? req.params.quizId : attempt.quiz_id, (quiz) => {
+          if(!quiz){
+            //verstuur een error
+            console.log("NO QUIZ FOUND");
+
+          }
+          else{
+            dbInstance.getQuizQuestions(quiz.id, (questionList) => { 
+              if(!questionList ){ 
+                //verstuur een error
+                console.log("ERROR: GEEN QUESTIONLIST OF VERKEERDE INDEX")
+              }
+              else{
+                console.log("PREVQUESITION INDEX: " + req.session.prevQuestionIndex);
+
+                questionIndex = (req.params.questionIndex > questionList.length) ? req.params.questionIndex : req.session.prevQuestionIndex;
+                dbInstance.getQuestionById(questionList[questionIndex], (question) => {
+                  if(!question){
+                    //throw an error
+                  }
+                  else{
+                    dbInstance.getUserAttemptAnswer(req.session.activeAttempt, question.id, (userAttemptAnswer) => {
+                      req.session.prevQuestionIndex = questionIndex;
+                      if(userAttemptAnswer){
+                        res.send({activeAttempt: 1, quiz: quiz, question: question, questionIndex: req.session.prevQuestionIndex, userAttemptAnswer: userAttemptAnswer, isLoggedIn: req.session.isAuthenticated});
+                      }
+                      else{
+                        res.send({activeAttempt: 1, quiz: quiz, question: question, questionIndex: req.session.prevQuestionIndex, isLoggedIn: req.session.isAuthenticated}); 
+                      }
+                    })
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+    })
+  }else{
+    //USER IS NOG NIET INGELOGD MAAR WIL WEL EEN ATTEMPT ITEREREN
+    console.log("SOMETHING HAS GONE WRONG")
+    res.redirect('/assessment');
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+app.get('/assessment/quiz/:quizId/question/:questionIndex', function(req, res) {
   console.log("\nASSESSMENT PAGE ROUTER CALLED: ");
   console.log("\tQUIZID: " + req.params.quizId);
   console.log("\tQUESTIONID: " + req.params.questionId);
 
   if(req.session.isAuthenticated && req.session.activeAttempt){
-    console.log("\tUSER IS AUTHENTICATED AND HAS AN ACTIVE ATTEMPT");
-
-    console.log("\n\tASSESSMENT PAGE LOGGING:\n\t");
-    console.log("\t\tAUTHENTICATED: " + req.session.isAuthenticated);
-    console.log("\t\tUSER ATTEMPT: " + req.session.activeAttempt);
-
     dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
       if(!attempt){
         //verstuur een error
       }
-      dbInstance.getQuizById(attempt.quiz_id, (quiz) => {
-        if(!quiz){
-          //verstuur een error
-        }
-        dbInstance.getQuestionById((req.params.questionId != 0) ? req.params.questionId : req.session.quizAttemptQuestion, (question) => {
-          if(!question || question.quiz_id != attempt.quiz_id){
+      else{
+        dbInstance.getQuizById((req.params.quizId == attempt.quiz_id) ? req.params.quizId : attempt.quiz_id, (quiz) => {
+          if(!quiz){
             //verstuur een error
           }
-          dbInstance.getUserAttemptAnswer(req.session.activeAttempt, req.session.activeAttemptQuestion, (userAttemptAnswer) => {
-            if(userAttemptAnswer){
-              res.send({activeAttempt: 1, quiz: quiz, question: question, userAttemptAnswer: userAttemptAnswer, isLoggedIn: req.session.isAuthenticated});
-            }
-            else{
-              res.send({activeAttempt: 1, quiz: quiz, question: question, isLoggedIn: req.session.isAuthenticated}); 
-            }
-          })
+          else{
+            dbInstance.getQuizQuestions(quiz.id, (questionList) => { //(req.params.questionId != 0) ? req.params.questionId : req.session.quizAttemptQuestion, (question) => {
+            //dbInstance.getQuestionById((req.params.questionId != 0) ? req.params.questionId : req.session.quizAttemptQuestion, (question) => {
+              if(!questionList ){ //question.quiz_id != attempt.quiz_id){
+                //verstuur een error
+                console.log("ERROR: GEEN QUESTIONLIST OF VERKEERDE INDEX")
+              }
+              else{
+                questionIndex = (req.params.questionIndex > sizeof(questionList)) ? req.params.questionIndex : req.session.prevQuestionIndex;
+                dbInstance.getQuestionById(questionList[questionIndex], (question) => {
+                  if(!question){
+                    //throw an error
+                  }
+                  else{
+                    dbInstance.getUserAttemptAnswer(req.session.activeAttempt, question.id, (userAttemptAnswer) => {
+                      req.session.prevQuestionIndex = questionIndex;
+                      if(userAttemptAnswer){
+                        res.send({activeAttempt: 1, quiz: quiz, question: question, userAttemptAnswer: userAttemptAnswer, isLoggedIn: req.session.isAuthenticated});
+                      }
+                      else{
+                        res.send({activeAttempt: 1, quiz: quiz, question: question, isLoggedIn: req.session.isAuthenticated}); 
+                      }
+                    })
+                  }
+                })
+              }
+            })
+          }
         })
-      })
+      }
     })
   }
   else if(req.params.quizId > 0 && req.params.questionId == 0){
@@ -107,7 +298,7 @@ app.get('/assessment/quiz/:quizId/question/:questionId', function(req, res) {
       if(!quiz){
         //send an error
       }
-      dbInstance.getAllQuestionsByQuizId(req.params.quizId, (questions) => {
+      dbInstance.getQuizQuestions(req.params.quizId, (questions) => {
         if(!questions){
           //send an error
         }
@@ -131,6 +322,19 @@ app.get('/assessment/quiz/:quizId/question/:questionId', function(req, res) {
     });
   }
 });
+
+app.get('/assessment/topicOverview', function(req, res){
+  if(req.session.isAuthenticated && req.session.activeAttempt){
+    dbInstance.getUserAttemptById(req.session.activeAttempt, (attempt) => {
+      if(!attempt){
+        //something went wrong, redirect to main page
+      }
+      else{
+        req.redirect('assessment/quiz/' + attempt.quiz_id + 'question/' + req.session.prevQuestionIndex);
+      }
+    }
+  }
+})
 
 
 app.post('/assessment/quiz/:quizId/question/:questionId/answer/:answerId', function(req, res){
@@ -169,9 +373,11 @@ app.get('/assessment/quiz/:quizId/newAttempt', function(req, res) {
       if(!quiz || !firstQuestion){
         //send an error
       }
-      req.session.activeAttempt = userAttemptId;
-      req.session.activeAttemptQuestion = firstQuestion.id;
-      res.send({activeAttempt: 1, quiz: quiz, question: firstQuestion, isLoggedIn: req.session.isAuthenticated});
+      else{
+        req.session.activeAttempt = userAttemptId;
+        req.session.prevQuestionIndex = 1;
+        res.send({activeAttempt: 1, quiz: quiz, question: firstQuestion, isLoggedIn: req.session.isAuthenticated});
+      }
     })
   }
   else{
@@ -192,7 +398,7 @@ app.get('/assessment/quiz/:quizId/newAttempt', function(req, res) {
 
 
 
-
+*/
 
 
 
