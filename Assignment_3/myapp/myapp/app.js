@@ -62,6 +62,169 @@ app.get('/assessment', function(req, res) {
 });
 
 
+
+// app.get('/assessment/overview/*)
+// app.get('/assessment/overview/topics')
+// app.get('/assessment/overview/quiz/:quizId')
+// app.get('/assessment/overview/reports')
+// app.get('/assessment/quizAttempt/newAttempt')
+// app.get('/assessment/quizAttempt/currentQuestion')
+// app.get('/assessment/quizAttempt/nextQuestion')
+// app.get('/assessment/quizAttempt/prevQuestion')
+// app.post('/assessment/quizAttempt/answerQuestion') //info staat in body
+// app.post('/assessment/quizAttempt/finishAttempt') //returned results naar client en logged final score in database
+// app.get('/assessment/quizAttempt/cancelAttempt')
+
+
+function requireAuthentication(req, res, next){
+  if(req.session.isAuthenticated){
+    console.log("\t user is authenticated");
+    next();
+  }
+  else{
+    console.log("\t User is niet authenticated");
+    return next();
+  }
+}
+
+function requireActiveAttempt(req, res, next){
+  if(req.session.activeAttemptId){
+    console.log("\t user heeft active attempt");
+    next();
+  }
+  else{
+    console.log("\t User heeft geen active attempt");
+    return next();
+  }
+}
+
+
+//Deze route vangt alle calls naar een overview en checked of de user bezig is met een quiz.
+//If so, dan wordt de user geredirect naar de laatste quizvraag van de attempt waar de user mee bezig was
+app.get('/assessment/overview/*', function(req, res, next){
+  console.log("CAUGHT DOOR * ROUTER")
+  if(req.session.isAuthenticated && req.session.activeAttemptId){
+    // De user is nog bezig met een attempt.
+    // Stuur de attempt en de huidige vraag
+    console.log("Attempt is active, redirect naar huidige vraag");
+    res.redirect('/assessment/quizAttempt/currentQuestion');
+  }
+  else{
+    //User is nog niet bezig met een attempt. Laat request doorgaan as normal.
+    console.log("No active attempt, loading requested overview")
+    next();
+  }
+});
+
+
+app.get('/assessment/overview/topics',  function(req, res){
+  console.log("Got here");
+  dbInstance.getTopicQuizes( (topicQuizes) => {
+      
+    console.log("SENDING: " + topicQuizes);
+    res.send({activeAttempt: 0, topicQuizes: topicQuizes, isLoggedIn: req.session.isAuthenticated}); 
+  });
+});
+
+app.get('/assessment/overview/quiz/:quizId', function(req, res, next){
+  dbInstance.getQuizById(req.params.quizId, (quiz) => {
+    if(typeof quiz == 'undefined'){
+      //send an error
+      console.log("QUIZ WAS UNDEFINED");
+      next();
+    }
+    else if(req.params.quizId <= 0){
+      console.log("INVALID QUIZID");
+      next();
+    }
+    else{
+      dbInstance.getQuizQuestions(req.params.quizId, (questions) => {
+        if(typeof questions == 'undefined' || questions == []){
+          //send an error
+          console.log("NO QUESTIONS FOUND!!!");
+          next();
+        }
+        else{
+          res.send({activeAttempt: 0, quiz: quiz, questions: questions, isLoggedIn: req.session.isAuthenticated});            
+        }
+      })
+    }
+  });
+});
+
+app.get('/assessment/overview/newAttempt/:quizId', requireAuthentication, function(req, res, next){
+  console.log("Starting new attempt");
+  
+  dbInstance.addUserAttempt(req.session.username, req.params.quizId, req.sessionID, (quiz, firstQuestion, userAttemptId)=>{
+    console.log("IT PASSED")
+    if(quiz == 'undefined' || firstQuestion == 'undefined'){
+      //send an error
+      console.log("EITHER QUIZ OR FIRSTQUESTION WAS UNDEFINED!!")
+      next();
+    }
+    else{
+      req.session.activeAttemptId = userAttemptId;
+      req.session.activeAttemptQuizId = req.params.quizId; 
+      req.session.activeAttemptQuestionIndex = 1;
+      res.redirect('/assessment/quizAttempt/currentQuestion');
+      //res.send({activeAttempt: 1, quiz: quiz, question: firstQuestion, isLoggedIn: req.session.isAuthenticated});
+    }
+  });
+});
+
+
+app.get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requireActiveAttempt,  function(req, res, next){
+  console.log("GOT INTO THIS");
+  console.log("REQ PARAMS: ");
+  for (key in req.session){
+    console.log("\t" + key + " : " + req.session[key]);
+  }
+  dbInstance.getQuizById(req.session.activeAttemptQuizId, (quiz) => {
+    if(quiz == 'undefined' || quiz == []){
+      console.log("COULD NOT FIND QUIZ");
+      next();
+    }
+    console.log("GOT HERE BY QUIZ ID");
+    dbInstance.getQuizQuestions(req.session.activeAttemptQuizId, (questionList) => {
+      if(questionList == 'undefined' || questionList == []){
+        console.log("COULD NOT FIND QUESTIONS");
+        next();
+      }
+      console.log("GOT HERE BY QUIZ QUESTIONS");
+      for (key in questionList){
+        console.log("\t" + key + " : " + questionList[key]);
+      }
+
+      dbInstance.getQuestionById(questionList[req.session.activeAttemptQuestionIndex - 1].id, (question) => {
+        if(question == 'undefined' || question == []){
+          console.log("COULD NOT FIND QUESTION");
+          next();
+        }
+        console.log("GOT HERE BY QUESTION ID");
+
+        dbInstance.getUserAttemptAnswer(req.session.activeAttemptId, question.id, (userAttemptAnswer) => {
+          console.log("GOT TO THE END");
+          console.log("SEARCHING FOR QUESTION: " + req.session.activeAttemptQuestionIndex);
+          if(userAttemptAnswer == 'undefined' || userAttemptAnswer == []){
+            res.send({activeAttempt: 1, quiz: quiz, question: question, userAttemptAnswer: userAttemptAnswer, isLoggedIn: req.session.isAuthenticated});
+          }
+          else{
+            res.send({activeAttempt: 1, quiz: quiz, question: question, isLoggedIn: req.session.isAuthenticated}); 
+          }
+        })
+      })
+    })
+  });
+});
+
+
+
+
+
+
+
+
+/*
 app.get('/assessment/topicOverview', function(req, res){
   console.log("PAGE ASKED FOR TOPIC OVERVIEW");
   if(req.session.isAuthenticated && req.session.activeAttempt){
@@ -227,8 +390,8 @@ app.get('/assessment/quiz/:quizId/question/:questionIndex', function(req, res) {
     res.redirect('/assessment');
   }
 });
-
-
+-----------------------------------------------------------------------------
+*/
 
 
 
@@ -748,7 +911,7 @@ app.get("/quiz/overview", (req, res) => {
 app.use("/api", apiRouter);*/
 
 
-/*var createError = require('http-errors');
+/*
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -771,12 +934,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+*/
 
+var createError = require('http-errors');
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function(err, req, res, next) {
   next(createError(404));
 });
-
+ 
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
@@ -786,6 +951,6 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
-}); */
+});
 
 module.exports = app; 

@@ -1,15 +1,32 @@
 
 
-class PageContentHandler {
-    constructor(){
-        this.state = 1;
-    };
-};
+function displayAttemptQuestion(quiz, question, userAnswer){
+    var contentEnclosure = document.getElementById("main-content-enclosure");
+    contentEnclosure.innerHTML = "";
+
+    //Add the quiz title as the main header 
+    var quizHeading = document.createElement('h1');
+    quizHeading.setAttribute('class', "page__title--base col-s__1 col-e__11 row-s__1 row-e__2");
+    quizHeading.appendChild(document.createTextNode(quiz.title));
+    contentEnclosure.appendChild(quizHeading);
+
+    //Add the question title as a heading for the question 
+    var questionHeading = document.createElement('h2');
+    questionHeading.setAttribute('class', "question__title--base col-s__1 col-e__11 row-s__1 row-e__2");
+    questionHeading.appendChild(document.createTextNode(question.title));
+    contentEnclosure.appendChild(questionHeading);
+
+    //Also add the problem statement 
+    var problemStatementHeading = document.createElement('h3');
+    problemStatementHeading.setAttribute('class', "question-attempt__problemStatement col-s__1 col-e__11 row-s__1 row-e__2");
+    problemStatementHeading.appendChild(document.createTextNode(question.problem_statement));
+    contentEnclosure.appendChild(problemStatementHeading);
+}
 
 
-PageContentHandler.prototype.displayTopicOverview = function(){
+function displayTopicOverview(){
     var req = new XMLHttpRequest();
-    req.open("GET", "/assessment/topicOverview", true);
+    req.open("GET", "/assessment/overview/topics", true);
     
     req.onreadystatechange = function() {
         if (req.readyState == 4 && req.status == 200) {
@@ -20,7 +37,7 @@ PageContentHandler.prototype.displayTopicOverview = function(){
     
             if(serverData.activeAttempt){
                 //dont load the overview
-                this.displayAttemptQuestion(serverData);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.userAttemptAnswer);
             }
             else{
                 var contentEnclosure = document.getElementById("main-content-enclosure");
@@ -57,9 +74,9 @@ PageContentHandler.prototype.displayTopicOverview = function(){
     req.send();
 }
 
-PageContentHandler.prototype.displayQuizOverview = function(quizId){
+function displayQuizOverview(quizId){
     var req = new XMLHttpRequest();
-    req.open("GET", "/assessment/quizOverview/" + quizId, true);
+    req.open("GET", "/assessment/overview/quiz/" + quizId, true);
 
     req.onreadystatechange = function() {
         if (req.readyState == 4 && req.status == 200) {
@@ -67,7 +84,7 @@ PageContentHandler.prototype.displayQuizOverview = function(quizId){
 
             if(serverData.activeAttempt){
                 //dont load the question
-                this.displayAttemptQuestion(serverData);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.userAttemptAnswer);
             }
             else{
                 var contentEnclosure = document.getElementById("main-content-enclosure");
@@ -115,10 +132,11 @@ PageContentHandler.prototype.displayQuizOverview = function(quizId){
     }
     req.send();
 }
-
+/*
 PageContentHandler.prototype.displayAttemptQuestion = function(quizId, questionIndex){
+    console.log("FUNCTI ON CLALE");
     var req = new XMLHttpRequest();
-    req.open("GET", "/assessment/quiz/" + quizId + "/question/" + questionIndex, true);
+    req.open("GET", "/assessment/overview/newAttempt/" + quizId, true);
 
     req.onreadystatechange = function() {
         if (req.readyState == 4 && req.status == 200) {
@@ -163,14 +181,16 @@ PageContentHandler.prototype.displayAttemptQuestion = function(quizId, questionI
         }
     }
     req.send();
-}
+}*/
 
 
 
 
-contentHandler = new PageContentHandler;
 
-contentHandler.displayTopicOverview();
+
+
+
+displayTopicOverview();
 
 
 
@@ -179,34 +199,28 @@ contentHandler.displayTopicOverview();
 
 
 function displayQuiz(event){
-    contentHandler.displayQuizOverview(this.getAttribute('data-id'));
+    displayQuizOverview(this.getAttribute('data-id'));
 }
+
+
 
 function takeQuiz(event){
     var req = new XMLHttpRequest();
-    req.open("GET", "/assessment/quiz/" + this.getAttribute('data-id') + "/newAttempt", true);
+    req.open("GET", "/assessment/overview/newAttempt/" + this.getAttribute('data-id'), true);
 
     req.onreadystatechange = function() {
+        console.log("Got attempt question");
         if (req.readyState == 4 && req.status == 200) {
             serverData = JSON.parse(req.responseText);
 
-            for (key in serverData){
-                for(innerkey in serverData[key]){
-                    console.log(key + " : " + innerkey + " : " + serverData[key][innerkey]);
-
-                }
-            }
-
             if(!serverData.activeAttempt){
                 //dont load the question
-                this.displayTopicOverview();
+                displayTopicOverview();
             }
             else{
                 
-                contentHandler.displayAttemptQuestion(serverData.quiz.id, serverData.questionIndex);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.userAttemptAnswer);
             }
-
-
         }
     }
     req.send();
