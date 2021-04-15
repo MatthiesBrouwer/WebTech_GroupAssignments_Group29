@@ -155,11 +155,11 @@ app.get('/assessment/overview/quiz/:quizId', function(req, res, next){
 app.get('/assessment/overview/newAttempt/:quizId', requireAuthentication, function(req, res, next){
   console.log("Starting new attempt");
   
-  dbInstance.addUserAttempt(req.session.username, req.params.quizId, req.sessionID, (quiz, firstQuestion, userAttemptId)=>{
+  dbInstance.addUserAttempt(req.session.username, req.params.quizId, req.sessionID, (userAttemptId)=>{
     console.log("IT PASSED")
-    if(quiz == 'undefined' || firstQuestion == 'undefined'){
+    if(userAttemptId == 'undefined' || userAttemptId == []){
       //send an error
-      console.log("EITHER QUIZ OR FIRSTQUESTION WAS UNDEFINED!!")
+      console.log("ATTEMPT WAS UNDEFINED!!")
       next();
     }
     else{
@@ -206,10 +206,10 @@ app.get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requir
           console.log("GOT TO THE END");
           console.log("SEARCHING FOR QUESTION: " + req.session.activeAttemptQuestionIndex);
           if(userAttemptAnswer == 'undefined' || userAttemptAnswer == []){
-            res.send({activeAttempt: 1, quiz: quiz, question: question, userAttemptAnswer: userAttemptAnswer, isLoggedIn: req.session.isAuthenticated});
+            res.send({activeAttempt: 1, quiz: quiz, question: question, questionIndex: req.session.activeAttemptQuestionIndex, userAttemptAnswer: userAttemptAnswer, isLoggedIn: req.session.isAuthenticated});
           }
           else{
-            res.send({activeAttempt: 1, quiz: quiz, question: question, isLoggedIn: req.session.isAuthenticated}); 
+            res.send({activeAttempt: 1, quiz: quiz, question: question, questionIndex: req.session.activeAttemptQuestionIndex, isLoggedIn: req.session.isAuthenticated}); 
           }
         })
       })
@@ -217,7 +217,13 @@ app.get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requir
   });
 });
 
-
+//STATUSCODE 501 = Deze vraag is al een keer beantwoord
+app.post('/assessment/quizAttempt/answerQuestion', function(req, res, next){
+  console.log("RECEIVED ANSWER POST REQUIST");
+  for(key in req.body){
+    console.log("\t" + key + " : " + req.body[key]);
+  }
+});
 
 
 

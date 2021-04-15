@@ -101,7 +101,6 @@ class fillInBlanks extends question{
         inputForm.appendChild(submitButton);  
         var innerSection = document.getElementById('innerSection' + questionCounter);   
         innerSection.appendChild(inputForm); 
-        
     }
 };
 

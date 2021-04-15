@@ -513,8 +513,26 @@ DatabaseServer.prototype.addUserAttempt = function(username =  required('usernam
                 throw err;
             }
             console.log("\tDATABASE LOG: SUCCESFULLY ADDED");
+
+            
         });
         entryStmt.finalize();
+
+        var attemptStmt = db.prepare("SELECT id FROM UserAttempt WHERE user_id=(SELECT User.id FROM User WHERE username=?)ORDER BY id DESC LIMIT 1;");
+            attemptStmt.get([username], (err, userAttemptId) => {
+                console.log("\tDATABASE LOG: RUNNING QUESTION STATEMENT");
+                if (err){
+                    console.log("Error finding userAttempt: \n\tuserAttemptId : " + userAttemptId);
+                    throw err;
+                }
+                else if(!userAttemptId){
+                    console.log("User has no active attempts");
+                    throw err;
+                }
+                callback(userAttemptId.id);
+            })
+            attemptStmt.finalize();
+        /*
 
         var quizStmt = db.prepare("SELECT * FROM Quiz WHERE id=?;");
         var quiz;
@@ -578,7 +596,7 @@ DatabaseServer.prototype.addUserAttempt = function(username =  required('usernam
 
 
         })
-        attemptStmt.finalize();
+        attemptStmt.finalize();*/
     });
     db.close((err) => { if (err) {return console.error(err.message);}});
 };
