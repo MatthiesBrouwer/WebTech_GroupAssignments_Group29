@@ -1,0 +1,32 @@
+{
+    "User": [
+        {   
+            "firstname": "Matthies",
+            "middlename": "Bart",
+            "lastname": "Brouwer",
+            "username": "MatthiesBrouwer",
+            "password": "Xx__Pussyslayer69_420__xX"
+        },
+        {   
+            "firstname": "Lennard",
+            "middlename": null,
+            "lastname": "Marck",
+            "username": "LennardMarck",
+            "password": "DaUltimate__BestBoi"
+        },
+        {   
+            "firstname": "Kathleen",
+            "middlename": null,
+            "lastname": "de Boer",
+            "username": "KathleendeBoer",
+            "password": "ItAintMuchButItsHonestWork"
+        },
+        {   
+            "firstname": "Admin",
+            "middlename": null,
+            "lastname": "Admin",
+            "username": "Admin",
+            "password": "Admin"
+        }
+    ]
+}

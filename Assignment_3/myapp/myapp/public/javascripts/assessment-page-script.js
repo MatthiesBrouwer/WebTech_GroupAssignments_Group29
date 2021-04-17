@@ -101,7 +101,6 @@ class fillInBlanks extends question{
         inputForm.appendChild(submitButton);  
         var innerSection = document.getElementById('innerSection' + questionCounter);   
         innerSection.appendChild(inputForm); 
-        
     }
 };
 
@@ -151,6 +150,19 @@ for (let i of questionList) {
 i.questionDisplay();
 }
 
+
+var databaseServer = require('DatabaseServer');
+dbServer.getUserById(2, function(user){console.log("Gotten user: " + user["id"]);});
+
+
+
+
+
+
+
+
+
+
 var req = new XMLHttpRequest();
 window.onload = function()
 {
@@ -164,3 +176,6 @@ req.onreadystatechange= function ()
 }
 req.open("GET", "testdata.json", true);
 req.send();}
+
+
+

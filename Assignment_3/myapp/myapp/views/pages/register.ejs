@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header class="grid-container header__grid-container">
+        <%- include('../partials/header'); %>
+</header>
+
+<main class="main-content-enclosure">
+    <h1 class="page__title--base col-s__1 col-e__11 row-s__1 row-e__2">Login
+    </h1>
+    <section class="grid-container main-content__grid-container--base">
+
+        <h2 class="main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2">HTML Education -
+            login 
+        </h2>
+        <article class = "col-s__5 col-e__7 row-s__2 row-e__3">
+            <form method="POST" action="/register">
+                <fieldset class="user-authentication__credential-input">
+                    <% if(registerFault) { %>
+                        <h3>User already exists</h3>
+                    <% } %>
+                    <input type="text" placeholder="Firstname" name="regFirstname" required>
+                    <input type="text" placeholder="Middlename" name="regMiddlename">
+                    <input type="text" placeholder="Lastname" name="regLastname" required>
+                    <input type="text" placeholder="Username" name="regUsername" required>
+                    <input type="email" placeholder="Email" name="regEmail" required>
+                    <input type="password" placeholder="Password" name="regPassword" required>
+                    <button type="submit">Register</button>
+                    <a href= "/login">Login</a>
+                </fieldset>    
+            </form>
+        </article> 
+
+       <!-- SOURCE 
+        https://icons8.com/icon/116999/web
+        -->
+        <div class="main-content__reference-image col-s__8 col-e__9">
+            <img
+            src="images/page-icon-homepage.png"
+            alt="An icon for the home page displaying a web
+            page">
+        </div>
+        
+
+    </section>
+</main>
+
+<footer class="grid-container">
+    <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>
