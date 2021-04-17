@@ -2,12 +2,11 @@
 
 
 class Question {
-    constructor(title, problemStatement, questionIndex, userAnswer=undefined){
+    constructor(title, problemStatement, questionId, userAnswer=undefined){
         this.title = title;
         this.problemStatement = problemStatement;
-        this.questionIndex = questionIndex;
+        this.questionId = questionId;
         this.userAnswer = userAnswer;
-
     }
 };
 
@@ -16,9 +15,14 @@ Question.prototype.getQuestionDisplay = function(){
     questionSection.setAttribute('class', 'main-content__text--base col-s__2 col-e__9 question-enclosure');
     var feedbackBox = document.createElement('img');
     feedbackBox.setAttribute('class', 'feedbackBox');
-    feedbackBox.setAttribute('src', "images/assessment-feedbackicon-incorrect.png");
 
-    if(this.userAnswer == undefined){
+    feedbackBox.setAttribute('src', "images/assessment-feedbackicon-incorrect.png");
+    if(this.userAnswer != undefined ){
+        if(this.userAnswer.correct){
+            feedbackBox.setAttribute('src', "images/assessment-feedbackicon-correct.png");
+        }
+    }
+    else{
         feedbackBox.style.visibility = "hidden";
     }
     questionSection.appendChild(feedbackBox);
@@ -43,16 +47,23 @@ Question.prototype.submitAnswer = function(answerText){
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     req.onreadystatechange = function() {
         if (req.readyState == 4 && req.status == 200) {
+            serverData = req.re
+            serverData = JSON.parse(req.responseText);    
+            console.log("GOT RESPONSE:");
+            for(key in serverData){
+                console.log(key + " : " + serverData[key]);
+            }
+            
             
         }
     }
-    console.log("SENDING: " + "answer=" + answerText + "&questionIndex=" + this.questionIndex);
-    req.send("answer=" + answerText + "&questionIndex=" + this.questionIndex);
+    console.log("SENDING: " + "answer=" + answerText + "&questionId=" + this.questionId );
+    req.send("answer=" + answerText + "&questionId=" + this.questionId);
 }
 
 class FillInBlanks extends Question{
-    constructor(title, problemStatement, questionIndex, userAnswer=undefined){
-        super(title, problemStatement, questionIndex, userAnswer)            //takes all the parameter inputs from the superclass constructor      
+    constructor(title, problemStatement, questionId, userAnswer=undefined){
+        super(title, problemStatement, questionId, userAnswer)            //takes all the parameter inputs from the superclass constructor      
     }
 
     getQuestionDisplay(){
@@ -65,12 +76,29 @@ class FillInBlanks extends Question{
         var inputBox = document.createElement('input');
         inputBox.setAttribute('type', 'text');
         inputBox.setAttribute('id', "questionForm__textInput");
-        inputForm.appendChild(inputBox);
         var submitButton = document.createElement('input');         //the submit button for accessibility
         submitButton.setAttribute('type', 'submit');    
         submitButton.setAttribute('value', 'Submit');
-        inputForm.appendChild(submitButton);  
+
+        var nextButton = document.createElement('button');
+        nextButton.appendChild(document.createTextNode('Take Quiz'));
+        nextButton.addEventListener("click", nextQuestion);
+
+        if(this.userAnswer != undefined ){
+            inputBox.disabled = true;
+            submitButton.disabled = true;
+        }
+        else{
+            nextButton.disabled = true;
+        }
+        inputForm.appendChild(inputBox);
+        
+        inputForm.appendChild(submitButton);
         questionSection.appendChild(inputForm); 
+        questionSection.appendChild(nextButton);  
+
+
+
         return questionSection;
     }
 
@@ -83,7 +111,7 @@ class FillInBlanks extends Question{
 
 
 
-function displayAttemptQuestion(quiz, question, questionIndex, userAnswer){
+function displayAttemptQuestion(quiz, question, userAnswer){
     console.log("DISPLAYING ATTEMPT QUESTION: ");
     console.log("\t" + "QUIZ:");
     for(key in quiz){
@@ -97,10 +125,11 @@ function displayAttemptQuestion(quiz, question, questionIndex, userAnswer){
     for(key in userAnswer){
         console.log("\t" + key + " : " + userAnswer[key]);
     }
+    console.log(userAnswer);
 
     var contentEnclosure = document.getElementById("main-content-enclosure");
     contentEnclosure.innerHTML = "";
-    var newQuestion = new FillInBlanks(question.title, question.problem_statement, questionIndex, userAnswer);
+    var newQuestion = new FillInBlanks(question.title, question.problem_statement, question.id, userAnswer);
     console.log(newQuestion);
     contentEnclosure.appendChild(newQuestion.getQuestionDisplay());
     /*
@@ -137,7 +166,7 @@ function displayTopicOverview(){
     
             if(serverData.activeAttempt){
                 //dont load the overview
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.userAttemptAnswer);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.userAnswer);
             }
             else{
                 var contentEnclosure = document.getElementById("main-content-enclosure");
@@ -184,7 +213,7 @@ function displayQuizOverview(quizId){
 
             if(serverData.activeAttempt){
                 //dont load the question
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionIndex, serverData.userAttemptAnswer);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionId, serverData.userAnswer);
             }
             else{
                 var contentEnclosure = document.getElementById("main-content-enclosure");
@@ -251,6 +280,27 @@ function displayQuiz(event){
     displayQuizOverview(this.getAttribute('data-id'));
 }
 
+function nextQuestion(event){
+    var req = new XMLHttpRequest();
+    req.open("GET", "/assessment/quizAttempt/nextQuestion", true);
+
+    req.onreadystatechange = function() {
+        console.log("Got question");
+        if (req.readyState == 4 && req.status == 200) {
+            serverData = JSON.parse(req.responseText);
+
+            if(!serverData.activeAttempt){
+                //dont load the question
+                displayTopicOverview();
+            }
+            else{
+                
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionId, serverData.userAttemptAnswer);
+            }
+        }
+    }
+    req.send();}
+
 
 
 function takeQuiz(event){
@@ -268,7 +318,7 @@ function takeQuiz(event){
             }
             else{
                 
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionIndex, serverData.userAttemptAnswer);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionId, serverData.userAttemptAnswer);
             }
         }
     }

@@ -69,7 +69,9 @@ class DatabaseServer {
         this.databaseTables["User"] = new DatabaseTable("User", ["firstname", "middlename", "lastname", "username", "password"]);
         this.databaseTables["UserAttemptStatus"] = new DatabaseTable("UserAttemptStatus", ["status"]);
         this.databaseTables["UserAttempt"] = new DatabaseTable("UserAttempt", ["user_id", "quiz_id", "user_attempt_status_id", "session_id"]);
-        this.databaseTables["UserAttemptAnswer"] = new DatabaseTable("UserAttemptAnswer", ["user_attempt_id", "quiz_question_answer_id"]);
+        //this.databaseTables["UserAttemptAnswer"] = new DatabaseTable("UserAttemptAnswer", ["user_attempt_id", "quiz_question_answer_id"]);
+        this.databaseTables["UserAttemptAnswer"] = new DatabaseTable("UserAttemptAnswer", ["quiz_question_id", "user_attempt_id", "user_question_answer", "correct"]);
+        
         console.log("DIRNAME: " + __dirname);
 
         if(!exists) {
@@ -161,7 +163,7 @@ DatabaseServer.prototype.createDatabase = function(){
                 "CONSTRAINT FK_Quiz FOREIGN KEY (quiz_id) REFERENCES Quiz(id) ON DELETE SET NULL ON UPDATE CASCADE",
                 "CONSTRAINT FK_UserAttemptStatus FOREIGN KEY (user_attempt_status_id) REFERENCES UserAttemptStatus(id) ON DELETE NO ACTION ON UPDATE CASCADE"
             ])
-        ).run(
+        /*).run(
             this.databaseTables["UserAttemptAnswer"].createTable([
                 "id INTEGER CONSTRAINT PK_UserAttemptAnswer PRIMARY KEY AUTOINCREMENT",
                 "user_attempt_id INT NOT NULL",
@@ -169,6 +171,19 @@ DatabaseServer.prototype.createDatabase = function(){
                 ],[
                 "CONSTRAINT FK_UserAttempt FOREIGN KEY (user_attempt_id) REFERENCES UserAttempt(id) ON DELETE CASCADE ON UPDATE CASCADE",
                 "CONSTRAINT FK_QuizQuestionAnswer FOREIGN KEY (quiz_question_answer_id) REFERENCES QuizQuestionAnswer(id) ON DELETE NO ACTION ON UPDATE NO ACTION"
+            ])
+        );*/
+        ).run(
+            this.databaseTables["UserAttemptAnswer"].createTable([
+                "id INTEGER CONSTRAINT PK_UserAttemptAnswer PRIMARY KEY AUTOINCREMENT",
+                "quiz_question_id INT NOT NULL",
+                "user_attempt_id INT NOT NULL",
+                "user_question_answer VARCHAR(50) NOT NULL",
+                "correct BOOLEAN NOT NULL"
+                ],[
+                "CONSTRAINT FK_UserAttempt FOREIGN KEY (user_attempt_id) REFERENCES UserAttempt(id) ON DELETE CASCADE ON UPDATE CASCADE",
+                "CONSTRAINT FK_QuizQuestion FOREIGN KEY (quiz_question_id) REFERENCES QuizQuestion(id) ON DELETE CASCADE ON UPDATE CASCADE"
+
             ])
         );
         console.log("FILLING DATA INTO TABLES");
@@ -454,7 +469,7 @@ DatabaseServer.prototype.getAnswersByQuestionId = function(questionId = required
 
         var answerStmt = db.prepare(`SELECT * FROM QuizQuestionAnswer WHERE quiz_question_id=?;`);
         console.log("\tDATABASE LOG: GOING TO RUN ANSWERSTATEMENT");
-        answerStmt.all([quizId], (err, selectedAnswers) => {
+        answerStmt.all([questionId], (err, selectedAnswers) => {
             console.log("\tDATABASE LOG: ANSWER STATEMENT HADS RUN");
             if (err){
                 console.log("Could not find answers for question by id: " + questionId);
@@ -532,6 +547,8 @@ DatabaseServer.prototype.addUserAttempt = function(username =  required('usernam
                 callback(userAttemptId.id);
             })
             attemptStmt.finalize();
+
+        
         /*
 
         var quizStmt = db.prepare("SELECT * FROM Quiz WHERE id=?;");
@@ -601,7 +618,8 @@ DatabaseServer.prototype.addUserAttempt = function(username =  required('usernam
     db.close((err) => { if (err) {return console.error(err.message);}});
 };
 
-DatabaseServer.prototype.getUserAttemptAnswer = function(attemptAnswerId = required('attemptAnswerId'), questionId = required('questionId'), callback = required('callback function')){
+
+DatabaseServer.prototype.getUserAttemptAnswer = function(attemptId = required('attemptId'), questionId = required('questionId'), callback = required('callback function')){
     const db = new sqlite3.Database(this.dbFile, (err) => {
         if (err) {
             console.log("Could not connect to the database", err);
@@ -609,13 +627,21 @@ DatabaseServer.prototype.getUserAttemptAnswer = function(attemptAnswerId = requi
     }); 
     db.serialize( () => {
         //var stmt = db.prepare(`SELECT Quiz.id, Quiz.title, QuizQuestion.title FROM (SELECT * FROM Quiz WHERE Quiz.id = ?) AS Quiz JOIN QuizQuestion ON Quiz.id = QuizQuestion.quiz_id;`);
-        var stmt = db.prepare(`SELECT UserAttemptAnswer.quiz_question_answer_id FROM UserAttemptAnswer WHERE UserAttemptAnswer.user_attempt_id=? AND UserAttemptAnswer.quiz_question_answer_id IN 
-        (SELECT quizQuestionAnswer.id FROM quizQuestionAnswer WHERE quizQuestionAnswer.quiz_question_id=?);`);
-        user = stmt.get([attemptAnswerId, questionId], (err, attemptAnswer) => {
+        //var stmt = db.prepare(`SELECT UserAttemptAnswer.quiz_question_answer_id FROM UserAttemptAnswer WHERE UserAttemptAnswer.user_attempt_id=? AND UserAttemptAnswer.quiz_question_answer_id IN 
+        //(SELECT quizQuestionAnswer.id FROM quizQuestionAnswer WHERE quizQuestionAnswer.quiz_question_id=?);`);
+        var stmt = db.prepare(`SELECT * FROM UserAttemptAnswer WHERE user_attempt_id=? AND quiz_question_id=?;`)
+        
+        user = stmt.get([attemptId, questionId], (err, attemptAnswer) => {
             if (err){
                 throw err;
             }
-            console.log("FOUND ANSWER: " + attemptAnswer);
+            console.log("SEARCHED DATABASE FOR :");
+            console.log("\tattemptId: " + attemptId);
+            console.log("\tquestionId: " + questionId);
+            console.log("\tAttempt answer: ");
+            for(key in attemptAnswer){
+                console.log("\t" + key + " : " + attemptAnswer[key]);
+            }
             callback(attemptAnswer);
         });
         stmt.finalize();
@@ -623,7 +649,55 @@ DatabaseServer.prototype.getUserAttemptAnswer = function(attemptAnswerId = requi
     db.close((err) => { if (err) {return console.error(err.message);}});
 };
 
+DatabaseServer.prototype.addUserAttemptAnswer = function(questionId = required('questionId'),
+                                                         userAttemptId =  required('userAttemptId'), 
+                                                         userAnswer = required('userAnswer'),
+                                                         correct = required('correct'), callback = required('callback function')){
 
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    });
+    db.serialize( () => {
+
+            var entryStmt = db.prepare(this.databaseTables["UserAttemptAnswer"].newEntryStatement());
+            entryStmt.run([questionId, userAttemptId, userAnswer, correct], (err) => {
+                if (err){
+                    console.log("Error adding new user attempt answer: userAttemptId : " + userAttemptId  + "\n\t" + "userAnswerId : " + userAnswerId );
+                    throw err;
+                }
+            });
+            entryStmt.finalize();
+            callback();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
+DatabaseServer.prototype.getCorrectAnswer = function(questionId = required('questionId'), callback = required('callback function')){
+    const db = new sqlite3.Database(this.dbFile, (err) => {
+        if (err) {
+            console.log("Could not connect to the database", err);
+        }
+    }); 
+    db.serialize( () => {
+
+        var stmt = db.prepare(`SELECT * FROM QuizQuestionAnswer WHERE quiz_question_id=? AND correct=true;`)
+        
+        user = stmt.get([questionId], (err, correctAnswer) => {
+            if (err){
+                throw err;
+            }
+            console.log("FOUND ANSWER: " + correctAnswer);
+            callback(correctAnswer);
+        });
+        stmt.finalize();
+    });
+    db.close((err) => { if (err) {return console.error(err.message);}});
+};
+
+
+/*
 DatabaseServer.prototype.addUserAttemptAnswer = function(userAttemptId =  required('userAttemptId'), 
                                                          userAnswerId = required('userAnswerId'),
                                                          callback = required('callback')){
@@ -653,7 +727,7 @@ DatabaseServer.prototype.addUserAttemptAnswer = function(userAttemptId =  requir
         }   
     });
     db.close((err) => { if (err) {return console.error(err.message);}});
-};
+};*/
 
 
 

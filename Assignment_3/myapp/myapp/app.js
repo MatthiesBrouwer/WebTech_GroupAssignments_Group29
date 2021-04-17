@@ -98,7 +98,6 @@ function requireActiveAttempt(req, res, next){
   }
 }
 
-
 //Deze route vangt alle calls naar een overview en checked of de user bezig is met een quiz.
 //If so, dan wordt de user geredirect naar de laatste quizvraag van de attempt waar de user mee bezig was
 app.get('/assessment/overview/*', function(req, res, next){
@@ -172,6 +171,11 @@ app.get('/assessment/overview/newAttempt/:quizId', requireAuthentication, functi
   });
 });
 
+app.get('/assessment/quizAttempt/nextQuestion', requireAuthentication, requireActiveAttempt,  function(req, res, next){
+  console.log("NEXT QUESTION HAS BEEN CALLED!");
+  req.session.activeAttemptQuestionIndex += 1;
+  res.redirect('/assessment/quizAttempt/currentQuestion');
+});
 
 app.get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requireActiveAttempt,  function(req, res, next){
   console.log("GOT INTO THIS");
@@ -202,14 +206,19 @@ app.get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requir
         }
         console.log("GOT HERE BY QUESTION ID");
 
-        dbInstance.getUserAttemptAnswer(req.session.activeAttemptId, question.id, (userAttemptAnswer) => {
+        dbInstance.getUserAttemptAnswer(req.session.activeAttemptId, questionList[req.session.activeAttemptQuestionIndex - 1].id , (userAttemptAnswer) => {
           console.log("GOT TO THE END");
           console.log("SEARCHING FOR QUESTION: " + req.session.activeAttemptQuestionIndex);
-          if(userAttemptAnswer == 'undefined' || userAttemptAnswer == []){
-            res.send({activeAttempt: 1, quiz: quiz, question: question, questionIndex: req.session.activeAttemptQuestionIndex, userAttemptAnswer: userAttemptAnswer, isLoggedIn: req.session.isAuthenticated});
+          for (key in userAttemptAnswer){
+            console.log("\t" + key + " : " + userAttemptAnswer[key]);
+          }
+          if(userAttemptAnswer != undefined){
+            console.log("USER HAS ALREADY ANSWERED THIS QUESTION");
+            res.send({activeAttempt: 1, quiz: quiz, question: question, userAnswer: userAttemptAnswer.user_question_answer, isLoggedIn: req.session.isAuthenticated});
           }
           else{
-            res.send({activeAttempt: 1, quiz: quiz, question: question, questionIndex: req.session.activeAttemptQuestionIndex, isLoggedIn: req.session.isAuthenticated}); 
+            console.log("USER HAS NOT YET ANSWERED THIS QUESTION");
+            res.send({activeAttempt: 1, quiz: quiz, question: question, isLoggedIn: req.session.isAuthenticated}); 
           }
         })
       })
@@ -218,11 +227,44 @@ app.get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requir
 });
 
 //STATUSCODE 501 = Deze vraag is al een keer beantwoord
-app.post('/assessment/quizAttempt/answerQuestion', function(req, res, next){
+app.post('/assessment/quizAttempt/answerQuestion', requireAuthentication, requireActiveAttempt, function(req, res, next){
   console.log("RECEIVED ANSWER POST REQUIST");
   for(key in req.body){
     console.log("\t" + key + " : " + req.body[key]);
   }
+  console.log("GOT HERE BY QUIZ ID");
+  dbInstance.getQuizQuestions(req.session.activeAttemptQuizId, (questionList) => {
+    if(questionList == 'undefined' || questionList == []){
+      console.log("COULD NOT FIND QUESTIONS");
+      next();
+    }
+    console.log("GOT HERE BY QUIZ QUESTIONS");
+    for (key in questionList){
+      console.log("\t" + key + " : " + questionList[key]);
+    }
+    if(questionList[req.session.activeAttemptQuestionIndex - 1].id != req.body.questionId){
+      console.log("INVALID QUESTION IND");
+      console.log("\t" + questionList[req.session.activeAttemptQuestionIndex -1].id + " : " + req.body.questionId);
+      next();
+    }
+
+    dbInstance.getUserAttemptAnswer(req.session.activeAttemptId, questionList[req.session.activeAttemptQuestionIndex - 1].id, (attemptAnswer)=>{
+      if(attemptAnswer != undefined){
+        console.log("USER HAS ALREADY ANSWERED THIS QUESTION");
+        next();
+      }
+      else{
+        dbInstance.getCorrectAnswer(questionList[req.session.activeAttemptQuestionIndex - 1].id, (correctAnswer) => {
+          console.log("GOT CORECT ANSER");
+          console.log(req.body.answer);
+          dbInstance.addUserAttemptAnswer(questionList[req.session.activeAttemptQuestionIndex - 1].id, req.session.activeAttemptId, req.body.answer, ((correctAnswer.answer == req.body.answer)? true : false), () => {
+            res.send({activeAttempt: 1, correct: ((correctAnswer == req.body.answer) ? true : false), correctAns: correctAnswer.answer, isLoggedIn: req.session.isAuthenticated});
+  
+          });
+        });
+      }
+    })
+  })
 });
 
 
@@ -945,6 +987,7 @@ app.use('/users', usersRouter);
 var createError = require('http-errors');
 // catch 404 and forward to error handler
 app.use(function(err, req, res, next) {
+  console.log("CAUGHT 404");
   next(createError(404));
 });
  
