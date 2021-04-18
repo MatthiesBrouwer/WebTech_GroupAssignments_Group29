@@ -2,11 +2,12 @@
 
 
 class Question {
-    constructor(title, problemStatement, questionId, userAnswer=undefined){
+    constructor(title, problemStatement, questionId, userAnswer=undefined, correctAnswer=undefined){
         this.title = title;
         this.problemStatement = problemStatement;
         this.questionId = questionId;
         this.userAnswer = userAnswer;
+        this.correctAnswer = correctAnswer;
     }
 };
 
@@ -14,11 +15,11 @@ Question.prototype.getQuestionDisplay = function(){
     var questionSection = document.createElement('section');
     questionSection.setAttribute('class', 'main-content__text--base col-s__2 col-e__9 question-enclosure');
     var feedbackBox = document.createElement('img');
-    feedbackBox.setAttribute('class', 'feedbackBox');
+    feedbackBox.setAttribute('class', 'question-attempt__feedbackBox');
 
     feedbackBox.setAttribute('src', "images/assessment-feedbackicon-incorrect.png");
     if(this.userAnswer != undefined ){
-        if(this.userAnswer.correct){
+        if(this.userAnswer = this.correctAnswer){
             feedbackBox.setAttribute('src', "images/assessment-feedbackicon-correct.png");
         }
     }
@@ -47,14 +48,37 @@ Question.prototype.submitAnswer = function(answerText){
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     req.onreadystatechange = function() {
         if (req.readyState == 4 && req.status == 200) {
-            serverData = req.re
             serverData = JSON.parse(req.responseText);    
             console.log("GOT RESPONSE:");
             for(key in serverData){
-                console.log(key + " : " + serverData[key]);
+                for(innerkey in serverData[key]){
+                    console.log(key + " : " + serverData[key] + " : " + serverData[key][innerkey]);
+
+                }
             }
-            
-            
+            console.log("CORRECT: " + serverData.questionAnswer.correctAnswer);
+            console.log("USER: " + serverData.questionAnswer.userAnswer);
+
+            this.userAnswer = serverData.questionAnswer.userAnswer;
+            this.correctAnswer = serverData.questionAnswer.correctAnswer;     
+
+            var submitButton = document.getElementById("questionForm__submitButton");
+            var nextButton = document.getElementById("questionForm__nextButton");
+            var answerFeedback = document.getElementById("questionForm__answerFeedback");
+
+            submitButton.disabled = true;
+            nextButton.disabled = false;
+            answerFeedback.style.visibility = "visible";
+
+            if(this.userAnswer != this.correctAnswer){
+                answerFeedback.setAttribute('class', "questionForm__answerFeedback--incorrect");
+                answerFeedback.appendChild(document.createTextNode("Incorrect! The correct answer was: '" + this.correctAnswer + "'."));
+            }
+            else{
+                answerFeedback.setAttribute('class', "questionForm__answerFeedback--correct");
+                answerFeedback.appendChild(document.createTextNode("Correct! You answered: '" + this.userAnswer + "'."));
+
+            }  
         }
     }
     console.log("SENDING: " + "answer=" + answerText + "&questionId=" + this.questionId );
@@ -62,8 +86,8 @@ Question.prototype.submitAnswer = function(answerText){
 }
 
 class FillInBlanks extends Question{
-    constructor(title, problemStatement, questionId, userAnswer=undefined){
-        super(title, problemStatement, questionId, userAnswer)            //takes all the parameter inputs from the superclass constructor      
+    constructor(title, problemStatement, questionId, userAnswer=undefined, correctAnswer=undefined){
+        super(title, problemStatement, questionId, userAnswer, correctAnswer);            //takes all the parameter inputs from the superclass constructor      
     }
 
     getQuestionDisplay(){
@@ -79,23 +103,39 @@ class FillInBlanks extends Question{
         var submitButton = document.createElement('input');         //the submit button for accessibility
         submitButton.setAttribute('type', 'submit');    
         submitButton.setAttribute('value', 'Submit');
+        submitButton.setAttribute('id', "questionForm__submitButton");
 
         var nextButton = document.createElement('button');
-        nextButton.appendChild(document.createTextNode('Take Quiz'));
+        nextButton.appendChild(document.createTextNode('Next Question'));
+        nextButton.setAttribute('id', "questionForm__nextButton");
         nextButton.addEventListener("click", nextQuestion);
+        var answerFeedback = document.createElement('label');
+        answerFeedback.setAttribute('id', "questionForm__answerFeedback");
 
         if(this.userAnswer != undefined ){
             inputBox.disabled = true;
             submitButton.disabled = true;
+
+
+            if(this.userAnswer = this.correctAnswer){
+                answerFeedback.setAttribute('class', "questionForm__answerFeedback--incorrect");
+                answerFeedback.appendChild(document.createTextNode("Incorrect! The correct answer was: '" + this.correctAnswer + "'."));
+
+            }
+            else{
+                answerFeedback.setAttribute('class', "questionForm__answerFeedback--correct");
+                answerFeedback.appendChild(document.createTextNode("Correct! You answered: '" + this.userAnswer + "'."));
+            }
         }
         else{
+            answerFeedback.style.visibility = "hidden";
             nextButton.disabled = true;
         }
         inputForm.appendChild(inputBox);
-        
         inputForm.appendChild(submitButton);
         questionSection.appendChild(inputForm); 
         questionSection.appendChild(nextButton);  
+        questionSection.appendChild(answerFeedback);
 
 
 
@@ -106,13 +146,18 @@ class FillInBlanks extends Question{
         event.preventDefault();
         var answerText = document.getElementById("questionForm__textInput").value;
         super.submitAnswer(answerText);
+        console.log("EN DAARNA HIERHEEN!!!!!!!!!!!!");
+        var textBox = document.getElementById("questionForm__textInput");
+        textBox.disabled = true;
+        
     }
 }
 
 
 
-function displayAttemptQuestion(quiz, question, userAnswer){
+function displayAttemptQuestion(quiz, question, userAnswer, correctAnswer){
     console.log("DISPLAYING ATTEMPT QUESTION: ");
+    console.log(question);
     console.log("\t" + "QUIZ:");
     for(key in quiz){
         console.log("\t" + key + " : " + quiz[key]);
@@ -125,11 +170,10 @@ function displayAttemptQuestion(quiz, question, userAnswer){
     for(key in userAnswer){
         console.log("\t" + key + " : " + userAnswer[key]);
     }
-    console.log(userAnswer);
 
     var contentEnclosure = document.getElementById("main-content-enclosure");
     contentEnclosure.innerHTML = "";
-    var newQuestion = new FillInBlanks(question.title, question.problem_statement, question.id, userAnswer);
+    var newQuestion = new FillInBlanks(question.title, question.problem_statement, question.id, userAnswer, correctAnswer);
     console.log(newQuestion);
     contentEnclosure.appendChild(newQuestion.getQuestionDisplay());
     /*
@@ -166,7 +210,8 @@ function displayTopicOverview(){
     
             if(serverData.activeAttempt){
                 //dont load the overview
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.userAnswer);
+                
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
             }
             else{
                 var contentEnclosure = document.getElementById("main-content-enclosure");
@@ -191,8 +236,8 @@ function displayTopicOverview(){
                         var quizHeading = document.createElement('h2');
                         quizHeading.appendChild(document.createTextNode(serverData.topicQuizes[topic].quizes[quiz].quizTitle));
                         quizSection.appendChild(quizHeading);
-                        quizSection.addEventListener("click", displayQuiz)
-                        topicSection.appendChild(quizSection);
+                        quizSection.addEventListener("click", displayQuiz); //displayQuiz
+                        topicSection.appendChild(quizSection); 
                     }
                     contentEnclosure.appendChild(topicHeading);
                     contentEnclosure.appendChild(topicSection);
@@ -213,7 +258,7 @@ function displayQuizOverview(quizId){
 
             if(serverData.activeAttempt){
                 //dont load the question
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionId, serverData.userAnswer);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
             }
             else{
                 var contentEnclosure = document.getElementById("main-content-enclosure");
@@ -294,8 +339,7 @@ function nextQuestion(event){
                 displayTopicOverview();
             }
             else{
-                
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionId, serverData.userAttemptAnswer);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
             }
         }
     }
@@ -317,8 +361,8 @@ function takeQuiz(event){
                 displayTopicOverview();
             }
             else{
-                
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionId, serverData.userAttemptAnswer);
+                console.log(serverData.question.title);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
             }
         }
     }
