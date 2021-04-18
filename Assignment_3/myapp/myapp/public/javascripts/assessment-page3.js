@@ -236,8 +236,8 @@ function displayTopicOverview(){
                         var quizHeading = document.createElement('h2');
                         quizHeading.appendChild(document.createTextNode(serverData.topicQuizes[topic].quizes[quiz].quizTitle));
                         quizSection.appendChild(quizHeading);
-                        quizSection.addEventListener("click", displayQuiz)
-                        topicSection.appendChild(quizSection);
+                        quizSection.addEventListener("click", displayQuiz); //displayQuiz
+                        topicSection.appendChild(quizSection); 
                     }
                     contentEnclosure.appendChild(topicHeading);
                     contentEnclosure.appendChild(topicSection);
