@@ -37,6 +37,11 @@ app.use(express.urlencoded({extended: false})); //Bodyparser now uses express.ur
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
+
+  req.session.isAuthenticated = true; //Backdoor remove after
+  req.session.username = "Admin";     //Backdoor remove after
+  req.session.name = "Admin";         //Backdoor remove after
+
   res.render('pages/index', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
   console.log(req.session.username);
 });
@@ -196,9 +201,33 @@ app.get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requir
       }
       console.log("GOT HERE BY QUIZ QUESTIONS");
       for (key in questionList){
-        console.log("\t" + key + " : " + questionList[key]);
-      }
+        for(innerkey in questionList[key]){
+          console.log("\t" + key + " : " + questionList[key] + " : " + questionList[key][innerkey]);
 
+        }
+      }
+      dbInstance.getUserAttemptAnswer(req.session.activeAttemptId, questionList[req.session.activeAttemptQuestionIndex - 1].id , (userAttemptAnswer) => {
+        console.log("GOT TO THE END");
+        console.log("SEARCHING FOR QUESTION: " + req.session.activeAttemptQuestionIndex);
+        for (key in userAttemptAnswer){
+          console.log("\t" + key + " : " + userAttemptAnswer[key]);
+        }
+        if(userAttemptAnswer != undefined){
+          console.log("USER HAS ALREADY ANSWERED THIS QUESTION");
+          dbInstance.getCorrectAnswer(questionList[req.session.activeAttemptQuestionIndex - 1].id, (correctAnswer) => {
+            //res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: userAttemptAnswer.user_question_answer, correctAnswer: correctAnswer.answer}, isLoggedIn: req.session.isAuthenticated});            
+            console.log("SENDING QUESTION WITH USER ANSWER");
+            res.send({activeAttempt: 1, quiz: quiz, question: questionList[req.session.activeAttemptQuestionIndex - 1], questionAnswer: {userAnswer: userAttemptAnswer.user_question_answer, correctAnswer: correctAnswer.answer}, isLoggedIn: req.session.isAuthenticated});            
+
+          });
+        }
+        else{
+          console.log("USER HAS NOT YET ANSWERED THIS QUESTION");
+          console.log(questionList[req.session.activeAttemptQuestionIndex - 1]);
+          res.send({activeAttempt: 1, quiz: quiz, question: questionList[req.session.activeAttemptQuestionIndex - 1], questionAnswer: {userAnswer: undefined, correctAnswer: undefined}, isLoggedIn: req.session.isAuthenticated}); 
+        }
+      })
+/*
       dbInstance.getQuestionById(questionList[req.session.activeAttemptQuestionIndex - 1].id, (question) => {
         if(question == 'undefined' || question == []){
           console.log("COULD NOT FIND QUESTION");
@@ -214,14 +243,19 @@ app.get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requir
           }
           if(userAttemptAnswer != undefined){
             console.log("USER HAS ALREADY ANSWERED THIS QUESTION");
-            res.send({activeAttempt: 1, quiz: quiz, question: question, userAnswer: userAttemptAnswer.user_question_answer, isLoggedIn: req.session.isAuthenticated});
+            dbInstance.getCorrectAnswer(questionList[req.session.activeAttemptQuestionIndex - 1].id, (correctAnswer) => {
+              //res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: userAttemptAnswer.user_question_answer, correctAnswer: correctAnswer.answer}, isLoggedIn: req.session.isAuthenticated});            
+              console.log("SENDING QUESTION WITH USER ANSWER");
+              res.send({activeAttempt: 1, quiz: quiz, question: questionList[req.session.activeAttemptQuestionIndex - 1], questionAnswer: {userAnswer: req.body.answer, correctAnswer: correctAnswer.answer}, isLoggedIn: req.session.isAuthenticated});            
+
+            });
           }
           else{
             console.log("USER HAS NOT YET ANSWERED THIS QUESTION");
-            res.send({activeAttempt: 1, quiz: quiz, question: question, isLoggedIn: req.session.isAuthenticated}); 
+            res.send({activeAttempt: 1, quiz: quiz, question: questionList[req.session.activeAttemptQuestionIndex - 1], questionAnswer: {userAnswer: undefined, correctAnswer: undefined}, isLoggedIn: req.session.isAuthenticated}); 
           }
         })
-      })
+      })*/
     })
   });
 });
@@ -258,8 +292,8 @@ app.post('/assessment/quizAttempt/answerQuestion', requireAuthentication, requir
           console.log("GOT CORECT ANSER");
           console.log(req.body.answer);
           dbInstance.addUserAttemptAnswer(questionList[req.session.activeAttemptQuestionIndex - 1].id, req.session.activeAttemptId, req.body.answer, ((correctAnswer.answer == req.body.answer)? true : false), () => {
-            res.send({activeAttempt: 1, correct: ((correctAnswer == req.body.answer) ? true : false), correctAns: correctAnswer.answer, isLoggedIn: req.session.isAuthenticated});
-  
+            res.send({activeAttempt: 1, quiz: quiz, question: questionList[req.session.activeAttemptQuestionIndex - 1], questionAnswer: {userAnswer: req.body.answer, correctAnswer: correctAnswer.answer}, isLoggedIn: req.session.isAuthenticated});            
+
           });
         });
       }
@@ -789,7 +823,7 @@ app.post('/login', (req, res) => {
  let HashPass = md5(req.body.authPassword);
   dbInstance.getUserByUsername(req.body.authUsername, (user) => {
     if (user) { //check if user existst by username
-      if(HashPass === md5(user["password"])){ //easy to hack but simple implementation
+      if(HashPass === user["password"]){ //easy to hack but simple implementation
         console.log("You are now logged in");
         req.session.isAuthenticated = true; 
         req.session.username = user["username"];
@@ -985,6 +1019,7 @@ app.use('/users', usersRouter);
 */
 
 var createError = require('http-errors');
+const { Hash } = require('crypto');
 // catch 404 and forward to error handler
 app.use(function(err, req, res, next) {
   console.log("CAUGHT 404");
