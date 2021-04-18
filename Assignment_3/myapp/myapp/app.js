@@ -175,24 +175,21 @@ app.use(logger('tiny')).get('/assessment/overview/newAttempt/:quizId', requireAu
   });
 });
 
-app.use(logger('tiny')).get('/assessment/overview/newAttempt/:quizId', requireAuthentication, function(req, res, next){
-  console.log("Starting new attempt");
+//WE ZITTEN HIER KIJHARD TE CRUNCHEN VOOR MEERDERE UREN AAN ELKAAR< EN IK SNAP NOG STEEDS NIET WAAROM DEZE ROUTER NOU
+//WEL DE EERSTE CONSOLE.LOG GOOIT, MAAR DAN INEENS UIT DE ROUTER GAAT EN EEN 404 GOOIT.
+app.use(logger('tiny')).get('/assessment/quizAttempt/finishQuiz', requireAuthentication,  requireActiveAttempt, function(req, res){
   
-  dbInstance.addUserAttempt(req.session.username, req.params.quizId, req.sessionID, (userAttemptId)=>{
-    console.log("IT PASSED")
-    if(userAttemptId == 'undefined' || userAttemptId == []){
-      //send an error
-      console.log("ATTEMPT WAS UNDEFINED!!")
-      next();
-    }
-    else{
-      req.session.activeAttemptId = userAttemptId;
-      req.session.activeAttemptQuizId = req.params.quizId; 
-      req.session.activeAttemptQuestionIndex = 1;
-      res.redirect('/assessment/quizAttempt/currentQuestion');
-      //res.send({activeAttempt: 1, quiz: quiz, question: firstQuestion, isLoggedIn: req.session.isAuthenticated});
-    }
+  console.log("FINISHING QUIZ");
+
+  dbInstance.finishUserAttempt(req.session.userAttemptId, (quiz, answeredCorrect, maxScore)=> {
+    console.log("FINISHING QUIZ: ");
+    console.log("\tQUIZ: " + quiz);
+    console.log("\tSCORE: " + answeredCorrect);
+    console.log("\tmaxScore: " + maxScore);
+    res.send({quiz: quiz, answeredCorrect: answeredCorrect, maxScore: maxScore});
   });
+  console.log("Got to end");
+  
 });
 
 app.use(logger('tiny')).get('/assessment/quizAttempt/nextQuestion', requireAuthentication, requireActiveAttempt,  function(req, res, next){

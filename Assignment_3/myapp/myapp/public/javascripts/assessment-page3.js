@@ -21,15 +21,6 @@ Question.prototype.getQuestionDisplay = function(){
     feedbackBox.setAttribute('src', "images/assessment-feedbackicon-incorrect.png");
     feedbackBox.style.visibility = "hidden";
 
-    /*
-    if(this.userAnswer != undefined ){        
-        if(this.userAnswer == this.correctAnswer){
-            feedbackBox.setAttribute('src', "images/assessment-feedbackicon-correct.png");
-        }
-    }
-    else{
-        feedbackBox.style.visibility = "hidden";
-    }*/
     questionSection.appendChild(feedbackBox);
 
     var questionHeading = document.createElement('h2');
@@ -134,7 +125,7 @@ class FillInBlanks extends Question{
             progressButton.addEventListener("click", finishQuiz);
         }
         feedbackText.setAttribute('id', "questionForm__feedbackText");
-        
+        progressButton.disabled = true;
         inputForm.appendChild(inputBox);
         inputForm.appendChild(submitButton);
         questionSection.appendChild(inputForm); 
@@ -197,6 +188,7 @@ class MultipleChoice extends Question{
 
             optionLabel.appendChild(optionRadioInput);
             optionLabel.appendChild(document.createTextNode(this.answerOptions[i].answer));
+            progressButton.disabled = true;
             
             inputForm.appendChild(optionLabel);
         }
@@ -312,12 +304,15 @@ function takeQuiz(event){
 
 
 function finishQuiz(event){
+    
+    console.log("FINISHING QUIZ");
     var req = new XMLHttpRequest();
-    req.open("GET", "/assessment/quizAttempt/finishAttempt/", true);
+    req.open("GET", "/assessment/quizAttempt/finishQuiz", true);
 
     req.onreadystatechange = function() {
-        console.log("Got attempt question");
         if (req.readyState == 4 && req.status == 200) {
+            console.log("Got finish question");
+
             serverData = JSON.parse(req.responseText);
             //{finishSuccess: boolean, quiz: quiz, quizScore: {correctAnswers: int, totalQuestions: int}};
             if(serverData.finishSuccess){
@@ -345,6 +340,7 @@ function finishQuiz(event){
 
 
 function nextQuestion(event){
+    console.log("CALLING NEXT QUESTION");
     var req = new XMLHttpRequest();
     req.open("GET", "/assessment/quizAttempt/nextQuestion", true);
 
