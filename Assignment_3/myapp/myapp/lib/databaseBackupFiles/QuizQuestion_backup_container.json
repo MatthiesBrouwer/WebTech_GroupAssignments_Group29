@@ -3,65 +3,130 @@
         {   
             "quiz_id":1,
             "quiz_question_type_id":1,
-            "title":"HTML Inventor",
+            "title":"HTML Inventor:",
             "problem_statement":"Tim-Berners-Lee invented HTML in",
             "enabled":true
         },
         {   
             "quiz_id":1,
             "quiz_question_type_id":2,
-            "title":"HTML Timeline",
+            "title":"HTML Timeline:",
             "problem_statement":"HTML 3.0  was released in April 1995",
             "enabled":true
         },
         {   
             "quiz_id":1,
             "quiz_question_type_id":1,
-            "title":"Current HTML",
+            "title":"Current HTML:",
             "problem_statement":"What is the name of the current HTML 5 specifications?",
             "enabled":true
         },
         {   
             "quiz_id":2,
             "quiz_question_type_id":2,
-            "title":"Syntax question",
+            "title":"Syntax question:",
             "problem_statement":"What should be the first element of a HTML5 document?",
             "enabled":true
         },
         {   
             "quiz_id":2,
             "quiz_question_type_id":2,
-            "title":"Basic HTML question",
+            "title":"Basic HTML question:",
             "problem_statement":"Which tag should be used to create emphasised 'bold' elements?",
             "enabled":true
         },
         {   
             "quiz_id":2,
             "quiz_question_type_id":2,
-            "title":"HTML Title question",
+            "title":"HTML Title question:",
             "problem_statement":"The <title> tag should be placed in what HTML element?",
             "enabled":true
         },
         {   
             "quiz_id":3,
             "quiz_question_type_id":2,
-            "title":"HTML styling question",
+            "title":"HTML styling question:",
             "problem_statement":"What is the best place to style your HTML?",
             "enabled":true
         },
         {   
             "quiz_id":3,
             "quiz_question_type_id":2,
-            "title":"Attribute question",
+            "title":"Attribute question:",
             "problem_statement":"Which attribute is used to give a alternative text for when an image which doesn't load?",
             "enabled":true
         },
         {   
             "quiz_id":3,
             "quiz_question_type_id":1,
-            "title":"Meta question",
+            "title":"Meta question:",
             "problem_statement":"The 'description' meta tag can help improve SEO. What other meta tag can accomplish this?",
             "enabled":true
+        },
+        {   
+            "quiz_id":4,
+            "quiz_question_type_id":2,
+            "title":"Best practice:",
+            "problem_statement":"Will HTML documents still work when you do not use without elements like html, head, and body?",
+            "enabled":true
+        },
+        {   
+            "quiz_id":4,
+            "quiz_question_type_id":1,
+            "title":"Best practice:",
+            "problem_statement":"What should be the first thing declared in your HTML document?",
+            "enabled":true
+        },
+        {   
+            "quiz_id":4,
+            "quiz_question_type_id":2,
+            "title":"True or false:",
+            "problem_statement":"Inline styles is a  good coding practice?",
+            "enabled":true
+        },
+        {   
+            "quiz_id":5,
+            "quiz_question_type_id":2,
+            "title":"Attribute question:",
+            "problem_statement":"Which attribute specifies an alternate text for an image, if the image cannot be displayed?",
+            "enabled":true
+        },
+        {   
+            "quiz_id":5,
+            "quiz_question_type_id":2,
+            "title":"True of false:",
+            "problem_statement":"Validating your code frequently will lead to complications",
+            "enabled":true
+        },
+        {   
+            "quiz_id":5,
+            "quiz_question_type_id":2,
+            "title":"True or false:",
+            "problem_statement":"Closing your tags will often lead to validation errors",
+            "enabled":true
+        },
+
+        {   
+            "quiz_id":6,
+            "quiz_question_type_id":1,
+            "title":"HTML Inventor:",
+            "problem_statement":"What did Tim Benders-Lee create in 1989?",
+            "enabled":true
+        },
+        {   
+            "quiz_id":6,
+            "quiz_question_type_id":2,
+            "title":"History question:",
+            "problem_statement":"Which organisation wanted to create a finished version of HTML rather than improving the version?",
+            "enabled":true
+        },
+        {   
+            "quiz_id":6,
+            "quiz_question_type_id":1,
+            "title":"History question:",
+            "problem_statement":"What is the reason HTML5 has the nickname :living standard",
+            "enabled":true
         }
+
     ]
 }
