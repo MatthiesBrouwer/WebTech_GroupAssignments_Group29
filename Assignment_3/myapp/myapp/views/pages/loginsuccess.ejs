@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body class="container">
+
+<header class="grid-container header__grid-container">
+        <%- include('../partials/header'); %>
+</header>
+
+<main class="main-content-enclosure">
+    <h1 class="page__title--base col-s__1 col-e__11 row-s__1 row-e__2">Welcome, <%=name%> 
+    </h1>
+    <section class="grid-container main-content__grid-container--base">
+
+        <h2 class="main-content__title--base col-s__1 col-e__11 row-s__1 row-e__2">HTML Education - Thanks for logging in 
+             
+        </h2>
+        <article class = "col-s__5 col-e__7 row-s__2 row-e__3">
+           <H3><a href='/assessment'>Start a quiz</a></H3>
+           <H3><a href='/'>Go to the home page</a></H3>
+        </article> 
+
+       <!-- SOURCE 
+        https://icons8.com/icon/116999/web
+        -->
+        <div class="main-content__reference-image col-s__8 col-e__9">
+            <img
+            src="images/page-icon-homepage.png"
+            alt="An icon for the home page displaying a web
+            page">
+        </div>
+        
+
+    </section>
+</main>
+
+<footer class="grid-container">
+    <%- include('../partials/footer'); %>
+</footer>
+
+</body>
+</html>

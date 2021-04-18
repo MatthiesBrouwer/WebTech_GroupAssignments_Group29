@@ -6,10 +6,6 @@ var logger = require('morgan');
 var DatabaseServer = require("./lib/database-server");
 var dbInstance = new DatabaseServer("database.db");
 
-//var bodyParser = require("body-parser");
-//var apiRouter = require ("./routes/api_router.js");
-//app.use(logger('dev'));
-//console.log("LOADED");
 const md5 = require('md5');
 const session = require('express-session');
 const { Database } = require('sqlite3');
@@ -38,9 +34,6 @@ app.use(express.urlencoded({extended: false})); //Bodyparser now uses express.ur
 app.set('view engine', 'ejs');
 
 app.use(logger('tiny')).get('/', function(req, res) {
-  req.session.isAuthenticated = true; //Backdoor remove after
-  req.session.username = "Admin";     //Backdoor remove after
-  req.session.name = "Admin";  
   res.render('pages/index', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
   console.log(req.session.username);
 });
@@ -65,20 +58,14 @@ app.use(logger('tiny')).get('/assessment', function(req, res) {
   res.render('pages/assessment', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
 });
 
-
-
-// app.get('/assessment/overview/*)
-// app.get('/assessment/overview/topics')
-// app.get('/assessment/overview/quiz/:quizId')
-// app.get('/assessment/overview/reports')
-// app.get('/assessment/quizAttempt/newAttempt')
-// app.get('/assessment/quizAttempt/currentQuestion')
-// app.get('/assessment/quizAttempt/nextQuestion')
-// app.get('/assessment/quizAttempt/prevQuestion')
-// app.post('/assessment/quizAttempt/answerQuestion') //info staat in body
-// app.post('/assessment/quizAttempt/finishAttempt') //returned results naar client en logged final score in database
-// app.get('/assessment/quizAttempt/cancelAttempt')
-
+app.use(logger('tiny')).get('/loginsuccess', (req,res) =>{
+  if (req.session.isAuthenticated == true){
+    res.render('pages/loginsuccess', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
+  }
+  else{
+    res.redirect('/login');
+  }
+});
 
 function requireAuthentication(req, res, next){
   if(req.session.isAuthenticated){
@@ -311,14 +298,6 @@ app.use(logger('tiny')).post('/assessment/quizAttempt/answerQuestion', requireAu
 });
 
 
-
-
-
-
-
-
-
-
 app.use(logger('tiny')).get('/register', (req, res) => {
   if (req.session.isAuthenticated == true){
     res.redirect("/"); //logged in people cannot register
@@ -345,8 +324,8 @@ app.use(logger('tiny')).post('/register', (req, res) =>{
 
 app.use(logger('tiny')).get('/login', (req, res) => {
   if (req.session.isAuthenticated == true){
-  res.redirect("/"); //{name: req.session.name, username: req.session.username, isLoggedIn: req.session.isAuthenticated}
-  }
+  res.redirect("/loginsuccess");
+  } 
   else{    
   res.render('pages/login', {isLoggedIn: req.session.isAuthenticated, loginFault: false}); //
   }
@@ -361,8 +340,7 @@ app.use(logger('tiny')).post('/login', (req, res) => {
         req.session.isAuthenticated = true; 
         req.session.username = user["username"];
         req.session.name = user["firstname"];
-        res.redirect('/');
-        //res.render("pages/index", {name: user["firstname"], username: user["username"], isLoggedIn: req.session.isAuthenticated});
+        res.redirect('/loginsuccess');
         console.log(req.session.username);
         console.log(user["firstname"]);
       }

@@ -124,6 +124,103 @@
             "quiz_question_id":9,
             "answer":"Keywords",
             "correct":true
+        },
+        {   
+            "quiz_question_id":10,
+            "answer":"True",
+            "correct":true
+        },
+        {   
+            "quiz_question_id":10,
+            "answer":"False",
+            "correct":false
+        },
+        {   
+            "quiz_question_id":11,
+            "answer":"Doctype",
+            "correct":true
+        },
+        {   
+            "quiz_question_id":12,
+            "answer":"True",
+            "correct":false
+        },
+        {   
+            "quiz_question_id":12,
+            "answer":"False",
+            "correct":true
+        },
+        {   
+            "quiz_question_id":13,
+            "answer":"Alt",
+            "correct":true
+        },
+        {   
+            "quiz_question_id":13,
+            "answer":"Img",
+            "correct":false
+        },
+        {   
+            "quiz_question_id":13,
+            "answer":"Src",
+            "correct":false
+        },
+        {   
+            "quiz_question_id":14,
+            "answer":"True",
+            "correct":false
+        },
+        {   
+            "quiz_question_id":14,
+            "answer":"False",
+            "correct":true
+        },
+        {   
+            "quiz_question_id":15,
+            "answer":"True",
+            "correct":false
+        },
+        {   
+            "quiz_question_id":15,
+            "answer":"False",
+            "correct":true
+        },
+
+        {   
+            "quiz_question_id":16,
+            "answer":"The World Wide Web",
+            "correct":true
+        },
+        {   
+            "quiz_question_id":16,
+            "answer":"World Wide Web",
+            "correct":true
+        },
+        {   
+            "quiz_question_id":17,
+            "answer":"W3C",
+            "correct":true
+        },
+        {   
+            "quiz_question_id":17,
+            "answer":"WHATWG",
+            "correct":false
+        },
+        {   
+            "quiz_question_id":18,
+            "answer":"Because the specification is updated every once in a while and therefore evolving",
+            "correct":true
+        },
+        {   
+            "quiz_question_id":18,
+            "answer":"Because the HTML5 specification is used the most nowadays",
+            "correct":false
+        },
+        {   
+            "quiz_question_id":18,
+            "answer":"Because HTML5 is the only HTML5 is the only working versioon of HTML today",
+            "correct":false
         }
+        
     ]
 }
