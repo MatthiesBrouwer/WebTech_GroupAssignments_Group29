@@ -175,6 +175,26 @@ app.use(logger('tiny')).get('/assessment/overview/newAttempt/:quizId', requireAu
   });
 });
 
+app.use(logger('tiny')).get('/assessment/overview/newAttempt/:quizId', requireAuthentication, function(req, res, next){
+  console.log("Starting new attempt");
+  
+  dbInstance.addUserAttempt(req.session.username, req.params.quizId, req.sessionID, (userAttemptId)=>{
+    console.log("IT PASSED")
+    if(userAttemptId == 'undefined' || userAttemptId == []){
+      //send an error
+      console.log("ATTEMPT WAS UNDEFINED!!")
+      next();
+    }
+    else{
+      req.session.activeAttemptId = userAttemptId;
+      req.session.activeAttemptQuizId = req.params.quizId; 
+      req.session.activeAttemptQuestionIndex = 1;
+      res.redirect('/assessment/quizAttempt/currentQuestion');
+      //res.send({activeAttempt: 1, quiz: quiz, question: firstQuestion, isLoggedIn: req.session.isAuthenticated});
+    }
+  });
+});
+
 app.use(logger('tiny')).get('/assessment/quizAttempt/nextQuestion', requireAuthentication, requireActiveAttempt,  function(req, res, next){
   console.log("NEXT QUESTION HAS BEEN CALLED!");
   req.session.activeAttemptQuestionIndex += 1;
@@ -214,14 +234,14 @@ app.use(logger('tiny')).get('/assessment/quizAttempt/currentQuestion', requireAu
             for(option in question.answerOptions){
               if(question.answerOptions[option].correct){
                 console.log("FOUND CORRECT ANSWER: " + question.answerOptions[option]);
-                res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: userAttemptAnswer.user_question_answer, correctAnswer: question.answerOptions[option].answer}, isLoggedIn: req.session.isAuthenticated});            
+                res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: userAttemptAnswer.user_question_answer, correctAnswer: question.answerOptions[option].answer}, finalQuestion: ((req.session.activeAttemptQuestionIndex == questionList.length) ? true: false), isLoggedIn: req.session.isAuthenticated});            
               }
             }
           }
           else{
             console.log("USER HAS NOT YET ANSWERED THIS QUESTION");
             console.log(question.id);
-            res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: undefined, correctAnswer: undefined}, isLoggedIn: req.session.isAuthenticated}); 
+            res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: undefined, correctAnswer: undefined}, finalQuestion: ((req.session.activeAttemptQuestionIndex == questionList.length) ? true: false), isLoggedIn: req.session.isAuthenticated}); 
           }
         })
       })
@@ -282,7 +302,7 @@ app.use(logger('tiny')).post('/assessment/quizAttempt/answerQuestion', requireAu
             if(question.answerOptions[option].correct){
               console.log("FOUND CORRECT ANSWER: " + question.answerOptions[option].answer);
               dbInstance.addUserAttemptAnswer(question.id, req.session.activeAttemptId, req.body.answer, ((question.answerOptions[option].answer == req.body.answer)? true : false), () => {
-                res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: req.body.answer, correctAnswer: question.answerOptions[option].answer}, isLoggedIn: req.session.isAuthenticated});            
+                res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: req.body.answer, correctAnswer: question.answerOptions[option].answer},  finalQuestion: ((req.session.activeAttemptQuestionIndex == questionList.length) ? true: false), isLoggedIn: req.session.isAuthenticated});            
 
               });
             }
@@ -292,6 +312,8 @@ app.use(logger('tiny')).post('/assessment/quizAttempt/answerQuestion', requireAu
     })
   })
 });
+
+
 
 
 
@@ -364,7 +386,7 @@ app.use(logger('tiny')).get('/logout', (req,res) => {
   res.redirect("/")
 });
 
-
+1
 
 var createError = require('http-errors');
 const { Hash } = require('crypto');

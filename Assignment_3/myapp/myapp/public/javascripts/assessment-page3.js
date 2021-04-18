@@ -2,8 +2,9 @@
 
 
 class Question {
-    constructor(title, problemStatement, questionId, userAnswer=undefined, correctAnswer=undefined){
+    constructor(title, finalQuestion, problemStatement, questionId, userAnswer=undefined, correctAnswer=undefined){
         this.title = title;
+        this.finalQuestion = finalQuestion;
         this.problemStatement = problemStatement;
         this.questionId = questionId;
         this.userAnswer = userAnswer;
@@ -69,16 +70,14 @@ Question.prototype.displayResults = function(){
         console.log(this.userAnswer);
         console.log(this.correctAnswer);    
         var submitButton = document.getElementById("questionForm__submitButton");
-        var nextButton = document.getElementById("questionForm__nextButton");
+        var progressButton = document.getElementById("questionForm__progressButton");
         var feedbackText = document.getElementById("questionForm__feedbackText");
         var feedbackBox = document.getElementById("questionForm__feedbackBox");
     
-        console.log(submitButton);
-        console.log(nextButton);
 
 
         submitButton.disabled = true;
-        nextButton.disabled = false;
+        progressButton.disabled = false;
         feedbackText.style.visibility = "visible";
         feedbackBox.style.visibility = "visible";
     
@@ -97,15 +96,13 @@ Question.prototype.displayResults = function(){
     else{
         console.log("USER HAS NOT YET ANSWERED THIS.");
         return false;
-        //feedbackText.style.visibility = "hidden";
-        //nextButton.disabled = true;
     }
 }
 
 class FillInBlanks extends Question{
-    constructor(title, problemStatement, questionId, userAnswer=undefined, correctAnswer=undefined){
+    constructor(title, finalQuestion, problemStatement, questionId, userAnswer=undefined, correctAnswer=undefined){
         console.log(userAnswer, correctAnswer);
-        super(title, problemStatement, questionId, userAnswer, correctAnswer);            //takes all the parameter inputs from the superclass constructor      
+        super(title, finalQuestion, problemStatement, questionId, userAnswer, correctAnswer);            //takes all the parameter inputs from the superclass constructor      
     }
 
     getQuestionDisplay(){
@@ -117,7 +114,7 @@ class FillInBlanks extends Question{
         inputForm.setAttribute('id', 'questionForm');
         var inputBox = document.createElement('input');
         var submitButton = document.createElement('input');         //the submit button for accessibility
-        var nextButton = document.createElement('button');
+        var progressButton = document.createElement('button');
         var feedbackText = document.createElement('label');
 
 
@@ -127,15 +124,21 @@ class FillInBlanks extends Question{
         submitButton.setAttribute('value', 'Submit');
         submitButton.setAttribute('id', "questionForm__submitButton");
 
-        nextButton.appendChild(document.createTextNode('Next Question'));
-        nextButton.setAttribute('id', "questionForm__nextButton");
-        nextButton.addEventListener("click", nextQuestion);
+        progressButton.setAttribute('id', "questionForm__progressButton");        
+        if(!this.finalQuestion){
+            progressButton.appendChild(document.createTextNode('Next Question'));
+            progressButton.addEventListener("click", nextQuestion);
+        }
+        else{
+            progressButton.appendChild(document.createTextNode('Finish Quiz'));
+            progressButton.addEventListener("click", finishQuiz);
+        }
         feedbackText.setAttribute('id', "questionForm__feedbackText");
         
         inputForm.appendChild(inputBox);
         inputForm.appendChild(submitButton);
         questionSection.appendChild(inputForm); 
-        questionSection.appendChild(nextButton);  
+        questionSection.appendChild(progressButton);  
         questionSection.appendChild(feedbackText);
         console.log("IM HERE NOW")
         
@@ -162,9 +165,9 @@ class FillInBlanks extends Question{
 }
 
 class MultipleChoice extends Question{
-    constructor(title, problemStatement, questionId, answerOptions, userAnswer=undefined, correctAnswer=undefined){
+    constructor(title, finalQuestion, problemStatement, questionId, answerOptions, userAnswer=undefined, correctAnswer=undefined){
         console.log(userAnswer, correctAnswer);
-        super(title, problemStatement, questionId, userAnswer, correctAnswer);            //takes all the parameter inputs from the superclass constructor      
+        super(title, finalQuestion, problemStatement, questionId, userAnswer, correctAnswer);            //takes all the parameter inputs from the superclass constructor      
         this.answerOptions = answerOptions;
 
     }
@@ -176,9 +179,8 @@ class MultipleChoice extends Question{
         var inputForm = document.createElement('form'); 
         inputForm.addEventListener('submit', this.submitAnswer.bind(this),false);
         inputForm.setAttribute('id', 'questionForm');
-        var inputBox = document.createElement('input');
         var submitButton = document.createElement('input');         //the submit button for accessibility
-        var nextButton = document.createElement('button');
+        var progressButton = document.createElement('button');
         var feedbackText = document.createElement('label');
 
         for (var i=0; i<this.answerOptions.length; i++){
@@ -208,15 +210,21 @@ class MultipleChoice extends Question{
         submitButton.setAttribute('value', 'Submit');
         submitButton.setAttribute('id', "questionForm__submitButton");
 
-        nextButton.appendChild(document.createTextNode('Next Question'));
-        nextButton.setAttribute('id', "questionForm__nextButton");
-        nextButton.addEventListener("click", nextQuestion);
+        progressButton.setAttribute('id', "questionForm__progressButton");        
+        if(!this.finalQuestion){
+            progressButton.appendChild(document.createTextNode('Next Question'));
+            progressButton.addEventListener("click", nextQuestion);
+        }
+        else{
+            progressButton.appendChild(document.createTextNode('Finish Quiz'));
+            progressButton.addEventListener("click", finishQuiz);
+        }
         feedbackText.setAttribute('id', "questionForm__feedbackText");
         
         //inputForm.appendChild(inputBox);
         inputForm.appendChild(submitButton);
         questionSection.appendChild(inputForm); 
-        questionSection.appendChild(nextButton);  
+        questionSection.appendChild(progressButton);  
         questionSection.appendChild(feedbackText);
         console.log("IM HERE NOW")
         
@@ -242,6 +250,7 @@ class MultipleChoice extends Question{
     }
 
     displayResults(){
+        //Super class returns wether the question was answered or not
         if(super.displayResults()){
             console.log("SHOWING FILL IN THE BLANKS RESULTS")
             for (var i=0; i<this.answerOptions.length; i++){
@@ -254,22 +263,28 @@ class MultipleChoice extends Question{
 
 
 
-function displayAttemptQuestion(quiz, question, userAnswer, correctAnswer){
+function displayAttemptQuestion(quiz, question, finalQuestion, userAnswer, correctAnswer){
     var contentEnclosure = document.getElementById("main-content-enclosure");
     contentEnclosure.innerHTML = "";
+
+    var quizTitle = document.createElement("h1");
+    quizTitle.appendChild(document.createTextNode(quiz.title));
+    quizTitle.setAttribute('class', "quizAttempt__quizTitle");
+    contentEnclosure.appendChild(quizTitle);
+
     if(question.quiz_question_type_id == 1){
         console.log("CREATING FILL IN THE BLANKS QUESTION");
-        var newQuestion = new FillInBlanks(question.title, question.problem_statement, question.id, userAnswer, correctAnswer);
+        var newQuestion = new FillInBlanks(question.title, finalQuestion, question.problem_statement, question.id, userAnswer, correctAnswer);
     }
     else{
-        var newQuestion = new MultipleChoice(question.title, question.problem_statement, question.id, question.answerOptions, userAnswer, correctAnswer);
+        var newQuestion = new MultipleChoice(question.title, finalQuestion, question.problem_statement, question.id, question.answerOptions, userAnswer, correctAnswer);
 
         console.log("CREATING MULTIPLE CHOICE QUESTION");
 
     }
     console.log(newQuestion);
-    contentEnclosure.appendChild(newQuestion.getQuestionDisplay());
-    newQuestion.displayResults();
+    contentEnclosure.appendChild(newQuestion.getQuestionDisplay()); //Geef mij de basis vraag html section 
+    newQuestion.displayResults(); //Update of je bent beantwoord of niet
 }
 
 
@@ -288,13 +303,43 @@ function takeQuiz(event){
             }
             else{
                 console.log(serverData.question.title);
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
+                displayAttemptQuestion(serverData.quiz, serverData.question,serverData.finalQuestion, serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
             }
         }
     }
     req.send();
 }
 
+
+function finishQuiz(event){
+    var req = new XMLHttpRequest();
+    req.open("GET", "/assessment/quizAttempt/finishAttempt/", true);
+
+    req.onreadystatechange = function() {
+        console.log("Got attempt question");
+        if (req.readyState == 4 && req.status == 200) {
+            serverData = JSON.parse(req.responseText);
+            //{finishSuccess: boolean, quiz: quiz, quizScore: {correctAnswers: int, totalQuestions: int}};
+            if(serverData.finishSuccess){
+                contentEnclosure.innerHTML = "";
+
+            }
+
+
+            if(!serverData.activeAttempt){
+                //dont load the question
+                displayTopicOverview();
+            }
+            else{
+
+
+                console.log(serverData.question.title);
+                displayAttemptQuestion(serverData.quiz, serverData.question,serverData.finalQuestion, serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
+            }
+        }
+    }
+    req.send();
+}
 
 
 
@@ -313,11 +358,18 @@ function nextQuestion(event){
                 displayTopicOverview();
             }
             else{
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.finalQuestion,serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
             }
         }
     }
     req.send();}
+
+
+
+
+
+
+
 
 
 
@@ -338,7 +390,7 @@ function displayTopicOverview(){
             if(serverData.activeAttempt){
                 //dont load the overview
                 
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.finalQuestion,serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
             }
             else{
                 var contentEnclosure = document.getElementById("main-content-enclosure");
@@ -385,7 +437,7 @@ function displayQuizOverview(quizId){
 
             if(serverData.activeAttempt){
                 //dont load the question
-                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
+                displayAttemptQuestion(serverData.quiz, serverData.question, serverData.finalQuestion,serverData.questionAnswer.userAnswer, serverData.questionAnswer.correctAnswer);
             }
             else{
                 var contentEnclosure = document.getElementById("main-content-enclosure");
