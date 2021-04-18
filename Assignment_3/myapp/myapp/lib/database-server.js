@@ -431,14 +431,14 @@ DatabaseServer.prototype.getQuestionById = function(questionId = required('quest
     
     db.serialize( () => {
         var answerStmt = db.prepare(`SELECT * FROM QuizQuestionAnswer WHERE quiz_question_id = ?;`);
-        var answerList = [];
+        var answerOptions = [];
         answerStmt.each([questionId], (err, result) => {
             if (err){
                 console.log("Could not find answers for question by id: " + questionId);
                 throw err;
             }
             console.log("FOUND ANSWERLIST");
-            answerList.push(result);
+            answerOptions.push(result);
         });
         answerStmt.finalize();
 
@@ -450,15 +450,12 @@ DatabaseServer.prototype.getQuestionById = function(questionId = required('quest
                 console.log("Could not find question by id: " + questionId);
                 throw err;
             }
-            result.answerList = answerList;
+            result.answerOptions = answerOptions;
             console.log("FOUND QUESTION WITH ID: " + result.id);
 
             callback(result);
         });
         questionStmt.finalize();
-
-        console.log("CALLING STATEMENT FOR QUESTIONS");
-
         
     });
     db.close((err) => { if (err) {return console.error(err.message);}});

@@ -15,74 +15,77 @@ Question.prototype.getQuestionDisplay = function(){
     var questionSection = document.createElement('section');
     questionSection.setAttribute('class', 'main-content__text--base col-s__2 col-e__9 question-enclosure');
     var feedbackBox = document.createElement('img');
-    feedbackBox.setAttribute('class', 'question-attempt__feedbackBox');
+    feedbackBox.setAttribute('id', 'questionForm__feedbackBox');
 
     feedbackBox.setAttribute('src', "images/assessment-feedbackicon-incorrect.png");
-    if(this.userAnswer != undefined ){
-        if(this.userAnswer = this.correctAnswer){
+    feedbackBox.style.visibility = "hidden";
+
+    /*
+    if(this.userAnswer != undefined ){        
+        if(this.userAnswer == this.correctAnswer){
             feedbackBox.setAttribute('src', "images/assessment-feedbackicon-correct.png");
         }
     }
     else{
         feedbackBox.style.visibility = "hidden";
-    }
+    }*/
     questionSection.appendChild(feedbackBox);
 
     var questionHeading = document.createElement('h2');
-    questionHeading.setAttribute('class', "question__title--base col-s__1 col-e__11 row-s__1 row-e__2");
+    questionHeading.setAttribute('class', "questionForm__title--base col-s__1 col-e__11 row-s__1 row-e__2");
     questionHeading.appendChild(document.createTextNode(this.title));
     questionSection.appendChild(questionHeading);
 
     var problemStatementHeading = document.createElement('h3');
-    problemStatementHeading.setAttribute('class', "question-attempt__problemStatement col-s__1 col-e__11 row-s__1 row-e__2");
+    problemStatementHeading.setAttribute('class', "questionForm__problemStatement col-s__1 col-e__11 row-s__1 row-e__2");
     problemStatementHeading.appendChild(document.createTextNode(this.problemStatement));
     questionSection.appendChild(problemStatementHeading);
     return questionSection;
 }
 
 Question.prototype.submitAnswer = function(answerText){
-    console.log("SUBMITTING ANSWER!!");
-
     var req = new XMLHttpRequest();
     req.open("POST", "/assessment/quizAttempt/answerQuestion", true);
     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    var displayFunc = this.displayResults.bind();
     req.onreadystatechange = function() {
         if (req.readyState == 4 && req.status == 200) {
             serverData = JSON.parse(req.responseText);    
-            console.log("GOT RESPONSE:");
-            for(key in serverData){
-                for(innerkey in serverData[key]){
-                    console.log(key + " : " + serverData[key] + " : " + serverData[key][innerkey]);
-
-                }
-            }
-            console.log("CORRECT: " + serverData.questionAnswer.correctAnswer);
-            console.log("USER: " + serverData.questionAnswer.userAnswer);
-
             this.userAnswer = serverData.questionAnswer.userAnswer;
-            this.correctAnswer = serverData.questionAnswer.correctAnswer;     
+            this.correctAnswer = serverData.questionAnswer.correctAnswer;    
+            
+            
+            displayFunc();
 
-            var submitButton = document.getElementById("questionForm__submitButton");
-            var nextButton = document.getElementById("questionForm__nextButton");
-            var answerFeedback = document.getElementById("questionForm__answerFeedback");
-
-            submitButton.disabled = true;
-            nextButton.disabled = false;
-            answerFeedback.style.visibility = "visible";
-
-            if(this.userAnswer != this.correctAnswer){
-                answerFeedback.setAttribute('class', "questionForm__answerFeedback--incorrect");
-                answerFeedback.appendChild(document.createTextNode("Incorrect! The correct answer was: '" + this.correctAnswer + "'."));
-            }
-            else{
-                answerFeedback.setAttribute('class', "questionForm__answerFeedback--correct");
-                answerFeedback.appendChild(document.createTextNode("Correct! You answered: '" + this.userAnswer + "'."));
-
-            }  
         }
     }
-    console.log("SENDING: " + "answer=" + answerText + "&questionId=" + this.questionId );
     req.send("answer=" + answerText + "&questionId=" + this.questionId);
+}
+
+Question.prototype.displayResults = function(){
+    console.log("DISPLAYING RESULTS");
+    console.log("ANSWERS: ");
+    console.log(this.userAnswer);
+    console.log(this.correctAnswer);    var submitButton = document.getElementById("questionForm__submitButton");
+    var nextButton = document.getElementById("questionForm__nextButton");
+    var feedbackText = document.getElementById("questionForm__feedbackText");
+    var feedbackBox = document.getElementById("questionForm__feedbackBox");
+
+    submitButton.disabled = true;
+    nextButton.disabled = false;
+    feedbackText.style.visibility = "visible";
+    feedbackBox.style.visibility = "visible";
+
+    if(this.userAnswer != this.correctAnswer){
+        feedbackText.setAttribute('class', "questionForm__feedbackText--incorrect");
+        feedbackText.appendChild(document.createTextNode("Incorrect! The correct answer was: '" + this.correctAnswer + "', You answered: '" + this.userAnswer + "'.")); 
+        feedbackBox.setAttribute('src', "images/assessment-feedbackicon-incorrect.png");
+    }
+    else{
+        feedbackText.setAttribute('class', "questionForm__feedbackText--correct");
+        feedbackText.appendChild(document.createTextNode("Correct! You answered: '" + this.userAnswer + "'."));
+        feedbackBox.setAttribute('src', "images/assessment-feedbackicon-correct.png");
+    }  
 }
 
 class FillInBlanks extends Question{
@@ -98,46 +101,50 @@ class FillInBlanks extends Question{
         inputForm.addEventListener('submit', this.submitAnswer.bind(this),false);
         inputForm.setAttribute('id', 'questionForm');
         var inputBox = document.createElement('input');
+        var submitButton = document.createElement('input');         //the submit button for accessibility
+        var nextButton = document.createElement('button');
+        var feedbackText = document.createElement('label');
+
+
         inputBox.setAttribute('type', 'text');
         inputBox.setAttribute('id', "questionForm__textInput");
-        var submitButton = document.createElement('input');         //the submit button for accessibility
         submitButton.setAttribute('type', 'submit');    
         submitButton.setAttribute('value', 'Submit');
         submitButton.setAttribute('id', "questionForm__submitButton");
 
-        var nextButton = document.createElement('button');
         nextButton.appendChild(document.createTextNode('Next Question'));
         nextButton.setAttribute('id', "questionForm__nextButton");
         nextButton.addEventListener("click", nextQuestion);
-        var answerFeedback = document.createElement('label');
-        answerFeedback.setAttribute('id', "questionForm__answerFeedback");
-
-        if(this.userAnswer != undefined ){
-            inputBox.disabled = true;
-            submitButton.disabled = true;
-
-
-            if(this.userAnswer = this.correctAnswer){
-                answerFeedback.setAttribute('class', "questionForm__answerFeedback--incorrect");
-                answerFeedback.appendChild(document.createTextNode("Incorrect! The correct answer was: '" + this.correctAnswer + "'."));
-
-            }
-            else{
-                answerFeedback.setAttribute('class', "questionForm__answerFeedback--correct");
-                answerFeedback.appendChild(document.createTextNode("Correct! You answered: '" + this.userAnswer + "'."));
-            }
-        }
-        else{
-            answerFeedback.style.visibility = "hidden";
-            nextButton.disabled = true;
-        }
+        feedbackText.setAttribute('id', "questionForm__feedbackText");
+        
         inputForm.appendChild(inputBox);
         inputForm.appendChild(submitButton);
         questionSection.appendChild(inputForm); 
         questionSection.appendChild(nextButton);  
-        questionSection.appendChild(answerFeedback);
+        questionSection.appendChild(feedbackText);
 
 
+        if(this.userAnswer != undefined ){
+            console.log("USER HAS ALREADY ANSWERED ONCE");
+            super.displayResults();
+            
+            inputBox.disabled = true;
+            //submitButton.disabled = true;
+            /*if(this.userAnswer != this.correctAnswer){
+                feedbackText.setAttribute('class', "questionForm__feedbackText--incorrect");
+                feedbackText.appendChild(document.createTextNode("Incorrect! The correct answer was: '" + this.correctAnswer + "'."));
+            }
+            else{
+                feedbackText.setAttribute('class', "questionForm__feedbackText--correct");
+                feedbackText.appendChild(document.createTextNode("Correct! You answered: '" + this.userAnswer + "'."));
+            }*/
+        }
+        else{
+            console.log("USER HAS NOT YET ANSWERED THIS.");
+            //feedbackText.style.visibility = "hidden";
+            //nextButton.disabled = true;
+        }
+        
 
         return questionSection;
     }
@@ -146,54 +153,28 @@ class FillInBlanks extends Question{
         event.preventDefault();
         var answerText = document.getElementById("questionForm__textInput").value;
         super.submitAnswer(answerText);
-        console.log("EN DAARNA HIERHEEN!!!!!!!!!!!!");
         var textBox = document.getElementById("questionForm__textInput");
-        textBox.disabled = true;
-        
+        textBox.disabled = true; 
     }
 }
 
 
 
 function displayAttemptQuestion(quiz, question, userAnswer, correctAnswer){
-    console.log("DISPLAYING ATTEMPT QUESTION: ");
-    console.log(question);
-    console.log("\t" + "QUIZ:");
-    for(key in quiz){
-        console.log("\t" + key + " : " + quiz[key]);
-    }
-    console.log("\t" + "QUESTION:");
-    for(key in question){
-        console.log("\t" + key + " : " + question[key]);
-    }
-    console.log("\t" + "USER ANSWER:");
-    for(key in userAnswer){
-        console.log("\t" + key + " : " + userAnswer[key]);
-    }
-
     var contentEnclosure = document.getElementById("main-content-enclosure");
     contentEnclosure.innerHTML = "";
-    var newQuestion = new FillInBlanks(question.title, question.problem_statement, question.id, userAnswer, correctAnswer);
+    if(question.quiz_question_type_id == 1){
+        console.log("CREATING FILL IN THE BLANKS QUESTION");
+        var newQuestion = new FillInBlanks(question.title, question.problem_statement, question.id, userAnswer, correctAnswer);
+    }
+    else{
+        //var newQuestion = new MultipleChoice(question.title, question.problem_statement, question.id, userAnswer, correctAnswer);
+
+        console.log("CREATING MULTIPLE CHOICE QUESTION");
+
+    }
     console.log(newQuestion);
     contentEnclosure.appendChild(newQuestion.getQuestionDisplay());
-    /*
-    //Add the quiz title as the main header 
-    var quizHeading = document.createElement('h1');
-    quizHeading.setAttribute('class', "page__title--base col-s__1 col-e__11 row-s__1 row-e__2");
-    quizHeading.appendChild(document.createTextNode(quiz.title));
-    contentEnclosure.appendChild(quizHeading);
-
-    //Add the question title as a heading for the question 
-    var questionHeading = document.createElement('h2');
-    questionHeading.setAttribute('class', "question__title--base col-s__1 col-e__11 row-s__1 row-e__2");
-    questionHeading.appendChild(document.createTextNode(question.title));
-    contentEnclosure.appendChild(questionHeading);
-
-    //Also add the problem statement 
-    var problemStatementHeading = document.createElement('h3');
-    problemStatementHeading.setAttribute('class', "question-attempt__problemStatement col-s__1 col-e__11 row-s__1 row-e__2");
-    problemStatementHeading.appendChild(document.createTextNode(question.problem_statement));
-    contentEnclosure.appendChild(problemStatementHeading);*/
 }
 
 
@@ -204,9 +185,6 @@ function displayTopicOverview(){
     req.onreadystatechange = function() {
         if (req.readyState == 4 && req.status == 200) {
             serverData = JSON.parse(req.responseText);    
-            for(key in serverData){
-                console.log(serverData[key]);
-            }
     
             if(serverData.activeAttempt){
                 //dont load the overview

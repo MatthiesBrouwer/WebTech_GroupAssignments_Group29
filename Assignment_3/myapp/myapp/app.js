@@ -205,27 +205,67 @@ app.use(logger('tiny')).get('/assessment/quizAttempt/currentQuestion', requireAu
 
         }
       }
-      dbInstance.getUserAttemptAnswer(req.session.activeAttemptId, questionList[req.session.activeAttemptQuestionIndex - 1].id , (userAttemptAnswer) => {
-        console.log("GOT TO THE END");
-        console.log("SEARCHING FOR QUESTION: " + req.session.activeAttemptQuestionIndex);
-        for (key in userAttemptAnswer){
-          console.log("\t" + key + " : " + userAttemptAnswer[key]);
-        }
-        if(userAttemptAnswer != undefined){
-          console.log("USER HAS ALREADY ANSWERED THIS QUESTION");
-          dbInstance.getCorrectAnswer(questionList[req.session.activeAttemptQuestionIndex - 1].id, (correctAnswer) => {
-            //res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: userAttemptAnswer.user_question_answer, correctAnswer: correctAnswer.answer}, isLoggedIn: req.session.isAuthenticated});            
-            console.log("SENDING QUESTION WITH USER ANSWER");
-            res.send({activeAttempt: 1, quiz: quiz, question: questionList[req.session.activeAttemptQuestionIndex - 1], questionAnswer: {userAnswer: userAttemptAnswer.user_question_answer, correctAnswer: correctAnswer.answer}, isLoggedIn: req.session.isAuthenticated});            
+      dbInstance.getQuestionById(questionList[req.session.activeAttemptQuestionIndex - 1].id, (question)=>{
+        dbInstance.getUserAttemptAnswer(req.session.activeAttemptId, question.id , (userAttemptAnswer) => {
 
-          });
-        }
-        else{
-          console.log("USER HAS NOT YET ANSWERED THIS QUESTION");
-          console.log(questionList[req.session.activeAttemptQuestionIndex - 1]);
-          res.send({activeAttempt: 1, quiz: quiz, question: questionList[req.session.activeAttemptQuestionIndex - 1], questionAnswer: {userAnswer: undefined, correctAnswer: undefined}, isLoggedIn: req.session.isAuthenticated}); 
-        }
+          if(userAttemptAnswer != undefined){
+            console.log("USER HAS ALREADY ANSWERED THIS QUESTION");
+            
+            for(option in question.answerOptions){
+              if(question.answerOptions[option].correct){
+                console.log("FOUND CORRECT ANSWER: " + question.answerOptions[option]);
+                res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: userAttemptAnswer.answer, correctAnswer: question.answerOptions[option].answer}, isLoggedIn: req.session.isAuthenticated});            
+              }
+            }
+          }
+          else{
+            console.log("USER HAS NOT YET ANSWERED THIS QUESTION");
+            console.log(question.id);
+            res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: undefined, correctAnswer: undefined}, isLoggedIn: req.session.isAuthenticated}); 
+          }
+        })
       })
+
+
+
+
+
+
+
+
+      /*
+      dbInstance.getQuestionById(questionList[req.session.activeAttemptQuestionIndex - 1].id, (question)=>{
+        for(key in question){
+          console.log(key + " : " + question[key]);
+        }
+
+
+        dbInstance.getUserAttemptAnswer(req.session.activeAttemptId, question.id , (userAttemptAnswer) => {
+          console.log("GOT TO THE END");
+          console.log("SEARCHING FOR QUESTION: " + req.session.activeAttemptQuestionIndex);
+          for (key in userAttemptAnswer){
+            console.log("\t" + key + " : " + userAttemptAnswer[key]);
+          }
+          if(userAttemptAnswer != undefined){
+            console.log("USER HAS ALREADY ANSWERED THIS QUESTION");
+            
+            for(option in question.answerOptions){
+              if(question.answerOptions[option].correct){
+                res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: userAttemptAnswer.user_question_answer, correctAnswer: question.answerOptions[option].answer}, isLoggedIn: req.session.isAuthenticated});            
+              }
+            }
+          }
+          else{
+            console.log("USER HAS NOT YET ANSWERED THIS QUESTION");
+            console.log(question.id);
+            res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: undefined, correctAnswer: undefined}, isLoggedIn: req.session.isAuthenticated}); 
+          }
+         
+        })
+      })*/
+
+
+      
 /*
       dbInstance.getQuestionById(questionList[req.session.activeAttemptQuestionIndex - 1].id, (question) => {
         if(question == 'undefined' || question == []){
@@ -281,6 +321,53 @@ app.use(logger('tiny')).post('/assessment/quizAttempt/answerQuestion', requireAu
       next();
     }
 
+    dbInstance.getQuestionById(questionList[req.session.activeAttemptQuestionIndex - 1].id, (question)=>{
+      dbInstance.getUserAttemptAnswer(req.session.activeAttemptId, question.id , (userAttemptAnswer) => {
+        console.log("GOT TO THE END");
+        console.log("SEARCHING FOR QUESTION: " + req.session.activeAttemptQuestionIndex);
+        console.log("FOUND QUESTION: " + question);
+        console.log("--");
+        for (key in question){
+          console.log("\t" + key + " : " + question[key]);
+        }
+        console.log("--");
+        for (key in question.answerOptions){
+          for(innerkey in question.answerOptions[key]){
+            console.log("\t" + key + " : " + innerkey + " : " +  question.answerOptions[key][innerkey]);
+
+          }
+        }
+        console.log("USER ATTEMPT ANSWER");
+        for (key in userAttemptAnswer){
+          console.log("\t" + key + " : " + userAttemptAnswer[key]);
+        }
+        if(userAttemptAnswer != undefined){
+          console.log("USER HAS ALREADY ANSWERED THIS QUESTION");
+          next();
+        }
+        else{
+          console.log("USER HAS NOT YET ANSWERED THIS QUESTION");
+          for(option in question.answerOptions){
+            console.log(question.answerOptions[option]);
+            if(question.answerOptions[option].correct){
+              console.log("FOUND CORRECT ANSWER: " + question.answerOptions[option].answer);
+              dbInstance.addUserAttemptAnswer(question.id, req.session.activeAttemptId, req.body.answer, ((question.answerOptions[option].answer == req.body.answer)? true : false), () => {
+                res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: req.body.answer, correctAnswer: question.answerOptions[option].answer}, isLoggedIn: req.session.isAuthenticated});            
+
+              });
+            }
+          }
+          //console.log(question.id);
+          //res.send({activeAttempt: 1, quiz: quiz, question: question, questionAnswer: {userAnswer: undefined, correctAnswer: undefined}, isLoggedIn: req.session.isAuthenticated}); 
+        }
+      })
+    })
+
+
+
+
+
+    /*
     dbInstance.getUserAttemptAnswer(req.session.activeAttemptId, questionList[req.session.activeAttemptQuestionIndex - 1].id, (attemptAnswer)=>{
       if(attemptAnswer != undefined){
         console.log("USER HAS ALREADY ANSWERED THIS QUESTION");
@@ -296,7 +383,7 @@ app.use(logger('tiny')).post('/assessment/quizAttempt/answerQuestion', requireAu
           });
         });
       }
-    })
+    })*/
   })
 });
 
