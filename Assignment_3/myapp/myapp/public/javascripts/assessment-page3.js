@@ -52,6 +52,19 @@ Question.prototype.submitAnswer = function(answerText){
             console.log("GOT RESPONSE:");
             for(key in serverData){
                 console.log(key + " : " + serverData[key]);
+                console.log(serverData.correct);
+            }
+            var feedbackBox =   document.getElementsByClassName("feedbackbox")[0]; 
+
+            if(serverData.correct){ //
+                feedbackBox.setAttribute('src', "images/assessment-feedbackicon-correct.png");  
+            //displayAttemptQuestion(serverData.quiz, serverData.question, serverData.userAnswer);              
+            }
+            else if (!serverData.correct){
+                feedbackBox.setAttribute('src', "images/assessment-feedbackicon-incorrect.png");
+            }
+            else{
+                console.log("dit is de foute positie")
             }
             
             
@@ -79,7 +92,6 @@ class FillInBlanks extends Question{
         var submitButton = document.createElement('input');         //the submit button for accessibility
         submitButton.setAttribute('type', 'submit');    
         submitButton.setAttribute('value', 'Submit');
-
         var nextButton = document.createElement('button');
         nextButton.appendChild(document.createTextNode('Take Quiz'));
         nextButton.addEventListener("click", nextQuestion);
@@ -106,6 +118,7 @@ class FillInBlanks extends Question{
         event.preventDefault();
         var answerText = document.getElementById("questionForm__textInput").value;
         super.submitAnswer(answerText);
+        
     }
 }
 
@@ -191,8 +204,8 @@ function displayTopicOverview(){
                         var quizHeading = document.createElement('h2');
                         quizHeading.appendChild(document.createTextNode(serverData.topicQuizes[topic].quizes[quiz].quizTitle));
                         quizSection.appendChild(quizHeading);
-                        quizSection.addEventListener("click", displayQuiz)
-                        topicSection.appendChild(quizSection);
+                        quizSection.addEventListener("click", displayQuiz); //displayQuiz
+                        topicSection.appendChild(quizSection); 
                     }
                     contentEnclosure.appendChild(topicHeading);
                     contentEnclosure.appendChild(topicSection);

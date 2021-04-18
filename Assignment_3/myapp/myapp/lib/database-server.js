@@ -242,14 +242,16 @@ DatabaseServer.prototype.getUserByUsername = function(username = required('usern
             console.log("Could not connect to the database", err);
         }
     });
+    
     db.serialize( () => {
-        
+        console.log("Start serialization");
         var stmt = db.prepare('SELECT * FROM User WHERE username=?;');
-        stmt.each([username], (err, user) => {
+        stmt.get([username], (err, user) => {
             if(err){
                 console.log("Could not find user by username: " + username);
                 throw err;
             }
+            console.log("calling callback")
             callback(user);
         });
         stmt.finalize();

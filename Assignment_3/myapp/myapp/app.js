@@ -16,6 +16,7 @@ const { Database } = require('sqlite3');
 const { nextTick } = require('process');
 const e = require('express');
 var app = express();
+
 var options = {secret: 'Top secret do not enter', cookie: { maxAge: 60 * 60 * 1000}} //1h login timer
 app.use(session(options)); //use session middleware
 //var currentSession; 
@@ -36,28 +37,28 @@ app.use(express.urlencoded({extended: false})); //Bodyparser now uses express.ur
 /* TEST FUNCTIES VOOR EJS */ // Can be placed in api router if done prperly
 app.set('view engine', 'ejs');
 
-app.get('/', function(req, res) {
+app.use(logger('tiny')).get('/', function(req, res) {
   res.render('pages/index', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
   console.log(req.session.username);
 });
 
-app.get('/history', (req,res) =>{
+app.use(logger('tiny')).get('/history', (req,res) =>{
   res.render('pages/history', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
 });
 
-app.get('/tutorial', (req,res) =>{
+app.use(logger('tiny')).get('/tutorial', (req,res) =>{
   res.render('pages/tutorial', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
 });
 
-app.get('/contact', (req,res) =>{
+app.use(logger('tiny')).get('/contact', (req,res) =>{
   res.render('pages/contact', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
 });
 
-app.get('/best-practices', (req,res) =>{
+app.use(logger('tiny')).get('/best-practices', (req,res) =>{
   res.render('pages/best-practices', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
 });
 
-app.get('/assessment', function(req, res) {
+app.use(logger('tiny')).get('/assessment', function(req, res) {
   res.render('pages/assessment', {name: req.session.name, isLoggedIn: req.session.isAuthenticated});
 });
 
@@ -100,7 +101,7 @@ function requireActiveAttempt(req, res, next){
 
 //Deze route vangt alle calls naar een overview en checked of de user bezig is met een quiz.
 //If so, dan wordt de user geredirect naar de laatste quizvraag van de attempt waar de user mee bezig was
-app.get('/assessment/overview/*', function(req, res, next){
+app.use(logger('tiny')).get('/assessment/overview/*', function(req, res, next){
   console.log("CAUGHT DOOR * ROUTER")
   if(req.session.isAuthenticated && req.session.activeAttemptId){
     // De user is nog bezig met een attempt.
@@ -116,7 +117,7 @@ app.get('/assessment/overview/*', function(req, res, next){
 });
 
 
-app.get('/assessment/overview/topics',  function(req, res){
+app.use(logger('tiny')).get('/assessment/overview/topics',  function(req, res){
   console.log("Got here");
   dbInstance.getTopicQuizes( (topicQuizes) => {
       
@@ -125,7 +126,7 @@ app.get('/assessment/overview/topics',  function(req, res){
   });
 });
 
-app.get('/assessment/overview/quiz/:quizId', function(req, res, next){
+app.use(logger('tiny')).get('/assessment/overview/quiz/:quizId', function(req, res, next){
   dbInstance.getQuizById(req.params.quizId, (quiz) => {
     if(typeof quiz == 'undefined'){
       //send an error
@@ -151,7 +152,7 @@ app.get('/assessment/overview/quiz/:quizId', function(req, res, next){
   });
 });
 
-app.get('/assessment/overview/newAttempt/:quizId', requireAuthentication, function(req, res, next){
+app.use(logger('tiny')).get('/assessment/overview/newAttempt/:quizId', requireAuthentication, function(req, res, next){
   console.log("Starting new attempt");
   
   dbInstance.addUserAttempt(req.session.username, req.params.quizId, req.sessionID, (userAttemptId)=>{
@@ -171,13 +172,13 @@ app.get('/assessment/overview/newAttempt/:quizId', requireAuthentication, functi
   });
 });
 
-app.get('/assessment/quizAttempt/nextQuestion', requireAuthentication, requireActiveAttempt,  function(req, res, next){
+app.use(logger('tiny')).get('/assessment/quizAttempt/nextQuestion', requireAuthentication, requireActiveAttempt,  function(req, res, next){
   console.log("NEXT QUESTION HAS BEEN CALLED!");
   req.session.activeAttemptQuestionIndex += 1;
   res.redirect('/assessment/quizAttempt/currentQuestion');
 });
 
-app.get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requireActiveAttempt,  function(req, res, next){
+app.use(logger('tiny')).get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requireActiveAttempt,  function(req, res, next){
   console.log("GOT INTO THIS");
   console.log("REQ PARAMS: ");
   for (key in req.session){
@@ -227,7 +228,7 @@ app.get('/assessment/quizAttempt/currentQuestion', requireAuthentication, requir
 });
 
 //STATUSCODE 501 = Deze vraag is al een keer beantwoord
-app.post('/assessment/quizAttempt/answerQuestion', requireAuthentication, requireActiveAttempt, function(req, res, next){
+app.use(logger('tiny')).post('/assessment/quizAttempt/answerQuestion', requireAuthentication, requireActiveAttempt, function(req, res, next){
   console.log("RECEIVED ANSWER POST REQUIST");
   for(key in req.body){
     console.log("\t" + key + " : " + req.body[key]);
@@ -752,7 +753,7 @@ app.post('/assessment/quiz/:quizId/question/:questionId/answer/:answerId', funct
 
 
 
-app.get('/register', (req, res) => {
+app.use(logger('tiny')).get('/register', (req, res) => {
   if (req.session.isAuthenticated == true){
     res.redirect("/"); //logged in people cannot register
   }
@@ -761,7 +762,7 @@ app.get('/register', (req, res) => {
   }
 });
 
-app.post('/register', (req, res) =>{
+app.use(logger('tiny')).post('/register', (req, res) =>{
   const HashPass = md5(req.body.regPassword);
   dbInstance.getUserByUsername(req.body.regUsername, (user) => {
     if (!user){
@@ -773,10 +774,10 @@ app.post('/register', (req, res) =>{
     console.log("This user already exists");
     res.render("pages/register", {isLoggedIn: req.session.isAuthenticated, registerFault: true});
     }
-  });         
+  });      
 });
 
-app.get('/login', (req, res) => {
+app.use(logger('tiny')).get('/login', (req, res) => {
   if (req.session.isAuthenticated == true){
   res.redirect("/"); //{name: req.session.name, username: req.session.username, isLoggedIn: req.session.isAuthenticated}
   }
@@ -785,11 +786,11 @@ app.get('/login', (req, res) => {
   }
 });
 
-app.post('/login', (req, res) => {
+app.use(logger('tiny')).post('/login', (req, res) => {
  let HashPass = md5(req.body.authPassword);
   dbInstance.getUserByUsername(req.body.authUsername, (user) => {
     if (user) { //check if user existst by username
-      if(HashPass === md5(user["password"])){ //easy to hack but simple implementation
+      if(HashPass === user["password"]){ //easy to hack but simple implementation
         console.log("You are now logged in");
         req.session.isAuthenticated = true; 
         req.session.username = user["username"];
@@ -800,18 +801,18 @@ app.post('/login', (req, res) => {
         console.log(user["firstname"]);
       }
       else{
-        console.log("Wrong username or password");
+        console.log("Wrong password");
         res.render("pages/login", {isLoggedIn: req.session.isAuthenticated, loginFault: true }) //communicates that there has been a false attempt 
       }
      }
      else{
-      console.log("Wrong username or password");
+      console.log("Wrong username");
       res.render("pages/login", {isLoggedIn: req.session.isAuthenticated, loginFault: true }) //communicates that there has been a false attempt 
      }
    })
 });
 
-app.get('/logout', (req,res) => {
+app.use(logger('tiny')).get('/logout', (req,res) => {
   req.session.destroy();
   res.redirect("/")
 });
