@@ -431,14 +431,14 @@ DatabaseServer.prototype.getQuestionById = function(questionId = required('quest
     
     db.serialize( () => {
         var answerStmt = db.prepare(`SELECT * FROM QuizQuestionAnswer WHERE quiz_question_id = ?;`);
-        var answerList = [];
+        var answerOptions = [];
         answerStmt.each([questionId], (err, result) => {
             if (err){
                 console.log("Could not find answers for question by id: " + questionId);
                 throw err;
             }
             console.log("FOUND ANSWERLIST");
-            answerList.push(result);
+            answerOptions.push(result);
         });
         answerStmt.finalize();
 
@@ -450,15 +450,12 @@ DatabaseServer.prototype.getQuestionById = function(questionId = required('quest
                 console.log("Could not find question by id: " + questionId);
                 throw err;
             }
-            result.answerList = answerList;
+            result.answerOptions = answerOptions;
             console.log("FOUND QUESTION WITH ID: " + result.id);
 
             callback(result);
         });
         questionStmt.finalize();
-
-        console.log("CALLING STATEMENT FOR QUESTIONS");
-
         
     });
     db.close((err) => { if (err) {return console.error(err.message);}});
@@ -633,29 +630,6 @@ DatabaseServer.prototype.getCorrectAnswer = function(questionId = required('ques
     });
     db.close((err) => { if (err) {return console.error(err.message);}});
 };
-
-/*
-DatabaseServer.prototype.getTopics = function(callback = required('callback function')){
-    const db = new sqlite3.Database(this.dbFile, (err) => {
-        if (err) {
-            console.log("Could not connect to the database", err);
-        }
-    });
-    
-    db.serialize( () => {
-        var stmt = db.prepare(`SELECT * FROM QuizTopic;`);
-        stmt.all((err, quizTopics) => {
-            if (err){
-                console.log("Could not find any topics ");
-                throw err;
-            }
-            console.log(quizTopics)
-            callback(quizTopics);
-        });
-        stmt.finalize();
-    });
-    db.close((err) => { if (err) {return console.error(err.message);}});
-};*/
 
 DatabaseServer.prototype.getTopicQuizes = function(callback = required('callback function')){
     const db = new sqlite3.Database(this.dbFile, (err) => {
